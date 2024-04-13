@@ -1,0 +1,87 @@
+{
+  "project_info": {
+    "project_number": "307076009581",
+    "firebase_url": "https://dpeliculas-695a1-default-rtdb.firebaseio.com",
+    "project_id": "dpeliculas-695a1",
+    "storage_bucket": "dpeliculas-695a1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:307076009581:android:79023614e93cfd0471f964",
+        "android_client_info": {
+          "package_name": "com.alvonj.dpeliculas"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBeAZxlcFfl_Lb6N8PyT0NNfnjf4KRsy24"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:307076009581:android:c0f6b8130c883f1871f964",
+        "android_client_info": {
+          "package_name": "com.alvonj.movie_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBeAZxlcFfl_Lb6N8PyT0NNfnjf4KRsy24"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:307076009581:android:1ad46573e68fc5a171f964",
+        "android_client_info": {
+          "package_name": "com.example.dpeliculas"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBeAZxlcFfl_Lb6N8PyT0NNfnjf4KRsy24"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:307076009581:android:2e7c17415d1f802471f964",
+        "android_client_info": {
+          "package_name": "com.example.is_dpelicula"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBeAZxlcFfl_Lb6N8PyT0NNfnjf4KRsy24"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
