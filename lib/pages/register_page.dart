@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:is_dpelicula/widgets/custom_app_bar.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
@@ -228,46 +229,7 @@ class _RegisterPageState extends State<RegisterPage> {
             ? Center(child: SizedBox(width: 400, child: registerForm))
             : ListView(children: [registerForm]),
       ),
-      appBar: AppBar(
-        backgroundColor: const Color(0xff1C1C27),
-        title: Text(
-          "Dpelicula",
-          style: TextStyle(color: Colors.white),
-        ),
-        leading: isDesktop
-            ? null
-            : Builder(
-                builder: (context) => IconButton(
-                  icon: Icon(Icons.menu, color: Colors.white),
-                  onPressed: () => Scaffold.of(context).openDrawer(),
-                ),
-              ),
-        actions: <Widget>[
-          if (isDesktop) ...[
-            TextButton(
-              onPressed: () => context.goNamed('home'),
-              child: Text("Inicio", style: TextStyle(color: Colors.white)),
-            ),
-            TextButton(
-              onPressed: () => context.goNamed('aboutUs'),
-              child: Text("Nosotros", style: TextStyle(color: Colors.white)),
-            ),
-            TextButton(
-              onPressed: () => context.goNamed('contact'),
-              child: Text("Contáctanos", style: TextStyle(color: Colors.white)),
-            ),
-          ],
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: IconButton(
-              icon: const Icon(Icons.search, color: Colors.white),
-              onPressed: () {
-                // Implementar acción de búsqueda
-              },
-            ),
-          ),
-        ],
-      ),
+      appBar: CustomAppBar(isDesktop: isDesktop,),
       drawer: !isDesktop
           ? Drawer(
               child: ListView(

@@ -3,16 +3,18 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:is_dpelicula/pages/register_page.dart'; // Asegúrate de usar la ruta correcta al archivo
 
 import 'package:go_router/go_router.dart';
 import 'package:is_dpelicula/cubit/money_cubit.dart';
 import 'package:is_dpelicula/cubit/movies_cubit.dart';
 import 'package:is_dpelicula/firebase_options.dart';
 import 'package:is_dpelicula/models/utils.dart';
+import 'package:is_dpelicula/pages/contact_page.dart';
 import 'package:is_dpelicula/pages/home_page.dart';
 import 'package:is_dpelicula/pages/login_page.dart';
 import 'package:is_dpelicula/pages/register_page.dart'; // Asegúrate de usar la ruta correcta al archivo
-
+import 'package:is_dpelicula/pages/about_us.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -56,6 +58,20 @@ class MyApp extends StatelessWidget {
         return const RegisterPage();
       },
     ),
+    GoRoute(
+      path: '/aboutUs',
+      name: 'aboutUs',
+      builder: (context, state) {
+        return const AboutUsPage();
+      },
+    ),
+    GoRoute(
+      path: '/contact',
+      name: 'contact',
+      builder: (context, state) {
+        return const ContactPage();
+      },
+    ),
   ], initialLocation: '/home');
 
   @override
@@ -93,3 +109,4 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+

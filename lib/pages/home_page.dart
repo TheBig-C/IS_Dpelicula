@@ -9,7 +9,8 @@ import 'package:is_dpelicula/models/movie.dart';
 import 'package:is_dpelicula/services/movie_services.dart';
 import 'package:is_dpelicula/widgets/category_card.dart';
 import 'package:is_dpelicula/widgets/loading_spinner.dart';
-
+import 'package:is_dpelicula/widgets/desktop_footer.dart.dart';
+import 'package:is_dpelicula/widgets/custom_app_bar.dart';  // Importa el AppBar personalizado
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -22,98 +23,7 @@ class HomePage extends StatelessWidget {
     bool isDesktop = MediaQuery.of(context).size.width > 800;
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color(0xff1C1C27),
-        title: Text(
-          "Dpelicula",
-          style: TextStyle(color: Colors.white),
-        ),
-        leading: isDesktop
-            ? null
-            : Builder(
-                builder: (context) => IconButton(
-                  icon: Icon(Icons.menu, color: Colors.white),
-                  onPressed: () => Scaffold.of(context).openDrawer(),
-                ),
-              ),
-        actions: <Widget>[
-          if (isDesktop) ...[
-            TextButton(
-              onPressed: () => context.goNamed('home'),
-              child: Text("Inicio", style: TextStyle(color: Colors.white)),
-            ),
-            TextButton(
-              onPressed: () => context.goNamed('aboutUs'),
-              child: Text("Nosotros", style: TextStyle(color: Colors.white)),
-            ),
-            TextButton(
-              onPressed: () => context.goNamed('contact'),
-              child: Text("Contáctanos", style: TextStyle(color: Colors.white)),
-            ),
-          ],
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: IconButton(
-              icon: const Icon(Icons.search, color: Colors.white),
-              onPressed: () {
-                // Implementar acción de búsqueda
-              },
-            ),
-          ),
-          if (user != null) ...[
-            FutureBuilder<DocumentSnapshot>(
-              future: users.doc(user.uid).get(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done &&
-                    snapshot.hasData) {
-                  final data = snapshot.data!.data() as Map<String, dynamic>;
-                  return CircleAvatar(
-                    backgroundImage: NetworkImage(
-                        data['image_url'] ?? './assets/img/profile.jpg'),
-                    radius: 24,
-                  );
-                } else {
-                  return const CircleAvatar(
-                    backgroundImage: AssetImage('./assets/img/profile.jpg'),
-                    radius: 24,
-                  );
-                }
-              },
-            ),
-            PopupMenuButton<int>(
-              onSelected: (value) {
-                switch (value) {
-                  case 0:
-                    context.goNamed('home');
-                    break;
-                  case 1:
-                    context.goNamed('history');
-                    break;
-                  case 2:
-                    context.goNamed('profile');
-                    break;
-                  case 3:
-                    FirebaseAuth.instance
-                        .signOut()
-                        .then((_) => context.goNamed('login'));
-                    break;
-                }
-              },
-              itemBuilder: (context) => [
-                const PopupMenuItem<int>(value: 0, child: Text('Home')),
-                const PopupMenuItem<int>(value: 1, child: Text('History')),
-                const PopupMenuItem<int>(value: 2, child: Text('Profile')),
-                const PopupMenuItem<int>(value: 3, child: Text('Logout')),
-              ],
-            ),
-          ] else ...[
-            TextButton(
-              onPressed: () => context.goNamed('login'),
-              child: Text("Login", style: TextStyle(color: Colors.white)),
-            )
-          ],
-        ],
-      ),
+      appBar: CustomAppBar(isDesktop: isDesktop) ,
       drawer: !isDesktop
           ? Drawer(
               child: ListView(
@@ -360,6 +270,8 @@ class HomePage extends StatelessWidget {
               SizedBox(
                 height: 60,
               ),
+              if (isDesktop)
+                const DesktopFooter(), // Usar el footer solo si es Desktop
             ],
           ));
         },
