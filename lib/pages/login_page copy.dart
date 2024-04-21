@@ -44,7 +44,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
             const SizedBox(height: 20),
             const Text(
-              "Welcome back.",
+              "Bienvenido",
               style: TextStyle(fontSize: 26),
             ),
             const SizedBox(height: 60),
@@ -55,7 +55,7 @@ class _LoginPageState extends State<LoginPage> {
               style: const TextStyle(color: Colors.white70, fontSize: 18),
               autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (email) => email != null && email.isEmpty
-                  ? 'Please enter an email'
+                  ? 'Ingrese un email'
                   : null,
               decoration: InputDecoration(
                   labelText: "Email",
@@ -87,7 +87,7 @@ class _LoginPageState extends State<LoginPage> {
               obscureText: true,
               autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (value) => value != null && value.length < 6
-                  ? 'Enter min 6 characters'
+                  ? 'Ingrese minimo 6 caracteres'
                   : null,
               // obscuringCharacter: '*',
               decoration: InputDecoration(

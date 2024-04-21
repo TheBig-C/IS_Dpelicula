@@ -39,12 +39,12 @@ class _LoginPageState extends State<LoginPage> {
           children: [
             const SizedBox(height: 20),
             const Text(
-              "Let's sign you in.",
+              "Inicio de sesión",
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
             ),
             const SizedBox(height: 20),
             const Text(
-              "Welcome back.",
+              "Bienvenido",
               style: TextStyle(fontSize: 26),
             ),
             const SizedBox(height: 60),
@@ -55,7 +55,7 @@ class _LoginPageState extends State<LoginPage> {
               style: const TextStyle(color: Colors.white70, fontSize: 18),
               autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (email) => email != null && email.isEmpty
-                  ? 'Please enter an email'
+                  ? 'Ingrese un email pofavor'
                   : null,
               decoration: InputDecoration(
                   labelText: "Email",
@@ -87,11 +87,11 @@ class _LoginPageState extends State<LoginPage> {
               obscureText: true,
               autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (value) => value != null && value.length < 6
-                  ? 'Enter min 6 characters'
+                  ? 'Introduzca minimo 6 caracteres'
                   : null,
               // obscuringCharacter: '*',
               decoration: InputDecoration(
-                  labelText: "Password",
+                  labelText: "Contraseña",
                   floatingLabelStyle:
                       const TextStyle(color: Colors.white54, fontSize: 22),
                   labelStyle: const TextStyle(
@@ -116,7 +116,7 @@ class _LoginPageState extends State<LoginPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Text(
-                  "Don't have an account?",
+                  "No tienes una cuenta?",
                   style: TextStyle(color: Colors.white70, fontSize: 16),
                 ),
                 TextButton(
@@ -124,7 +124,7 @@ class _LoginPageState extends State<LoginPage> {
                     context.goNamed('register');
                   },
                   child: Text(
-                    "Register",
+                    "Registrarse",
                     style: TextStyle(
                         color: Theme.of(context).primaryColor, fontSize: 16),
                   ),
@@ -176,7 +176,7 @@ class _LoginPageState extends State<LoginPage> {
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16))),
                       child: const Text(
-                        "Login",
+                        "Iniciar Sesión",
                         style: TextStyle(
                             fontSize: 20, fontWeight: FontWeight.w600),
                       ),

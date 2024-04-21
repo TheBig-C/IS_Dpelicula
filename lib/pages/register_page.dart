@@ -32,12 +32,12 @@ class _RegisterPageState extends State<RegisterPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              "Let's register.",
+              "Vamos a registrarte",
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
             ),
             const SizedBox(height: 20),
             const Text(
-              "Welcome to movie app.",
+              "Bienvenido a DPelícula",
               style: TextStyle(fontSize: 26),
             ),
             const SizedBox(height: 60),
@@ -48,7 +48,7 @@ class _RegisterPageState extends State<RegisterPage> {
               style: const TextStyle(color: Colors.white70, fontSize: 18),
               autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (email) => email != null && email.isEmpty
-                  ? 'Please enter an email'
+                  ? 'Por favor introduzca un email'
                   : null,
               decoration: InputDecoration(
                   labelText: "Email",
@@ -81,10 +81,10 @@ class _RegisterPageState extends State<RegisterPage> {
               // obscuringCharacter: '*',
               autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (value) => value != null && value.length < 6
-                  ? 'Enter min 6 characters'
+                  ? 'Ingrese minimo 6 caracteres'
                   : null,
               decoration: InputDecoration(
-                  labelText: "Password",
+                  labelText: "Contraseña",
                   floatingLabelStyle:
                       const TextStyle(color: Colors.white54, fontSize: 22),
                   labelStyle: const TextStyle(
@@ -115,10 +115,10 @@ class _RegisterPageState extends State<RegisterPage> {
               autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (value) =>
                   value != null && value != passwordController.text
-                      ? 'Confirmation password is not same'
+                      ? 'Las contraseñas no coinciden'
                       : null,
               decoration: InputDecoration(
-                  labelText: "Confirmation Password",
+                  labelText: "Confirmar contraseña",
                   floatingLabelStyle:
                       const TextStyle(color: Colors.white54, fontSize: 22),
                   labelStyle: const TextStyle(
@@ -143,7 +143,7 @@ class _RegisterPageState extends State<RegisterPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Text(
-                  "Already have an account?",
+                  "Tienes una cuenta?",
                   style: TextStyle(color: Colors.white70, fontSize: 16),
                 ),
                 TextButton(
@@ -151,7 +151,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     context.goNamed('login');
                   },
                   child: Text(
-                    "Login",
+                    "Iniciar Sesión",
                     style: TextStyle(
                         color: Theme.of(context).primaryColor, fontSize: 16),
                   ),
@@ -212,7 +212,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16))),
                   child: const Text(
-                    "Register",
+                    "Registrarse",
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
                   ),
                 ),
