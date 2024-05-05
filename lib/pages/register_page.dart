@@ -80,9 +80,22 @@ class _RegisterPageState extends State<RegisterPage> {
               obscureText: true,
               // obscuringCharacter: '*',
               autovalidateMode: AutovalidateMode.onUserInteraction,
-              validator: (value) => value != null && value.length < 6
-                  ? 'Ingrese minimo 6 caracteres'
-                  : null,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Por favor, introduzca una contraseña';
+                } else if (value.length < 6) {
+                  return 'La contraseña debe tener al menos 6 caracteres';
+                } else if (!RegExp(r'[A-Z]').hasMatch(value)) {
+                  return 'La contraseña debe contener al menos \nuna letra mayúscula';
+                } else if (!RegExp(r'[a-z]').hasMatch(value)) {
+                  return 'La contraseña debe contener al menos \nuna letra minúscula';
+                } else if (!RegExp(r'[0-9]').hasMatch(value)) {
+                  return 'La contraseña debe contener al menos un número';
+                } else if (!RegExp(r'[!@#\$&*~]').hasMatch(value)) {
+                  return 'La contraseña debe contener al menos \nun carácter especial (!@#\$&*~)';
+                }
+                return null; // si todos los chequeos pasan, retorna null que significa que el input es válido
+              },
               decoration: InputDecoration(
                   labelText: "Contraseña",
                   floatingLabelStyle:
@@ -183,9 +196,11 @@ class _RegisterPageState extends State<RegisterPage> {
                             users.doc(userRegister.user!.uid).set({
                               'money': 0,
                               'name': null,
+                              'CI': null,
                               'email': userRegister.user!.email,
                               'phone': null,
-                              'address': null
+                              'address': null,
+                              'role': 'client',
                             }))
                         .then((_) {
                       Navigator.of(context, rootNavigator: true).pop();
@@ -229,7 +244,9 @@ class _RegisterPageState extends State<RegisterPage> {
             ? Center(child: SizedBox(width: 400, child: registerForm))
             : ListView(children: [registerForm]),
       ),
-      appBar: CustomAppBar(isDesktop: isDesktop,),
+      appBar: CustomAppBar(
+        isDesktop: isDesktop,
+      ),
       drawer: !isDesktop
           ? Drawer(
               child: ListView(

@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:is_dpelicula/pages/register_employee.dart';
 import 'package:is_dpelicula/pages/register_page.dart'; // Asegúrate de usar la ruta correcta al archivo
 
 import 'package:go_router/go_router.dart';
@@ -15,6 +16,7 @@ import 'package:is_dpelicula/pages/home_page.dart';
 import 'package:is_dpelicula/pages/login_page.dart';
 import 'package:is_dpelicula/pages/register_page.dart';
 import 'package:is_dpelicula/pages/about_us.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -72,6 +74,14 @@ class MyApp extends StatelessWidget {
         return const ContactPage();
       },
     ),
+    GoRoute(
+      path: '/register_employee',
+      name: 'registerEmployee',
+      builder: (context, state) {
+        return const RegisterEmployee();
+      },
+    ),
+    
   ], initialLocation: '/home');
 
   @override
@@ -109,4 +119,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-

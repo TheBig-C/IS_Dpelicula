@@ -15,97 +15,119 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     CollectionReference users = firestore.collection('users');
 
     return AppBar(
-        backgroundColor: const Color(0xff1C1C27),
-        title: Text(
-          "Dpelicula",
-          style: TextStyle(color: Colors.white),
-        ),
-        leading: isDesktop
-            ? null
-            : Builder(
-                builder: (context) => IconButton(
-                  icon: Icon(Icons.menu, color: Colors.white),
-                  onPressed: () => Scaffold.of(context).openDrawer(),
-                ),
+      backgroundColor: const Color(0xff1C1C27),
+      title: Text(
+        "Dpelicula",
+        style: TextStyle(color: Colors.white),
+      ),
+      leading: isDesktop
+          ? null
+          : Builder(
+              builder: (context) => IconButton(
+                icon: Icon(Icons.menu, color: Colors.white),
+                onPressed: () => Scaffold.of(context).openDrawer(),
               ),
-        actions: <Widget>[
-          if (isDesktop) ...[
-            TextButton(
-              onPressed: () => context.goNamed('home'),
-              child: Text("Inicio", style: TextStyle(color: Colors.white)),
             ),
-            TextButton(
-              onPressed: () => context.go('/aboutUs'),
-              child: Text("Nosotros", style: TextStyle(color: Colors.white)),
-            ),
-            TextButton(
-              onPressed: () => context.go('/contact'),
-              child: Text("Contáctanos", style: TextStyle(color: Colors.white)),
-            ),
-          ],
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: IconButton(
-              icon: const Icon(Icons.search, color: Colors.white),
-              onPressed: () {
-                // Implementar acción de búsqueda
-              },
-            ),
+      actions: <Widget>[
+        if (isDesktop) ...[
+          TextButton(
+            onPressed: () => context.goNamed('home'),
+            child: Text("Inicio", style: TextStyle(color: Colors.white)),
           ),
-          if (user != null) ...[
-            FutureBuilder<DocumentSnapshot>(
-              future: users.doc(user.uid).get(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done &&
-                    snapshot.hasData) {
-                  final data = snapshot.data!.data() as Map<String, dynamic>;
-                  return CircleAvatar(
-                    backgroundImage: NetworkImage(
-                        data['image_url'] ?? './assets/img/profile.jpg'),
-                    radius: 24,
-                  );
-                } else {
-                  return const CircleAvatar(
-                    backgroundImage: AssetImage('./assets/img/profile.jpg'),
-                    radius: 24,
-                  );
-                }
-              },
-            ),
-            PopupMenuButton<int>(
-              onSelected: (value) {
-                switch (value) {
-                  case 0:
-                    context.goNamed('home');
-                    break;
-                  case 1:
-                    context.goNamed('history');
-                    break;
-                  case 2:
-                    context.goNamed('profile');
-                    break;
-                  case 3:
-                    FirebaseAuth.instance
-                        .signOut()
-                        .then((_) => context.goNamed('login'));
-                    break;
-                }
-              },
-              itemBuilder: (context) => [
-                const PopupMenuItem<int>(value: 0, child: Text('Home')),
-                const PopupMenuItem<int>(value: 1, child: Text('History')),
-                const PopupMenuItem<int>(value: 2, child: Text('Profile')),
-                const PopupMenuItem<int>(value: 3, child: Text('Logout')),
-              ],
-            ),
-          ] else ...[
-            TextButton(
-              onPressed: () => context.goNamed('login'),
-              child: Text("Login", style: TextStyle(color: Colors.white)),
-            )
-          ],
+          TextButton(
+            onPressed: () => context.go('/aboutUs'),
+            child: Text("Nosotros", style: TextStyle(color: Colors.white)),
+          ),
+          TextButton(
+            onPressed: () => context.go('/contact'),
+            child: Text("Contáctanos", style: TextStyle(color: Colors.white)),
+          ),
         ],
-      );
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: IconButton(
+            icon: const Icon(Icons.search, color: Colors.white),
+            onPressed: () {
+              // Implementar acción de búsqueda
+            },
+          ),
+        ),
+        if (user != null) ...[
+          FutureBuilder<DocumentSnapshot>(
+            future: users.doc(user.uid).get(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done &&
+                  snapshot.hasData) {
+                final data = snapshot.data!.data() as Map<String, dynamic>;
+                return CircleAvatar(
+                  backgroundImage: NetworkImage(
+                      data['image_url'] ?? './assets/img/profile.png'),
+                  radius: 24,
+                );
+              } else {
+                return const CircleAvatar(
+                  backgroundImage: AssetImage('./assets/img/profile.png'),
+                  radius: 24,
+                );
+              }
+            },
+          ),
+          FutureBuilder<DocumentSnapshot>(
+            future: users.doc(user.uid).get(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done &&
+                  snapshot.hasData) {
+                final data = snapshot.data!.data() as Map<String, dynamic>;
+                return PopupMenuButton<int>(
+                  onSelected: (value) {
+                    switch (value) {
+                      case 0:
+                        context.goNamed('home');
+                        break;
+                      case 1:
+                        context.goNamed('history');
+                        break;
+                      case 2:
+                        context.goNamed('profile');
+                        break;
+                      case 3:
+                        FirebaseAuth.instance
+                            .signOut()
+                            .then((_) => context.goNamed('login'));
+                        break;
+                      case 4:
+                        context.goNamed('registerEmployee');
+                        break;
+                    }
+                  },
+                  itemBuilder: (context) => <PopupMenuEntry<int>>[
+                    const PopupMenuItem<int>(value: 0, child: Text('Inicio')),
+                    const PopupMenuItem<int>(
+                        value: 1, child: Text('Historial')),
+                    const PopupMenuItem<int>(value: 2, child: Text('Perfil')),
+                    const PopupMenuItem<int>(
+                        value: 3, child: Text('Cerrar sesión')),
+                    if (data['role'] == 'admin') // Check for admin role
+                      const PopupMenuItem<int>(
+                          value: 4, child: Text('Registrar Empleado')),
+                  ],
+                );
+              } else {
+                return CircleAvatar(
+                  backgroundImage: AssetImage('./assets/img/profile.png'),
+                  radius: 24,
+                );
+              }
+            },
+          ),
+        ] else ...[
+          TextButton(
+            onPressed: () => context.goNamed('login'),
+            child: Text("Login", style: TextStyle(color: Colors.white)),
+          )
+        ],
+      ],
+    );
   }
 
   @override

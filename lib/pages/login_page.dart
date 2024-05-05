@@ -4,9 +4,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:is_dpelicula/pages/forgot_pw_page.dart';
 import 'package:is_dpelicula/widgets/custom_app_bar.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
+import 'package:intl/intl.dart';
 
 import '../cubit/money_cubit.dart';
 
@@ -28,6 +30,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     FirebaseFirestore firestore = FirebaseFirestore.instance;
     CollectionReference users = firestore.collection('users');
+    CollectionReference activities = firestore.collection('activity');
     bool isDesktop = MediaQuery.of(context).size.width > 800;
 
     Widget loginForm = Padding(
@@ -112,6 +115,25 @@ class _LoginPageState extends State<LoginPage> {
                       borderRadius: BorderRadius.circular(16))),
             ),
             const SizedBox(height: 20),
+            Align(
+              alignment: Alignment.centerRight,
+              child: TextButton(
+                onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: ((context) {
+                      return ForgotPasswordPage();
+                    }),
+                  ),
+                ),
+                child: Text(
+                  "¿Olvidaste tu contraseña?",
+                  style: TextStyle(
+                      color: Theme.of(context).primaryColor, fontSize: 16),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -137,38 +159,83 @@ class _LoginPageState extends State<LoginPage> {
                 BlocBuilder<MoneyCubit, MoneyState>(
                   builder: (context, state) {
                     return ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
                         final isValid = formKey.currentState!.validate();
-
                         if (!isValid) return;
 
                         showDialog(
-                            context: context,
-                            barrierDismissible: false,
-                            builder: (context) => Center(
-                                    child: CircularProgressIndicator(
-                                  color: Theme.of(context).primaryColor,
-                                )));
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (context) => Center(
+                              child: CircularProgressIndicator(
+                                  color: Theme.of(context).primaryColor)),
+                        );
 
-                        FirebaseAuth.instance
-                            .signInWithEmailAndPassword(
-                                email: emailController.text.trim(),
-                                password: passwordController.text.trim())
-                            .then((value) {
-                          users.doc(value.user?.uid).get().then((value) {
-                            final data = value.data() as Map<String, dynamic>;
-                            BlocProvider.of<MoneyCubit>(context)
-                                .getSelectedMoney(data['money']);
-                          }).then((_) {
-                            Navigator.of(context, rootNavigator: true).pop();
-                            context.goNamed('home');
+                        try {
+                          UserCredential userCredential = await FirebaseAuth
+                              .instance
+                              .signInWithEmailAndPassword(
+                            email: emailController.text.trim(),
+                            password: passwordController.text.trim(),
+                          );
+
+                          if (!mounted)
+                            return; // Check if the widget is still in the tree
+                          DocumentSnapshot userData =
+                              await users.doc(userCredential.user!.uid).get();
+                          Map<String, dynamic> userDataMap =
+                              userData.data() as Map<String, dynamic>;
+                          String userCI = userDataMap['CI'];
+
+                          // Log the login activity
+                          await activities.add({
+                            'user': userCredential.user!.email,
+                            'activity': 'Inicio de sesión',
+                            'date':
+                                DateFormat('yyyy-MM-dd').format(DateTime.now()),
+                            'hour':
+                                DateFormat('HH:mm:ss').format(DateTime.now()),
                           });
-                        }).catchError((e) {
-                          Navigator.of(context, rootNavigator: true).pop();
 
-                          showTopSnackBar(Overlay.of(context) as OverlayState,
-                              CustomSnackBar.error(message: e.message));
-                        });
+                          if (!mounted)
+                            return; // Check again before interacting with the context
+                          if (passwordController.text.trim() == userCI) {
+                            Navigator.of(context)
+                                .pop(); // Close the progress dialog
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        ForgotPasswordPage()));
+                          } else {
+                            Navigator.of(context, rootNavigator: true)
+                                .pop(); // Close the progress dialog
+                            context.goNamed(
+                                'home'); // Redirect to home if password is not CI
+                          }
+                        } catch (e) {
+                          if (!mounted) return;
+                          Navigator.of(context, rootNavigator: true)
+                              .pop(); // Close the progress dialog
+                          // Log failed login attempt
+                          await activities.add({
+                            'user': emailController.text
+                                .trim(), // Using email here, adjust based on your privacy policy
+                            'activity': 'Intento de Inicio de sesión fallido',
+                            'date':
+                                DateFormat('yyyy-MM-dd').format(DateTime.now()),
+                            'hour':
+                                DateFormat('HH:mm:ss').format(DateTime.now()),
+                          });
+                          if (e is FirebaseAuthException) {
+                            showTopSnackBar(
+                              Overlay.of(context)!,
+                              CustomSnackBar.error(
+                                message: e.message ?? "An error occurred",
+                              ),
+                            );
+                          }
+                        }
                       },
                       style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(
