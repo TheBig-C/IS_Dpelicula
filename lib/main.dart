@@ -13,12 +13,12 @@ import 'package:is_dpelicula/models/utils.dart';
 import 'package:is_dpelicula/pages/contact_page.dart';
 import 'package:is_dpelicula/pages/home_page.dart';
 import 'package:is_dpelicula/pages/login_page.dart';
-import 'package:is_dpelicula/pages/register_page.dart'; // Asegúrate de usar la ruta correcta al archivo
+import 'package:is_dpelicula/pages/register_page.dart';
 import 'package:is_dpelicula/pages/about_us.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform, // Utiliza las opciones configuradas
+    options: DefaultFirebaseOptions.currentPlatform,
   );
   runApp(MyApp());
 }
