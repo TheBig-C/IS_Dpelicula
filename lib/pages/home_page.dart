@@ -8,6 +8,7 @@ import 'package:is_dpelicula/models/movie.dart';
 import 'package:is_dpelicula/widgets/category_card.dart';
 import 'package:is_dpelicula/widgets/custom_app_bar.dart';
 import 'package:is_dpelicula/widgets/desktop_footer.dart';
+import 'package:is_dpelicula/widgets/inactivity_handler.dart';
 import 'package:is_dpelicula/widgets/loading_spinner.dart';
 
 class HomePage extends ConsumerWidget {
@@ -17,7 +18,8 @@ class HomePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isDesktop = MediaQuery.of(context).size.width > 800;
 
-    return Scaffold(
+    return InactivityHandler( // Envuelve Scaffold con InactivityHandler
+      child: Scaffold(
       appBar: CustomAppBar(isDesktop: isDesktop),
       drawer: !isDesktop ? _buildDrawer(context) : null,
       body: SafeArea(
@@ -45,7 +47,7 @@ class HomePage extends ConsumerWidget {
           ],
         ),
       ),
-    );
+    ),);
   }
 
  Widget _buildBanner(BuildContext context) {
