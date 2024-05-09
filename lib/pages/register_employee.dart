@@ -230,12 +230,12 @@ class _RegisterEmployeeState extends State<RegisterEmployee> {
                   showTopSnackBar(
                       Overlay.of(context)!,
                       const CustomSnackBar.success(
-                          message: 'Success, employee has been registered!'));
+                          message: 'Empleado fue registrado exitosamente'));
                   context.goNamed('login');
                 }).catchError((e) {
                   Navigator.of(context, rootNavigator: true).pop();
                   showTopSnackBar(Overlay.of(context)!,
-                      CustomSnackBar.error(message: e.message));
+                      CustomSnackBar.error(message: "Ocurrio un error al registrar el empleado"));
                 });
               },
               style: ElevatedButton.styleFrom(

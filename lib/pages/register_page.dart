@@ -18,6 +18,7 @@ class _RegisterPageState extends State<RegisterPage> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
+  bool passwordVisible = false;
 
   @override
   Widget build(BuildContext context) {
@@ -77,8 +78,8 @@ class _RegisterPageState extends State<RegisterPage> {
               textInputAction: TextInputAction.next,
               cursorColor: Theme.of(context).primaryColor,
               style: const TextStyle(color: Colors.white70, fontSize: 18),
-              obscureText: true,
-              // obscuringCharacter: '*',
+              obscureText:
+                  !passwordVisible, // Usar el estado para controlar la visibilidad
               autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -123,33 +124,47 @@ class _RegisterPageState extends State<RegisterPage> {
               textInputAction: TextInputAction.done,
               cursorColor: Theme.of(context).primaryColor,
               style: const TextStyle(color: Colors.white70, fontSize: 18),
-              obscureText: true,
-              // obscuringCharacter: '*',
+              obscureText:
+                  !passwordVisible, // Usar el estado para controlar la visibilidad
               autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (value) =>
                   value != null && value != passwordController.text
                       ? 'Las contraseñas no coinciden'
                       : null,
               decoration: InputDecoration(
-                  labelText: "Confirmar contraseña",
-                  floatingLabelStyle:
-                      const TextStyle(color: Colors.white54, fontSize: 22),
-                  labelStyle: const TextStyle(
-                      color: Colors.white38,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500),
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                  enabledBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.white24),
-                      borderRadius: BorderRadius.circular(16)),
-                  focusedBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Theme.of(context).primaryColor),
-                      borderRadius: BorderRadius.circular(16)),
-                  border: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.white70),
-                      borderRadius: BorderRadius.circular(16))),
+                labelText: "Confirmar contraseña",
+                floatingLabelStyle:
+                    const TextStyle(color: Colors.white54, fontSize: 22),
+                labelStyle: const TextStyle(
+                    color: Colors.white38,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                enabledBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(color: Colors.white24),
+                    borderRadius: BorderRadius.circular(16)),
+                focusedBorder: OutlineInputBorder(
+                    borderSide:
+                        BorderSide(color: Theme.of(context).primaryColor),
+                    borderRadius: BorderRadius.circular(16)),
+                border: OutlineInputBorder(
+                    borderSide: const BorderSide(color: Colors.white70),
+                    borderRadius: BorderRadius.circular(16)),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    // Ícono cambia según el estado de visibilidad
+                    passwordVisible ? Icons.visibility_off : Icons.visibility,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                  onPressed: () {
+                    // Cambiar el estado de visibilidad al presionar el ícono
+                    setState(() {
+                      passwordVisible = !passwordVisible;
+                    });
+                  },
+                ),
+              ),
             ),
             const SizedBox(height: 20),
             Row(
@@ -217,7 +232,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       Navigator.of(context, rootNavigator: true).pop();
 
                       showTopSnackBar(Overlay.of(context) as OverlayState,
-                          CustomSnackBar.error(message: e.message));
+                          CustomSnackBar.error(message: "Ocurrio un error al registrarse"));
                       // Utils.showSnackBarError(e.message);
                     });
                   },
