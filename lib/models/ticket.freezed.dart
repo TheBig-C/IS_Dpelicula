@@ -1,7 +1,7 @@
 // coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint
-// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target
+// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'ticket.dart';
 
@@ -12,7 +12,7 @@ part of 'ticket.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 Ticket _$TicketFromJson(Map<String, dynamic> json) {
   return _Ticket.fromJson(json);
@@ -99,9 +99,10 @@ class _$TicketCopyWithImpl<$Res, $Val extends Ticket>
 }
 
 /// @nodoc
-abstract class _$$_TicketCopyWith<$Res> implements $TicketCopyWith<$Res> {
-  factory _$$_TicketCopyWith(_$_Ticket value, $Res Function(_$_Ticket) then) =
-      __$$_TicketCopyWithImpl<$Res>;
+abstract class _$$TicketImplCopyWith<$Res> implements $TicketCopyWith<$Res> {
+  factory _$$TicketImplCopyWith(
+          _$TicketImpl value, $Res Function(_$TicketImpl) then) =
+      __$$TicketImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -116,10 +117,11 @@ abstract class _$$_TicketCopyWith<$Res> implements $TicketCopyWith<$Res> {
 }
 
 /// @nodoc
-class __$$_TicketCopyWithImpl<$Res>
-    extends _$TicketCopyWithImpl<$Res, _$_Ticket>
-    implements _$$_TicketCopyWith<$Res> {
-  __$$_TicketCopyWithImpl(_$_Ticket _value, $Res Function(_$_Ticket) _then)
+class __$$TicketImplCopyWithImpl<$Res>
+    extends _$TicketCopyWithImpl<$Res, _$TicketImpl>
+    implements _$$TicketImplCopyWith<$Res> {
+  __$$TicketImplCopyWithImpl(
+      _$TicketImpl _value, $Res Function(_$TicketImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -131,7 +133,7 @@ class __$$_TicketCopyWithImpl<$Res>
     Object? price = null,
     Object? seats = null,
   }) {
-    return _then(_$_Ticket(
+    return _then(_$TicketImpl(
       movie: null == movie
           ? _value.movie
           : movie // ignore: cast_nullable_to_non_nullable
@@ -158,8 +160,8 @@ class __$$_TicketCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_Ticket implements _Ticket {
-  const _$_Ticket(
+class _$TicketImpl implements _Ticket {
+  const _$TicketImpl(
       {required this.movie,
       required this.date,
       required this.time,
@@ -167,8 +169,8 @@ class _$_Ticket implements _Ticket {
       required final List<String> seats})
       : _seats = seats;
 
-  factory _$_Ticket.fromJson(Map<String, dynamic> json) =>
-      _$$_TicketFromJson(json);
+  factory _$TicketImpl.fromJson(Map<String, dynamic> json) =>
+      _$$TicketImplFromJson(json);
 
   @override
   final Movie movie;
@@ -181,6 +183,7 @@ class _$_Ticket implements _Ticket {
   final List<String> _seats;
   @override
   List<String> get seats {
+    if (_seats is EqualUnmodifiableListView) return _seats;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_seats);
   }
@@ -191,10 +194,10 @@ class _$_Ticket implements _Ticket {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_Ticket &&
+            other is _$TicketImpl &&
             (identical(other.movie, movie) || other.movie == movie) &&
             (identical(other.date, date) || other.date == date) &&
             (identical(other.time, time) || other.time == time) &&
@@ -210,12 +213,12 @@ class _$_Ticket implements _Ticket {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_TicketCopyWith<_$_Ticket> get copyWith =>
-      __$$_TicketCopyWithImpl<_$_Ticket>(this, _$identity);
+  _$$TicketImplCopyWith<_$TicketImpl> get copyWith =>
+      __$$TicketImplCopyWithImpl<_$TicketImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_TicketToJson(
+    return _$$TicketImplToJson(
       this,
     );
   }
@@ -227,9 +230,9 @@ abstract class _Ticket implements Ticket {
       required final DateTime date,
       required final String time,
       required final double price,
-      required final List<String> seats}) = _$_Ticket;
+      required final List<String> seats}) = _$TicketImpl;
 
-  factory _Ticket.fromJson(Map<String, dynamic> json) = _$_Ticket.fromJson;
+  factory _Ticket.fromJson(Map<String, dynamic> json) = _$TicketImpl.fromJson;
 
   @override
   Movie get movie;
@@ -243,6 +246,6 @@ abstract class _Ticket implements Ticket {
   List<String> get seats;
   @override
   @JsonKey(ignore: true)
-  _$$_TicketCopyWith<_$_Ticket> get copyWith =>
+  _$$TicketImplCopyWith<_$TicketImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

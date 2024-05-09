@@ -98,6 +98,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                       case 4:
                         context.goNamed('registerEmployee');
                         break;
+                      case 5:
+                        context.goNamed('registerMovie');
+                        break;
                     }
                   },
                   itemBuilder: (context) => <PopupMenuEntry<int>>[
@@ -110,6 +113,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                     if (data['role'] == 'admin') // Check for admin role
                       const PopupMenuItem<int>(
                           value: 4, child: Text('Registrar Empleado')),
+                          if (data['role'] == 'admin') // Check for admin role
+                      const PopupMenuItem<int>(
+                          value: 5, child: Text('Registrar Pelicula')),
                   ],
                 );
               } else {

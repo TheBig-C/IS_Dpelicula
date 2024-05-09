@@ -6,26 +6,36 @@ part of 'movie.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_Movie _$$_MovieFromJson(Map<String, dynamic> json) => _$_Movie(
-      id: json['id'] as int,
+_$MovieImpl _$$MovieImplFromJson(Map<String, dynamic> json) => _$MovieImpl(
+      id: json['id'] as String,
       title: json['title'] as String,
-      vote_average: (json['vote_average'] as num).toDouble(),
+      voteAverage: (json['vote_average'] as num).toDouble(),
       overview: json['overview'] as String,
-      poster_path: json['poster_path'] as String,
-      runtime: json['runtime'] as int?,
-      backdrop_path: json['backdrop_path'] as String?,
-      genres: (json['genres'] as List<dynamic>?)
-          ?.map((e) => e as Map<String, dynamic>)
+      status: json['status'] as String,
+      posterPath: json['poster_path'] as String,
+      backdropPath: json['backdrop_path'] as String?,
+      genres:
+          (json['genres'] as List<dynamic>?)?.map((e) => e as String).toList(),
+      directorNames: (json['directorNames'] as List<dynamic>)
+          .map((e) => e as String)
           .toList(),
+      leadActors: (json['leadActors'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList(),
+      registeredBy: json['registeredBy'] as String,
     );
 
-Map<String, dynamic> _$$_MovieToJson(_$_Movie instance) => <String, dynamic>{
+Map<String, dynamic> _$$MovieImplToJson(_$MovieImpl instance) =>
+    <String, dynamic>{
       'id': instance.id,
       'title': instance.title,
-      'vote_average': instance.vote_average,
+      'vote_average': instance.voteAverage,
       'overview': instance.overview,
-      'poster_path': instance.poster_path,
-      'runtime': instance.runtime,
-      'backdrop_path': instance.backdrop_path,
+      'status': instance.status,
+      'poster_path': instance.posterPath,
+      'backdrop_path': instance.backdropPath,
       'genres': instance.genres,
+      'directorNames': instance.directorNames,
+      'leadActors': instance.leadActors,
+      'registeredBy': instance.registeredBy,
     };
