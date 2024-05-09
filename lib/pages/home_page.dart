@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:is_dpelicula/cubit/movies_cubit.dart';
 import 'package:is_dpelicula/models/movie.dart';
+import 'package:is_dpelicula/widgets/inactivity_handler.dart';
 import 'package:is_dpelicula/services/movie_services.dart';
 import 'package:is_dpelicula/widgets/category_card.dart';
 import 'package:is_dpelicula/widgets/loading_spinner.dart';
@@ -22,7 +23,8 @@ class HomePage extends StatelessWidget {
     CollectionReference users = firestore.collection('users');
     bool isDesktop = MediaQuery.of(context).size.width > 800;
 
-    return Scaffold(
+    return InactivityHandler( // Envuelve Scaffold con InactivityHandler
+      child: Scaffold(
       appBar: CustomAppBar(isDesktop: isDesktop) ,
       drawer: !isDesktop
           ? Drawer(
@@ -276,6 +278,6 @@ class HomePage extends StatelessWidget {
           ));
         },
       ),
-    );
+    ));
   }
 }
