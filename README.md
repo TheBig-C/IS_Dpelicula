@@ -1,4 +1,4 @@
-# TaskMaker
+# Dpelícula
 Descripcion:  
 Dpelicula es una aplicación móvil desarrollada con Flutter que permite a los usuarios comprar fácilmente boletos desde un sistema web y tambien para el cine desde sus dispositivos móviles. 
 
