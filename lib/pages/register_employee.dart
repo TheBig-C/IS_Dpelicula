@@ -230,12 +230,11 @@ class _RegisterEmployeeState extends State<RegisterEmployee> {
                   showTopSnackBar(
                       Overlay.of(context)!,
                       const CustomSnackBar.success(
-                          message: 'Success, employee has been registered!'));
-                  context.goNamed('login');
+                          message: 'Empleado fue registrado exitosamente'));
                 }).catchError((e) {
                   Navigator.of(context, rootNavigator: true).pop();
                   showTopSnackBar(Overlay.of(context)!,
-                      CustomSnackBar.error(message: e.message));
+                      CustomSnackBar.error(message: "El correo ya esta siendo utilizado"));
                 });
               },
               style: ElevatedButton.styleFrom(

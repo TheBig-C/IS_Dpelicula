@@ -38,7 +38,6 @@ class _InactivityHandlerState extends State<InactivityHandler> {
   }
 
   void logOutUser() {
-    // Verificar si hay un usuario autenticado antes de cerrar la sesión
     if (FirebaseAuth.instance.currentUser != null) {
       FirebaseAuth.instance.signOut();
       GoRouter.of(context).go('/login');

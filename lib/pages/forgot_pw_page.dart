@@ -27,25 +27,32 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     final email = emailController.text.trim();
     if (email.isEmpty) {
       showTopSnackBar(
-        Overlay.of(context)!,  // Correct way to get OverlayState from BuildContext
+        Overlay.of(context)!,
         CustomSnackBar.error(
           message: "Por favor, ingrese un correo electrónico válido.",
         ),
       );
       return;
     }
+
     FirebaseAuth.instance.sendPasswordResetEmail(email: email).then((_) {
       showTopSnackBar(
-        Overlay.of(context)!,  // Correct way to get OverlayState from BuildContext
+        Overlay.of(context)!,
         CustomSnackBar.success(
-          message: "Se ha enviado un enlace de restablecimiento a su correo electrónico.",
+          message:
+              "Se ha enviado un enlace de restablecimiento a su correo electrónico.",
         ),
       );
+      // Añade un pequeño retraso para asegurar que el usuario pueda leer el mensaje
+      Future.delayed(const Duration(seconds: 2), () {
+        // Verifica si la navegación es correcta según la configuración de tus rutas
+        GoRouter.of(context).go('/login');
+      });
     }).catchError((e) {
       showTopSnackBar(
-        Overlay.of(context)!,  // Correct way to get OverlayState from BuildContext
+        Overlay.of(context)!,
         CustomSnackBar.error(
-          message: e.message,
+          message: "Ocurrio un error inesperado",
         ),
       );
     });
