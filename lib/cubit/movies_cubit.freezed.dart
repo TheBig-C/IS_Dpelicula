@@ -1,7 +1,7 @@
 // coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint
-// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target
+// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'movies_cubit.dart';
 
@@ -12,7 +12,7 @@ part of 'movies_cubit.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
 mixin _$MoviesState {
@@ -75,25 +75,25 @@ class _$MoviesStateCopyWithImpl<$Res, $Val extends MoviesState>
 }
 
 /// @nodoc
-abstract class _$$_UnselectedCopyWith<$Res> {
-  factory _$$_UnselectedCopyWith(
-          _$_Unselected value, $Res Function(_$_Unselected) then) =
-      __$$_UnselectedCopyWithImpl<$Res>;
+abstract class _$$UnselectedImplCopyWith<$Res> {
+  factory _$$UnselectedImplCopyWith(
+          _$UnselectedImpl value, $Res Function(_$UnselectedImpl) then) =
+      __$$UnselectedImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$_UnselectedCopyWithImpl<$Res>
-    extends _$MoviesStateCopyWithImpl<$Res, _$_Unselected>
-    implements _$$_UnselectedCopyWith<$Res> {
-  __$$_UnselectedCopyWithImpl(
-      _$_Unselected _value, $Res Function(_$_Unselected) _then)
+class __$$UnselectedImplCopyWithImpl<$Res>
+    extends _$MoviesStateCopyWithImpl<$Res, _$UnselectedImpl>
+    implements _$$UnselectedImplCopyWith<$Res> {
+  __$$UnselectedImplCopyWithImpl(
+      _$UnselectedImpl _value, $Res Function(_$UnselectedImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$_Unselected implements _Unselected {
-  const _$_Unselected();
+class _$UnselectedImpl implements _Unselected {
+  const _$UnselectedImpl();
 
   @override
   String toString() {
@@ -101,9 +101,9 @@ class _$_Unselected implements _Unselected {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$_Unselected);
+        (other.runtimeType == runtimeType && other is _$UnselectedImpl);
   }
 
   @override
@@ -173,14 +173,14 @@ class _$_Unselected implements _Unselected {
 }
 
 abstract class _Unselected implements MoviesState {
-  const factory _Unselected() = _$_Unselected;
+  const factory _Unselected() = _$UnselectedImpl;
 }
 
 /// @nodoc
-abstract class _$$_SelectedCopyWith<$Res> {
-  factory _$$_SelectedCopyWith(
-          _$_Selected value, $Res Function(_$_Selected) then) =
-      __$$_SelectedCopyWithImpl<$Res>;
+abstract class _$$SelectedImplCopyWith<$Res> {
+  factory _$$SelectedImplCopyWith(
+          _$SelectedImpl value, $Res Function(_$SelectedImpl) then) =
+      __$$SelectedImplCopyWithImpl<$Res>;
   @useResult
   $Res call({Movie movie});
 
@@ -188,11 +188,11 @@ abstract class _$$_SelectedCopyWith<$Res> {
 }
 
 /// @nodoc
-class __$$_SelectedCopyWithImpl<$Res>
-    extends _$MoviesStateCopyWithImpl<$Res, _$_Selected>
-    implements _$$_SelectedCopyWith<$Res> {
-  __$$_SelectedCopyWithImpl(
-      _$_Selected _value, $Res Function(_$_Selected) _then)
+class __$$SelectedImplCopyWithImpl<$Res>
+    extends _$MoviesStateCopyWithImpl<$Res, _$SelectedImpl>
+    implements _$$SelectedImplCopyWith<$Res> {
+  __$$SelectedImplCopyWithImpl(
+      _$SelectedImpl _value, $Res Function(_$SelectedImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -200,7 +200,7 @@ class __$$_SelectedCopyWithImpl<$Res>
   $Res call({
     Object? movie = null,
   }) {
-    return _then(_$_Selected(
+    return _then(_$SelectedImpl(
       null == movie
           ? _value.movie
           : movie // ignore: cast_nullable_to_non_nullable
@@ -219,8 +219,8 @@ class __$$_SelectedCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_Selected implements _Selected {
-  const _$_Selected(this.movie);
+class _$SelectedImpl implements _Selected {
+  const _$SelectedImpl(this.movie);
 
   @override
   final Movie movie;
@@ -231,10 +231,10 @@ class _$_Selected implements _Selected {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_Selected &&
+            other is _$SelectedImpl &&
             (identical(other.movie, movie) || other.movie == movie));
   }
 
@@ -244,8 +244,8 @@ class _$_Selected implements _Selected {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_SelectedCopyWith<_$_Selected> get copyWith =>
-      __$$_SelectedCopyWithImpl<_$_Selected>(this, _$identity);
+  _$$SelectedImplCopyWith<_$SelectedImpl> get copyWith =>
+      __$$SelectedImplCopyWithImpl<_$SelectedImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -311,10 +311,10 @@ class _$_Selected implements _Selected {
 }
 
 abstract class _Selected implements MoviesState {
-  const factory _Selected(final Movie movie) = _$_Selected;
+  const factory _Selected(final Movie movie) = _$SelectedImpl;
 
   Movie get movie;
   @JsonKey(ignore: true)
-  _$$_SelectedCopyWith<_$_Selected> get copyWith =>
+  _$$SelectedImplCopyWith<_$SelectedImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

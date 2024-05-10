@@ -6,7 +6,7 @@ part of 'ticket.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_Ticket _$$_TicketFromJson(Map<String, dynamic> json) => _$_Ticket(
+_$TicketImpl _$$TicketImplFromJson(Map<String, dynamic> json) => _$TicketImpl(
       movie: Movie.fromJson(json['movie'] as Map<String, dynamic>),
       date: DateTime.parse(json['date'] as String),
       time: json['time'] as String,
@@ -14,7 +14,8 @@ _$_Ticket _$$_TicketFromJson(Map<String, dynamic> json) => _$_Ticket(
       seats: (json['seats'] as List<dynamic>).map((e) => e as String).toList(),
     );
 
-Map<String, dynamic> _$$_TicketToJson(_$_Ticket instance) => <String, dynamic>{
+Map<String, dynamic> _$$TicketImplToJson(_$TicketImpl instance) =>
+    <String, dynamic>{
       'movie': instance.movie,
       'date': instance.date.toIso8601String(),
       'time': instance.time,

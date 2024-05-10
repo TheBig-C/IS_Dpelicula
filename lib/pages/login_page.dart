@@ -163,6 +163,14 @@ class _LoginPageState extends State<LoginPage> {
                         final isValid = formKey.currentState!.validate();
                         if (!isValid) return;
 
+                        final emailTrimmed = emailController.text.trim();
+                        final passwordTrimmed = passwordController.text.trim();
+
+                        // Definir la fecha actual antes de abrir el diálogo
+                        final queryDate =
+                            DateFormat('yyyy-MM-dd').format(DateTime.now());
+
+                        // Mostrar diálogo de progreso
                         showDialog(
                           context: context,
                           barrierDismissible: false,
@@ -172,66 +180,71 @@ class _LoginPageState extends State<LoginPage> {
                         );
 
                         try {
-                          UserCredential userCredential = await FirebaseAuth
-                              .instance
-                              .signInWithEmailAndPassword(
-                            email: emailController.text.trim(),
-                            password: passwordController.text.trim(),
-                          );
+                          // Verificar intentos fallidos antes de proceder
+                          final failedAttempts = await activities
+                              .where('user', isEqualTo: emailTrimmed)
+                              .where('activity',
+                                  isEqualTo:
+                                      'Intento de Inicio de sesión fallido')
+                              .where('date', isEqualTo: queryDate)
+                              .get();
 
-                          if (!mounted)
-                            return; // Check if the widget is still in the tree
-                          DocumentSnapshot userData =
-                              await users.doc(userCredential.user!.uid).get();
-                          Map<String, dynamic> userDataMap =
-                              userData.data() as Map<String, dynamic>;
-                          String userCI = userDataMap['CI'];
-
-                          // Log the login activity
-                          await activities.add({
-                            'user': userCredential.user!.email,
-                            'activity': 'Inicio de sesión',
-                            'date':
-                                DateFormat('yyyy-MM-dd').format(DateTime.now()),
-                            'hour':
-                                DateFormat('HH:mm:ss').format(DateTime.now()),
-                          });
-
-                          if (!mounted)
-                            return; // Check again before interacting with the context
-                          if (passwordController.text.trim() == userCI) {
-                            Navigator.of(context)
-                                .pop(); // Close the progress dialog
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        ForgotPasswordPage()));
-                          } else {
+                          if (failedAttempts.docs.length >= 3) {
                             Navigator.of(context, rootNavigator: true)
-                                .pop(); // Close the progress dialog
-                            context.goNamed(
-                                'home'); // Redirect to home if password is not CI
-                          }
-                        } catch (e) {
-                          if (!mounted) return;
-                          Navigator.of(context, rootNavigator: true)
-                              .pop(); // Close the progress dialog
-                          // Log failed login attempt
-                          await activities.add({
-                            'user': emailController.text
-                                .trim(), // Using email here, adjust based on your privacy policy
-                            'activity': 'Intento de Inicio de sesión fallido',
-                            'date':
-                                DateFormat('yyyy-MM-dd').format(DateTime.now()),
-                            'hour':
-                                DateFormat('HH:mm:ss').format(DateTime.now()),
-                          });
-                          if (e is FirebaseAuthException) {
+                                .pop(); // Cierra cualquier diálogo abierto
                             showTopSnackBar(
                               Overlay.of(context)!,
                               CustomSnackBar.error(
-                                message: e.message ?? "An error occurred",
+                                message:
+                                    "Has excedido el número máximo de intentos de inicio de sesión para hoy.",
+                              ),
+                            );
+                            return; // No permitir más intentos de inicio de sesión
+                          }
+
+                          // Intentar iniciar sesión
+                          UserCredential userCredential = await FirebaseAuth
+                              .instance
+                              .signInWithEmailAndPassword(
+                            email: emailTrimmed,
+                            password: passwordTrimmed,
+                          );
+
+                          if (!mounted)
+                            return; // Verificar si el widget todavía está en el árbol
+
+                          // Registrar actividad de inicio de sesión exitoso
+                          await activities.add({
+                            'user': userCredential.user!.email,
+                            'activity': 'Inicio de sesión',
+                            'date': queryDate,
+                            'hour':
+                                DateFormat('HH:mm:ss').format(DateTime.now()),
+                          });
+
+                          Navigator.of(context, rootNavigator: true)
+                              .pop(); // Cerrar el diálogo de progreso
+                          context.goNamed(
+                              'home'); // Redirigir a home si la autenticación es exitosa
+                        } catch (e) {
+                          if (!mounted) return;
+                          Navigator.of(context, rootNavigator: true)
+                              .pop(); // Cerrar el diálogo de progreso
+
+                          if (e is FirebaseAuthException) {
+                            // Registrar intento de inicio de sesión fallido
+                            await activities.add({
+                              'user': emailTrimmed,
+                              'activity': 'Intento de Inicio de sesión fallido',
+                              'date': queryDate,
+                              'hour':
+                                  DateFormat('HH:mm:ss').format(DateTime.now()),
+                            });
+
+                            showTopSnackBar(
+                              Overlay.of(context)!,
+                              CustomSnackBar.error(
+                                message: "El correo o contraseña es incorrecto",
                               ),
                             );
                           }

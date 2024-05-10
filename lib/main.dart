@@ -3,7 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:is_dpelicula/pages/register_employee.dart';
+import 'package:is_dpelicula/pages/register_movie_page.dart';
 import 'package:is_dpelicula/pages/register_page.dart'; // Asegúrate de usar la ruta correcta al archivo
 
 import 'package:go_router/go_router.dart';
@@ -22,8 +24,11 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(MyApp());
+  runApp(
+    ProviderScope(child: MyApp())  // Asegúrate de envolver MyApp con ProviderScope
+  );
 }
+
 
 class MyApp extends StatelessWidget {
   MyApp({Key? key}) : super(key: key);
@@ -79,6 +84,13 @@ class MyApp extends StatelessWidget {
       name: 'registerEmployee',
       builder: (context, state) {
         return const RegisterEmployee();
+      },
+    ),
+     GoRoute(
+      path: '/register_movie',
+      name: 'registerMovie',
+      builder: (context, state) {
+        return RegisterMovie();
       },
     ),
     
