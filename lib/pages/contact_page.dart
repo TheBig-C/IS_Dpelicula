@@ -1,14 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:is_dpelicula/widgets/custom_app_bar.dart';
 import 'package:is_dpelicula/widgets/desktop_footer.dart';
-import 'package:url_launcher/url_launcher.dart';  // Asegúrate de tener esta importación
+import 'package:url_launcher/url_launcher.dart';
 
 class ContactPage extends StatelessWidget {
   const ContactPage({super.key});
 
-  // Función para lanzar la URL de Google Maps
   void _launchMapsUrl(double latitude, double longitude) async {
-    var url = Uri.parse('https://www.google.com/maps/search/?api=1&query=$latitude,$longitude');
+    var url = Uri.parse(
+        'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude');
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  void _launchUrl(String urlString) async {
+    var url = Uri.parse(urlString);
     if (await canLaunchUrl(url)) {
       await launchUrl(url);
     } else {
@@ -26,17 +35,36 @@ class ContactPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              _buildContactCard(
-                title: 'Contáctanos',
-                content: '¿Tienes preguntas o comentarios? No dudes en contactarnos a través de los siguientes medios:',
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: const [
+                  Expanded(
+                    child: ContactCard(),
+                  ),
+                  Expanded(
+                    child: Image(
+                      image: AssetImage(
+                          'sala.png'), // Nombre del archivo de imagen
+                    ),
+                  ),
+                ],
               ),
+              const SizedBox(height: 40), // Espacio antes del botón
               ElevatedButton(
-                onPressed: () => _launchMapsUrl(-16.500000, -68.150000), // Coordenadas de ejemplo, cambia según tu necesidad
+                onPressed: () => _launchMapsUrl(-16.500000, -68.150000),
                 child: const Text('Ver Ubicación en Mapa'),
                 style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white, backgroundColor: Colors.deepPurple, // Color del texto
+                  backgroundColor: Colors.deepPurple,
+                  foregroundColor: Colors.white,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                  textStyle: const TextStyle(fontSize: 16),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8)),
                 ),
               ),
+              const SizedBox(height: 40), // Espacio después del botón
+              const IconSection(), // Sección de íconos más grandes y blancos
               const DesktopFooter(),
             ],
           ),
@@ -44,55 +72,155 @@ class ContactPage extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget _buildContactCard({required String title, required String content}) {
+class ContactCard extends StatelessWidget {
+  const ContactCard({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
     return Card(
       elevation: 4,
+      margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
       child: Container(
-        width: 800,
         padding: const EdgeInsets.all(16),
+        width: 600, // Reduce el ancho del recuadro
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment:
+              MainAxisAlignment.center, // Centra los elementos verticalmente
+          crossAxisAlignment:
+              CrossAxisAlignment.center, // Centra los elementos horizontalmente
           children: [
             Text(
-              title,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
+              'Contáctanos',
+              style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.deepPurple),
             ),
             const SizedBox(height: 10),
             Text(
-              content,
-              style: const TextStyle(fontSize: 16, color: Colors.black),
-              textAlign: TextAlign.justify,
+              '¿Tienes preguntas o comentarios? No dudes en contactarnos a través de los siguientes medios:',
+              style: TextStyle(fontSize: 16, color: Colors.black54),
+              textAlign: TextAlign.center, // Centra el texto
             ),
             const SizedBox(height: 20),
-            _buildContactDetail(icon: Icons.email, text: 'Email: contacto@dpelicula.com'),
-            _buildContactDetail(icon: Icons.phone, text: 'Teléfono: +1 234 567 8900'),
-            _buildContactDetail(icon: Icons.location_on, text: 'Dirección: Calle Falsa 123, Ciudad, País'),
-            _buildContactDetail(icon: Icons.web, text: 'Sitio Web: www.dpelicula.com'),
-            _buildContactDetail(icon: Icons.facebook, text: 'Facebook: @DpeliculaOfficial'),
-            _buildContactDetail(icon: Icons.linked_camera, text: 'Instagram: @Dpelicula'),
+            const ContactDetails(),
           ],
         ),
       ),
     );
   }
+}
 
-  Widget _buildContactDetail({required IconData icon, required String text}) {
+class ContactDetails extends StatelessWidget {
+  const ContactDetails({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment:
+          CrossAxisAlignment.center, // Centra los detalles horizontalmente
+      children: const [
+        ContactDetail(
+            icon: Icons.email, label: 'Email', text: 'contacto@dpelicula.com'),
+        ContactDetail(
+            icon: Icons.phone, label: 'Teléfono', text: '+1 234 567 8900'),
+        ContactDetail(
+            icon: Icons.location_on,
+            label: 'Dirección',
+            text: 'Calle Falsa 123, Ciudad, País'),
+        ContactDetail(
+            icon: Icons.web, label: 'Sitio Web', text: 'www.dpelicula.com'),
+        ContactDetail(
+            icon: Icons.facebook,
+            label: 'Facebook',
+            text: '@DpeliculaOfficial'),
+        ContactDetail(
+            icon: Icons.camera_alt, label: 'Instagram', text: '@Dpelicula'),
+      ],
+    );
+  }
+}
+
+class ContactDetail extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String text;
+
+  const ContactDetail({
+    Key? key,
+    required this.icon,
+    required this.label,
+    required this.text,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
+        mainAxisAlignment:
+            MainAxisAlignment.center, // Centra el contenido de la fila
         children: [
           Icon(icon, size: 24, color: Colors.deepPurple),
           const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              text,
-              style: const TextStyle(fontSize: 16, color: Colors.black),
-              textAlign: TextAlign.left,
-            ),
+          Text(
+            '$label: ',
+            style: TextStyle(
+                fontSize: 16,
+                color: Colors.deepPurple,
+                fontWeight: FontWeight.bold),
+          ),
+          Text(
+            text,
+            style: const TextStyle(fontSize: 16, color: Colors.black),
           ),
         ],
       ),
+    );
+  }
+}
+
+class IconSection extends StatelessWidget {
+  const IconSection({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            GestureDetector(
+              onTap: () => ContactPage()
+                  ._launchUrl('mailto:callcenterlp@multicine.com.bo'),
+              child: const Icon(Icons.email, size: 36, color: Colors.white),
+            ),
+            GestureDetector(
+              onTap: () => ContactPage()._launchUrl('tel:(591 2) 211 2463'),
+              child: const Icon(Icons.phone, size: 36, color: Colors.white),
+            ),
+            GestureDetector(
+              onTap: () =>
+                  ContactPage()._launchUrl('https://www.multicine.com.bo'),
+              child: const Icon(Icons.web, size: 36, color: Colors.white),
+            ),
+            GestureDetector(
+              onTap: () => ContactPage()
+                  ._launchUrl('https://www.facebook.com/MulticineBolivia'),
+              child: const Icon(Icons.facebook, size: 36, color: Colors.white),
+            ),
+            GestureDetector(
+              onTap: () => ContactPage()
+                  ._launchUrl('https://www.instagram.com/multicinebolivia/'),
+              child: const Icon(Icons.camera, size: 36, color: Colors.white),
+            ),
+          ],
+        ),
+        const SizedBox(height: 40), // Espacio después de los iconos
+      ],
     );
   }
 }
