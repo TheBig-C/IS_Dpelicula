@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -16,9 +16,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
     return AppBar(
       backgroundColor: const Color(0xff1C1C27),
-      title: Text(
-        "Dpelicula",
-        style: TextStyle(color: Colors.white),
+      title: Image.asset(
+        'dp.png',
+        height: kToolbarHeight - 20,
       ),
       leading: isDesktop
           ? null
@@ -110,10 +110,10 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                     const PopupMenuItem<int>(value: 2, child: Text('Perfil')),
                     const PopupMenuItem<int>(
                         value: 3, child: Text('Cerrar sesión')),
-                    if (data['role'] == 'admin') // Check for admin role
+                    if (data['role'] == 'admin')
                       const PopupMenuItem<int>(
                           value: 4, child: Text('Registrar Empleado')),
-                          if (data['role'] == 'admin') // Check for admin role
+                    if (data['role'] == 'admin')
                       const PopupMenuItem<int>(
                           value: 5, child: Text('Registrar Pelicula')),
                   ],

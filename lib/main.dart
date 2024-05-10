@@ -69,7 +69,7 @@ class MyApp extends StatelessWidget {
       path: '/aboutUs',
       name: 'aboutUs',
       builder: (context, state) {
-        return const AboutUsPage();
+        return AboutUsPage();
       },
     ),
     GoRoute(
