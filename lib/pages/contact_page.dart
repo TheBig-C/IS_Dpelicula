@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:is_dpelicula/widgets/custom_app_bar.dart';
-import 'package:is_dpelicula/widgets/desktop_footer.dart.dart';
+import 'package:is_dpelicula/widgets/desktop_footer.dart';
 import 'package:url_launcher/url_launcher.dart';  // Asegúrate de tener esta importación
 
 class ContactPage extends StatelessWidget {

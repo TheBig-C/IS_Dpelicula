@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:is_dpelicula/widgets/custom_app_bar.dart';
-import 'package:is_dpelicula/widgets/desktop_footer.dart.dart';
+import 'package:is_dpelicula/widgets/desktop_footer.dart';
 
 class AboutUsPage extends StatelessWidget {
   const AboutUsPage({super.key});

@@ -1,7 +1,7 @@
 // coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint
-// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target
+// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'movie.dart';
 
@@ -12,7 +12,7 @@ part of 'movie.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 Movie _$MovieFromJson(Map<String, dynamic> json) {
   return _Movie.fromJson(json);
@@ -20,14 +20,20 @@ Movie _$MovieFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$Movie {
-  int get id => throw _privateConstructorUsedError;
+  String get id => throw _privateConstructorUsedError;
   String get title => throw _privateConstructorUsedError;
-  double get vote_average => throw _privateConstructorUsedError;
+  @JsonKey(name: 'vote_average')
+  double get voteAverage => throw _privateConstructorUsedError;
   String get overview => throw _privateConstructorUsedError;
-  String get poster_path => throw _privateConstructorUsedError;
-  int? get runtime => throw _privateConstructorUsedError;
-  String? get backdrop_path => throw _privateConstructorUsedError;
-  List<Map<String, dynamic>>? get genres => throw _privateConstructorUsedError;
+  String get status => throw _privateConstructorUsedError;
+  @JsonKey(name: 'poster_path')
+  String get posterPath => throw _privateConstructorUsedError;
+  @JsonKey(name: 'backdrop_path')
+  String? get backdropPath => throw _privateConstructorUsedError;
+  List<String>? get genres => throw _privateConstructorUsedError;
+  List<String> get directorNames => throw _privateConstructorUsedError;
+  List<String> get leadActors => throw _privateConstructorUsedError;
+  String get registeredBy => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -40,14 +46,17 @@ abstract class $MovieCopyWith<$Res> {
       _$MovieCopyWithImpl<$Res, Movie>;
   @useResult
   $Res call(
-      {int id,
+      {String id,
       String title,
-      double vote_average,
+      @JsonKey(name: 'vote_average') double voteAverage,
       String overview,
-      String poster_path,
-      int? runtime,
-      String? backdrop_path,
-      List<Map<String, dynamic>>? genres});
+      String status,
+      @JsonKey(name: 'poster_path') String posterPath,
+      @JsonKey(name: 'backdrop_path') String? backdropPath,
+      List<String>? genres,
+      List<String> directorNames,
+      List<String> leadActors,
+      String registeredBy});
 }
 
 /// @nodoc
@@ -65,71 +74,92 @@ class _$MovieCopyWithImpl<$Res, $Val extends Movie>
   $Res call({
     Object? id = null,
     Object? title = null,
-    Object? vote_average = null,
+    Object? voteAverage = null,
     Object? overview = null,
-    Object? poster_path = null,
-    Object? runtime = freezed,
-    Object? backdrop_path = freezed,
+    Object? status = null,
+    Object? posterPath = null,
+    Object? backdropPath = freezed,
     Object? genres = freezed,
+    Object? directorNames = null,
+    Object? leadActors = null,
+    Object? registeredBy = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as int,
+              as String,
       title: null == title
           ? _value.title
           : title // ignore: cast_nullable_to_non_nullable
               as String,
-      vote_average: null == vote_average
-          ? _value.vote_average
-          : vote_average // ignore: cast_nullable_to_non_nullable
+      voteAverage: null == voteAverage
+          ? _value.voteAverage
+          : voteAverage // ignore: cast_nullable_to_non_nullable
               as double,
       overview: null == overview
           ? _value.overview
           : overview // ignore: cast_nullable_to_non_nullable
               as String,
-      poster_path: null == poster_path
-          ? _value.poster_path
-          : poster_path // ignore: cast_nullable_to_non_nullable
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
               as String,
-      runtime: freezed == runtime
-          ? _value.runtime
-          : runtime // ignore: cast_nullable_to_non_nullable
-              as int?,
-      backdrop_path: freezed == backdrop_path
-          ? _value.backdrop_path
-          : backdrop_path // ignore: cast_nullable_to_non_nullable
+      posterPath: null == posterPath
+          ? _value.posterPath
+          : posterPath // ignore: cast_nullable_to_non_nullable
+              as String,
+      backdropPath: freezed == backdropPath
+          ? _value.backdropPath
+          : backdropPath // ignore: cast_nullable_to_non_nullable
               as String?,
       genres: freezed == genres
           ? _value.genres
           : genres // ignore: cast_nullable_to_non_nullable
-              as List<Map<String, dynamic>>?,
+              as List<String>?,
+      directorNames: null == directorNames
+          ? _value.directorNames
+          : directorNames // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      leadActors: null == leadActors
+          ? _value.leadActors
+          : leadActors // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      registeredBy: null == registeredBy
+          ? _value.registeredBy
+          : registeredBy // ignore: cast_nullable_to_non_nullable
+              as String,
     ) as $Val);
   }
 }
 
 /// @nodoc
-abstract class _$$_MovieCopyWith<$Res> implements $MovieCopyWith<$Res> {
-  factory _$$_MovieCopyWith(_$_Movie value, $Res Function(_$_Movie) then) =
-      __$$_MovieCopyWithImpl<$Res>;
+abstract class _$$MovieImplCopyWith<$Res> implements $MovieCopyWith<$Res> {
+  factory _$$MovieImplCopyWith(
+          _$MovieImpl value, $Res Function(_$MovieImpl) then) =
+      __$$MovieImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
-      {int id,
+      {String id,
       String title,
-      double vote_average,
+      @JsonKey(name: 'vote_average') double voteAverage,
       String overview,
-      String poster_path,
-      int? runtime,
-      String? backdrop_path,
-      List<Map<String, dynamic>>? genres});
+      String status,
+      @JsonKey(name: 'poster_path') String posterPath,
+      @JsonKey(name: 'backdrop_path') String? backdropPath,
+      List<String>? genres,
+      List<String> directorNames,
+      List<String> leadActors,
+      String registeredBy});
 }
 
 /// @nodoc
-class __$$_MovieCopyWithImpl<$Res> extends _$MovieCopyWithImpl<$Res, _$_Movie>
-    implements _$$_MovieCopyWith<$Res> {
-  __$$_MovieCopyWithImpl(_$_Movie _value, $Res Function(_$_Movie) _then)
+class __$$MovieImplCopyWithImpl<$Res>
+    extends _$MovieCopyWithImpl<$Res, _$MovieImpl>
+    implements _$$MovieImplCopyWith<$Res> {
+  __$$MovieImplCopyWithImpl(
+      _$MovieImpl _value, $Res Function(_$MovieImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -137,112 +167,161 @@ class __$$_MovieCopyWithImpl<$Res> extends _$MovieCopyWithImpl<$Res, _$_Movie>
   $Res call({
     Object? id = null,
     Object? title = null,
-    Object? vote_average = null,
+    Object? voteAverage = null,
     Object? overview = null,
-    Object? poster_path = null,
-    Object? runtime = freezed,
-    Object? backdrop_path = freezed,
+    Object? status = null,
+    Object? posterPath = null,
+    Object? backdropPath = freezed,
     Object? genres = freezed,
+    Object? directorNames = null,
+    Object? leadActors = null,
+    Object? registeredBy = null,
   }) {
-    return _then(_$_Movie(
+    return _then(_$MovieImpl(
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as int,
+              as String,
       title: null == title
           ? _value.title
           : title // ignore: cast_nullable_to_non_nullable
               as String,
-      vote_average: null == vote_average
-          ? _value.vote_average
-          : vote_average // ignore: cast_nullable_to_non_nullable
+      voteAverage: null == voteAverage
+          ? _value.voteAverage
+          : voteAverage // ignore: cast_nullable_to_non_nullable
               as double,
       overview: null == overview
           ? _value.overview
           : overview // ignore: cast_nullable_to_non_nullable
               as String,
-      poster_path: null == poster_path
-          ? _value.poster_path
-          : poster_path // ignore: cast_nullable_to_non_nullable
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
               as String,
-      runtime: freezed == runtime
-          ? _value.runtime
-          : runtime // ignore: cast_nullable_to_non_nullable
-              as int?,
-      backdrop_path: freezed == backdrop_path
-          ? _value.backdrop_path
-          : backdrop_path // ignore: cast_nullable_to_non_nullable
+      posterPath: null == posterPath
+          ? _value.posterPath
+          : posterPath // ignore: cast_nullable_to_non_nullable
+              as String,
+      backdropPath: freezed == backdropPath
+          ? _value.backdropPath
+          : backdropPath // ignore: cast_nullable_to_non_nullable
               as String?,
       genres: freezed == genres
           ? _value._genres
           : genres // ignore: cast_nullable_to_non_nullable
-              as List<Map<String, dynamic>>?,
+              as List<String>?,
+      directorNames: null == directorNames
+          ? _value._directorNames
+          : directorNames // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      leadActors: null == leadActors
+          ? _value._leadActors
+          : leadActors // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      registeredBy: null == registeredBy
+          ? _value.registeredBy
+          : registeredBy // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
 
 /// @nodoc
 @JsonSerializable()
-class _$_Movie implements _Movie {
-  const _$_Movie(
+class _$MovieImpl implements _Movie {
+  const _$MovieImpl(
       {required this.id,
       required this.title,
-      required this.vote_average,
+      @JsonKey(name: 'vote_average') required this.voteAverage,
       required this.overview,
-      required this.poster_path,
-      this.runtime,
-      this.backdrop_path,
-      final List<Map<String, dynamic>>? genres})
-      : _genres = genres;
+      required this.status,
+      @JsonKey(name: 'poster_path') required this.posterPath,
+      @JsonKey(name: 'backdrop_path') this.backdropPath,
+      final List<String>? genres,
+      required final List<String> directorNames,
+      required final List<String> leadActors,
+      required this.registeredBy})
+      : _genres = genres,
+        _directorNames = directorNames,
+        _leadActors = leadActors;
 
-  factory _$_Movie.fromJson(Map<String, dynamic> json) =>
-      _$$_MovieFromJson(json);
+  factory _$MovieImpl.fromJson(Map<String, dynamic> json) =>
+      _$$MovieImplFromJson(json);
 
   @override
-  final int id;
+  final String id;
   @override
   final String title;
   @override
-  final double vote_average;
+  @JsonKey(name: 'vote_average')
+  final double voteAverage;
   @override
   final String overview;
   @override
-  final String poster_path;
+  final String status;
   @override
-  final int? runtime;
+  @JsonKey(name: 'poster_path')
+  final String posterPath;
   @override
-  final String? backdrop_path;
-  final List<Map<String, dynamic>>? _genres;
+  @JsonKey(name: 'backdrop_path')
+  final String? backdropPath;
+  final List<String>? _genres;
   @override
-  List<Map<String, dynamic>>? get genres {
+  List<String>? get genres {
     final value = _genres;
     if (value == null) return null;
+    if (_genres is EqualUnmodifiableListView) return _genres;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(value);
   }
 
+  final List<String> _directorNames;
   @override
-  String toString() {
-    return 'Movie(id: $id, title: $title, vote_average: $vote_average, overview: $overview, poster_path: $poster_path, runtime: $runtime, backdrop_path: $backdrop_path, genres: $genres)';
+  List<String> get directorNames {
+    if (_directorNames is EqualUnmodifiableListView) return _directorNames;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_directorNames);
+  }
+
+  final List<String> _leadActors;
+  @override
+  List<String> get leadActors {
+    if (_leadActors is EqualUnmodifiableListView) return _leadActors;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_leadActors);
   }
 
   @override
-  bool operator ==(dynamic other) {
+  final String registeredBy;
+
+  @override
+  String toString() {
+    return 'Movie(id: $id, title: $title, voteAverage: $voteAverage, overview: $overview, status: $status, posterPath: $posterPath, backdropPath: $backdropPath, genres: $genres, directorNames: $directorNames, leadActors: $leadActors, registeredBy: $registeredBy)';
+  }
+
+  @override
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_Movie &&
+            other is _$MovieImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.title, title) || other.title == title) &&
-            (identical(other.vote_average, vote_average) ||
-                other.vote_average == vote_average) &&
+            (identical(other.voteAverage, voteAverage) ||
+                other.voteAverage == voteAverage) &&
             (identical(other.overview, overview) ||
                 other.overview == overview) &&
-            (identical(other.poster_path, poster_path) ||
-                other.poster_path == poster_path) &&
-            (identical(other.runtime, runtime) || other.runtime == runtime) &&
-            (identical(other.backdrop_path, backdrop_path) ||
-                other.backdrop_path == backdrop_path) &&
-            const DeepCollectionEquality().equals(other._genres, _genres));
+            (identical(other.status, status) || other.status == status) &&
+            (identical(other.posterPath, posterPath) ||
+                other.posterPath == posterPath) &&
+            (identical(other.backdropPath, backdropPath) ||
+                other.backdropPath == backdropPath) &&
+            const DeepCollectionEquality().equals(other._genres, _genres) &&
+            const DeepCollectionEquality()
+                .equals(other._directorNames, _directorNames) &&
+            const DeepCollectionEquality()
+                .equals(other._leadActors, _leadActors) &&
+            (identical(other.registeredBy, registeredBy) ||
+                other.registeredBy == registeredBy));
   }
 
   @JsonKey(ignore: true)
@@ -251,22 +330,25 @@ class _$_Movie implements _Movie {
       runtimeType,
       id,
       title,
-      vote_average,
+      voteAverage,
       overview,
-      poster_path,
-      runtime,
-      backdrop_path,
-      const DeepCollectionEquality().hash(_genres));
+      status,
+      posterPath,
+      backdropPath,
+      const DeepCollectionEquality().hash(_genres),
+      const DeepCollectionEquality().hash(_directorNames),
+      const DeepCollectionEquality().hash(_leadActors),
+      registeredBy);
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_MovieCopyWith<_$_Movie> get copyWith =>
-      __$$_MovieCopyWithImpl<_$_Movie>(this, _$identity);
+  _$$MovieImplCopyWith<_$MovieImpl> get copyWith =>
+      __$$MovieImplCopyWithImpl<_$MovieImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_MovieToJson(
+    return _$$MovieImplToJson(
       this,
     );
   }
@@ -274,35 +356,47 @@ class _$_Movie implements _Movie {
 
 abstract class _Movie implements Movie {
   const factory _Movie(
-      {required final int id,
+      {required final String id,
       required final String title,
-      required final double vote_average,
+      @JsonKey(name: 'vote_average') required final double voteAverage,
       required final String overview,
-      required final String poster_path,
-      final int? runtime,
-      final String? backdrop_path,
-      final List<Map<String, dynamic>>? genres}) = _$_Movie;
+      required final String status,
+      @JsonKey(name: 'poster_path') required final String posterPath,
+      @JsonKey(name: 'backdrop_path') final String? backdropPath,
+      final List<String>? genres,
+      required final List<String> directorNames,
+      required final List<String> leadActors,
+      required final String registeredBy}) = _$MovieImpl;
 
-  factory _Movie.fromJson(Map<String, dynamic> json) = _$_Movie.fromJson;
+  factory _Movie.fromJson(Map<String, dynamic> json) = _$MovieImpl.fromJson;
 
   @override
-  int get id;
+  String get id;
   @override
   String get title;
   @override
-  double get vote_average;
+  @JsonKey(name: 'vote_average')
+  double get voteAverage;
   @override
   String get overview;
   @override
-  String get poster_path;
+  String get status;
   @override
-  int? get runtime;
+  @JsonKey(name: 'poster_path')
+  String get posterPath;
   @override
-  String? get backdrop_path;
+  @JsonKey(name: 'backdrop_path')
+  String? get backdropPath;
   @override
-  List<Map<String, dynamic>>? get genres;
+  List<String>? get genres;
+  @override
+  List<String> get directorNames;
+  @override
+  List<String> get leadActors;
+  @override
+  String get registeredBy;
   @override
   @JsonKey(ignore: true)
-  _$$_MovieCopyWith<_$_Movie> get copyWith =>
+  _$$MovieImplCopyWith<_$MovieImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
