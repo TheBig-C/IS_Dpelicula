@@ -14,9 +14,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
     return AppBar(
       backgroundColor: const Color(0xff1C1C27),
-      title: Text(
-        "Dpelicula",
-        style: TextStyle(color: Colors.white),
+      title: Image.asset(
+        'dp.png',
+        height: kToolbarHeight - 20,
       ),
       leading: isDesktop
           ? null
