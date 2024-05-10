@@ -273,6 +273,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "7.0.0"
+  file_picker:
+    dependency: "direct main"
+    description:
+      name: file_picker
+      sha256: be325344c1f3070354a1d84a231a1ba75ea85d413774ec4bdf444c023342e030
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.5.0"
   file_selector_linux:
     dependency: transitive
     description:
@@ -492,10 +500,10 @@ packages:
     dependency: "direct main"
     description:
       name: google_maps
-      sha256: "47eef3836b49bb030d5cb3afc60b8451408bf34cf753e571b645d6529eb4251a"
+      sha256: "555d5d736339b0478e821167ac521c810d7b51c3b2734e6802a9f046b64ea37a"
       url: "https://pub.dev"
     source: hosted
-    version: "7.1.0"
+    version: "6.3.0"
   google_maps_flutter:
     dependency: "direct main"
     description:
@@ -529,6 +537,7 @@ packages:
     source: hosted
     version: "2.6.0"
   google_maps_flutter_web:
+<<<<<<< HEAD
     dependency: transitive
     description:
       name: google_maps_flutter_web
@@ -536,6 +545,15 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.5.7"
+=======
+    dependency: "direct main"
+    description:
+      name: google_maps_flutter_web
+      sha256: "9ae7d8001add51c6edd7befa45de5249ea9553fb42a950e7a5132a324217e72a"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.3"
+>>>>>>> 4a1bf3f0791445f113624ebb090e08924d121171
   graphs:
     dependency: transitive
     description:
@@ -872,6 +890,7 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.0"
+<<<<<<< HEAD
   shared_preferences:
     dependency: "direct main"
     description:
@@ -928,6 +947,8 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.3.2"
+=======
+>>>>>>> 4a1bf3f0791445f113624ebb090e08924d121171
   shelf:
     dependency: transitive
     description:
@@ -1165,6 +1186,7 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.5.0"
+<<<<<<< HEAD
   xdg_directories:
     dependency: transitive
     description:
@@ -1173,6 +1195,8 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.4"
+=======
+>>>>>>> 4a1bf3f0791445f113624ebb090e08924d121171
   yaml:
     dependency: transitive
     description:
