@@ -37,11 +37,14 @@ class _RegisterMovieState extends State<RegisterMovie> {
  // Método para agregar una película
 Future<void> addMovie(Movie movie) async {
   try {
-    // Mostrar un mensaje de carga o indicador de progreso
-    // setState(() {
-    //   isLoading = true;
-    // });
+    // Agregar la película a Firestore
+    final DocumentReference docRef = await movies.add(movie.toJson());
 
+    // Obtener el snapshot del documento recién agregado
+    final DocumentSnapshot docSnapshot = await docRef.get();
+    print("pelicula registrada");
+    Future<void> addMovie(Movie movie) async {
+  try {
     // Agregar la película a Firestore
     final DocumentReference docRef = await movies.add(movie.toJson());
 
@@ -56,6 +59,14 @@ Future<void> addMovie(Movie movie) async {
       ),
     );
 
+    // Pequeño retraso antes de limpiar los campos y redirigir al usuario
+    await Future.delayed(const Duration(milliseconds: 500)); // Puedes ajustar el tiempo según tus necesidades
+       showTopSnackBar(
+      context as OverlayState,
+      const CustomSnackBar.success(
+        message: "Película registrada exitosamente",
+      ),
+    );
     // Limpiar los campos del formulario
     titleController.clear();
     overviewController.clear();
@@ -70,10 +81,6 @@ Future<void> addMovie(Movie movie) async {
 
     // Navegar de regreso a la página de inicio
     Navigator.of(context).pop(); // Esto cierra la pantalla actual y vuelve a la anterior
-
-    // setState(() {
-    //   isLoading = false;
-    // });
   } catch (e) {
     // Manejar el error
     showTopSnackBar(
@@ -82,10 +89,17 @@ Future<void> addMovie(Movie movie) async {
         message: "Error registrando película: $e",
       ),
     );
+  }
+}
 
-    // setState(() {
-    //   isLoading = false;
-    // });
+  } catch (e) {
+    // Manejar el error
+    showTopSnackBar(
+      context as OverlayState,
+      CustomSnackBar.error(
+        message: "Error registrando película: $e",
+      ),
+    );
   }
 }
 
@@ -234,6 +248,7 @@ Future<void> addMovie(Movie movie) async {
 
                           // Llamar al método addMovie
                           await addMovie(movie);
+                          
                         }
                       },
                       style: ElevatedButton.styleFrom(

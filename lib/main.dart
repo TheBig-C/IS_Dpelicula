@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:is_dpelicula/pages/movie_detail_page.dart';
 import 'package:is_dpelicula/pages/register_employee.dart';
 import 'package:is_dpelicula/pages/register_movie_page.dart';
 import 'package:is_dpelicula/pages/register_page.dart'; // Asegúrate de usar la ruta correcta al archivo
@@ -93,7 +94,13 @@ class MyApp extends StatelessWidget {
         return RegisterMovie();
       },
     ),
-    
+     GoRoute(
+      path: '/movie/:id',
+      builder: (BuildContext context, GoRouterState state) {
+        final String id = state.pathParameters['id']!;
+        return MovieDetailPage(movieId: id);
+      },
+    )
   ], initialLocation: '/home');
 
   @override

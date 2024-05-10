@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:flutter/foundation.dart'; // Importa foundation
 
 class DesktopFooter extends StatefulWidget {
   const DesktopFooter({super.key});
@@ -11,20 +10,37 @@ class DesktopFooter extends StatefulWidget {
 
 class _DesktopFooterState extends State<DesktopFooter> {
   late GoogleMapController mapController;
-  final LatLng _center = const LatLng(-16.5000, -68.1500); // Coordenadas ejemplo
+  final LatLng _center = const LatLng(-16.5107348, -68.1231924); // Coordenadas del centro del mapa
+
+  // Conjunto de marcadores
+  final Set<Marker> _markers = {};
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
+    setState(() {
+      // Agregar marcador en las coordenadas especificadas
+      _markers.add(
+        Marker(
+          markerId: MarkerId('mainLocation'),
+          position: _center,  // Posición del marcador
+          infoWindow: InfoWindow(
+            title: 'Dpelicula Headquarters',  // Título del marcador
+            snippet: 'Avenida Arce 2631, La Paz',  // Descripción pequeña
+          ),
+          icon: BitmapDescriptor.defaultMarker,  // Ícono del marcador
+        )
+      );
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      height: 300, // Ajusta la altura del footer según sea necesario
+      height: 350,
       padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 40),
       decoration: const BoxDecoration(
-        color: Colors.blueGrey, // Ajusta el color según sea necesario
+        color: Colors.blueGrey,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -34,6 +50,7 @@ class _DesktopFooterState extends State<DesktopFooter> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: const [
                 Text('Dpelicula © 2024', style: TextStyle(color: Colors.white, fontSize: 14)),
                 SizedBox(height: 10),
@@ -51,14 +68,14 @@ class _DesktopFooterState extends State<DesktopFooter> {
           ),
           Expanded(
             flex: 2, // Da más espacio al mapa
-            child: kIsWeb ? Image.network('URL_DE_UNA_IMAGEN_ESTÁTICA_DEL_MAPA')
-                         : GoogleMap(
-                             onMapCreated: _onMapCreated,
-                             initialCameraPosition: CameraPosition(
-                               target: _center,
-                               zoom: 14.0,
-                             ),
-                           ),
+            child: GoogleMap(
+              onMapCreated: _onMapCreated,
+              initialCameraPosition: CameraPosition(
+                target: _center,
+                zoom: 16.0,  // Ajustado para una mejor visualización del lugar
+              ),
+              markers: _markers,  // Agrega los marcadores al mapa
+            ),
           ),
         ],
       ),
