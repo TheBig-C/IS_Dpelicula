@@ -192,48 +192,50 @@ class _RegisterPageState extends State<RegisterPage> {
                 ElevatedButton(
                   onPressed: () {
                     final isValid = formKey.currentState!.validate();
-
                     if (!isValid) return;
-
                     showDialog(
                         context: context,
                         barrierDismissible: false,
                         builder: (context) => Center(
-                                child: CircularProgressIndicator(
-                              color: Theme.of(context).primaryColor,
-                            )));
+                            child: CircularProgressIndicator(
+                                color: Theme.of(context).primaryColor)));
 
                     FirebaseAuth.instance
                         .createUserWithEmailAndPassword(
                             email: emailController.text.trim(),
                             password: passwordController.text.trim())
-                        .then((userRegister) =>
-                            users.doc(userRegister.user!.uid).set({
-                              'money': 0,
-                              'name': null,
-                              'CI': null,
-                              'email': userRegister.user!.email,
-                              'phone': null,
-                              'address': null,
-                              'role': 'client',
-                            }))
-                        .then((_) {
+                        .then((userCredential) {
+                      // Almacenar información del usuario en Firestore
+                      return users.doc(userCredential.user!.uid).set({
+                        'money': 0,
+                        'name': null,
+                        'CI': null,
+                        'email': userCredential.user!.email,
+                        'phone': null,
+                        'address': null,
+                        'role': 'client',
+                      }).then((_) => userCredential
+                          .user!.email); // Pasar el email al siguiente then
+                    }).then((email) {
+                      // Cierre del diálogo de progreso
                       Navigator.of(context, rootNavigator: true).pop();
-
+                      // Mostrar notificación de éxito
                       showTopSnackBar(
                           Overlay.of(context) as OverlayState,
-                          displayDuration: const Duration(milliseconds: 1500),
                           const CustomSnackBar.success(
-                              message:
-                                  'Success, your account has been created!'));
-
-                      context.goNamed('login');
+                              message: 'Su cuenta se creó correctamente'));
+                      // Redireccionar a la página de verificación de email
+                      GoRouter.of(context)
+                          .push('/verify_email', extra: email);
                     }).catchError((e) {
+                      // Cierre del diálogo de progreso en caso de error
                       Navigator.of(context, rootNavigator: true).pop();
-
-                      showTopSnackBar(Overlay.of(context) as OverlayState,
-                          CustomSnackBar.error(message: "Ocurrio un error al registrarse"));
-                      // Utils.showSnackBarError(e.message);
+                      // Mostrar notificación de error
+                      showTopSnackBar(
+                          Overlay.of(context) as OverlayState,
+                          CustomSnackBar.error(
+                              message:
+                                  "Ocurrió un error al registrarse"));
                     });
                   },
                   style: ElevatedButton.styleFrom(

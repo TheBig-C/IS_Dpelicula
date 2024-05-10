@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -26,6 +28,145 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   bool passwordVisible = false;
+  bool isButtonEnabled = true;
+  int? remainingTime;
+  Timer? countdownTimer;
+
+  @override
+  void dispose() {
+    countdownTimer?.cancel();
+    super.dispose();
+  }
+
+  void startTimer() {
+    countdownTimer?.cancel();
+    const oneSec = Duration(seconds: 1);
+    remainingTime = 10;
+
+    countdownTimer = Timer.periodic(oneSec, (Timer timer) {
+      if (remainingTime == 0) {
+        setState(() {
+          timer.cancel();
+          isButtonEnabled = true;
+          remainingTime = null;
+        });
+      } else {
+        setState(() {
+          remainingTime = remainingTime! - 1;
+        });
+      }
+    });
+  }
+
+  String?
+      _verificationId; // Agrega esta variable a nivel de clase para almacenar el verificationId
+
+  void sendVerificationCode(String phoneNumber) {
+    FirebaseAuth.instance.verifyPhoneNumber(
+      phoneNumber: phoneNumber,
+      verificationCompleted: (PhoneAuthCredential credential) async {
+        try {
+          await FirebaseAuth.instance.signInWithCredential(credential);
+          if (!mounted) {
+            Navigator.of(context)
+                .pop(); // Asegúrate de usar el Navigator correcto
+            // Navegar a la página principal
+          }
+        } catch (e) {
+          if (!mounted) {
+            showTopSnackBar(
+              Overlay.of(context)!,
+              CustomSnackBar.error(
+                  message: "Error al iniciar sesión: ${e.toString()}"),
+            );
+          }
+        }
+      },
+      verificationFailed: (FirebaseAuthException e) {
+        if (!mounted) {
+          Navigator.of(context).pop();
+          showTopSnackBar(
+            Overlay.of(context)!,
+            CustomSnackBar.error(
+                message: "Falló la verificación: ${e.message}"),
+          );
+        }
+      },
+      codeSent: (String verificationId, int? resendToken) {
+        _verificationId = verificationId;
+        if (!mounted) {
+          showVerificationCodeDialog(context, verificationId);
+        }
+      },
+      codeAutoRetrievalTimeout: (String verificationId) {
+        _verificationId = verificationId;
+      },
+    );
+  }
+
+  void showVerificationCodeDialog(BuildContext context, String verificationId) {
+    TextEditingController codeController = TextEditingController();
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: Text('Introduce el código de verificación'),
+          content: TextField(
+            controller: codeController,
+            decoration: InputDecoration(
+              labelText: 'Código SMS',
+              hintText: '123456',
+            ),
+            keyboardType: TextInputType.number,
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Cancelar'),
+              onPressed: () {
+                Navigator.of(dialogContext)
+                    .pop(); // Asegúrate de usar el context del diálogo aquí
+              },
+            ),
+            TextButton(
+              child: Text('Verificar'),
+              onPressed: () async {
+                final String smsCode = codeController.text.trim();
+                await signInWithPhoneNumber(verificationId, smsCode);
+                Navigator.of(dialogContext)
+                    .pop(); // Cierra el diálogo antes de cualquier navegación o actualización de estado
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> signInWithPhoneNumber(
+      String verificationId, String smsCode) async {
+    try {
+      PhoneAuthCredential credential = PhoneAuthProvider.credential(
+        verificationId: verificationId,
+        smsCode: smsCode,
+      );
+
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithCredential(credential);
+
+      if (!mounted) {
+        Navigator.of(context).pushReplacementNamed('/home');
+      }
+    } catch (e) {
+      if (!mounted) {
+        showTopSnackBar(
+          Overlay.of(context)!,
+          CustomSnackBar.error(
+              message: "Error verificando el código SMS: ${e.toString()}"),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -133,14 +274,7 @@ class _LoginPageState extends State<LoginPage> {
             Align(
               alignment: Alignment.centerRight,
               child: TextButton(
-                onPressed: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: ((context) {
-                      return ForgotPasswordPage();
-                    }),
-                  ),
-                ),
+                onPressed: () => GoRouter.of(context).push('/reset_password'),
                 child: Text(
                   "¿Olvidaste tu contraseña?",
                   style: TextStyle(
@@ -168,103 +302,203 @@ class _LoginPageState extends State<LoginPage> {
                 )
               ],
             ),
+            Text(
+              remainingTime != null
+                  ? 'Espera ${remainingTime! ~/ 60}:${(remainingTime! % 60).toString().padLeft(2, '0')} para volver a intentar'
+                  : '',
+              style: TextStyle(color: Colors.red, fontSize: 16),
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 BlocBuilder<MoneyCubit, MoneyState>(
                   builder: (context, state) {
                     return ElevatedButton(
-                      onPressed: () async {
-                        final isValid = formKey.currentState!.validate();
-                        if (!isValid) return;
+                      onPressed: isButtonEnabled
+                          ? () async {
+                              final isValid = formKey.currentState!.validate();
+                              if (!isValid) return;
 
-                        final emailTrimmed = emailController.text.trim();
-                        final passwordTrimmed = passwordController.text.trim();
+                              final emailTrimmed = emailController.text.trim();
+                              final passwordTrimmed =
+                                  passwordController.text.trim();
+                              final queryDate = DateFormat('yyyy-MM-dd')
+                                  .format(DateTime.now());
 
-                        // Definir la fecha actual antes de abrir el diálogo
-                        final queryDate =
-                            DateFormat('yyyy-MM-dd').format(DateTime.now());
+                              showDialog(
+                                context: context,
+                                barrierDismissible: false,
+                                builder: (context) => Center(
+                                    child: CircularProgressIndicator(
+                                        color: Theme.of(context).primaryColor)),
+                              );
 
-                        // Mostrar diálogo de progreso
-                        showDialog(
-                          context: context,
-                          barrierDismissible: false,
-                          builder: (context) => Center(
-                              child: CircularProgressIndicator(
-                                  color: Theme.of(context).primaryColor)),
-                        );
+                              try {
+                                // Obtener registros de intentos fallidos del día actual
+                                final failedAttemptsQuery = await activities
+                                    .where('user', isEqualTo: emailTrimmed)
+                                    .where('activity',
+                                        isEqualTo:
+                                            'Intento de Inicio de sesión fallido')
+                                    .where('date', isEqualTo: queryDate)
+                                    .get();
 
-                        try {
-                          // Verificar intentos fallidos antes de proceder
-                          final failedAttempts = await activities
-                              .where('user', isEqualTo: emailTrimmed)
-                              .where('activity',
-                                  isEqualTo:
-                                      'Intento de Inicio de sesión fallido')
-                              .where('date', isEqualTo: queryDate)
-                              .get();
+                                // Definir y actualizar la cantidad de intentos fallidos
+                                int failedAttempts =
+                                    failedAttemptsQuery.docs.length;
 
-                          if (failedAttempts.docs.length >= 3) {
-                            Navigator.of(context, rootNavigator: true)
-                                .pop(); // Cierra cualquier diálogo abierto
-                            showTopSnackBar(
-                              Overlay.of(context)!,
-                              CustomSnackBar.error(
-                                message:
-                                    "Has excedido el número máximo de intentos de inicio de sesión para hoy.",
-                              ),
-                            );
-                            return; // No permitir más intentos de inicio de sesión
-                          }
+                                if (failedAttempts >= 3) {
+                                  Navigator.of(context, rootNavigator: true)
+                                      .pop();
+                                  showTopSnackBar(
+                                    Overlay.of(context)!,
+                                    CustomSnackBar.error(
+                                      message:
+                                          "Has excedido el número máximo de intentos de inicio de sesión para hoy. Inténtalo mañana.",
+                                    ),
+                                  );
+                                  return;
+                                }
 
-                          // Intentar iniciar sesión
-                          UserCredential userCredential = await FirebaseAuth
-                              .instance
-                              .signInWithEmailAndPassword(
-                            email: emailTrimmed,
-                            password: passwordTrimmed,
-                          );
+                                UserCredential userCredential =
+                                    await FirebaseAuth.instance
+                                        .signInWithEmailAndPassword(
+                                  email: emailTrimmed,
+                                  password: passwordTrimmed,
+                                );
 
-                          if (!mounted)
-                            return; // Verificar si el widget todavía está en el árbol
+                                if (!userCredential.user!.emailVerified) {
+                                  Navigator.of(context, rootNavigator: true)
+                                      .pop();
+                                  GoRouter.of(context).push('/verify_email',
+                                      extra: userCredential.user!.email);
+                                  await activities.add({
+                                    'user': userCredential.user!.email,
+                                    'activity':
+                                        'Inicio de sesión exitoso y redirigido a verificar email',
+                                    'date': queryDate,
+                                    'hour': DateFormat('HH:mm:ss')
+                                        .format(DateTime.now()),
+                                  });
+                                  return;
+                                }
 
-                          // Registrar actividad de inicio de sesión exitoso
-                          await activities.add({
-                            'user': userCredential.user!.email,
-                            'activity': 'Inicio de sesión',
-                            'date': queryDate,
-                            'hour':
-                                DateFormat('HH:mm:ss').format(DateTime.now()),
-                          });
+                                if (!mounted) return;
 
-                          Navigator.of(context, rootNavigator: true)
-                              .pop(); // Cerrar el diálogo de progreso
-                          context.goNamed(
-                              'home'); // Redirigir a home si la autenticación es exitosa
-                        } catch (e) {
-                          if (!mounted) return;
-                          Navigator.of(context, rootNavigator: true)
-                              .pop(); // Cerrar el diálogo de progreso
+                                // // Retrieving user data and casting to Map<String, dynamic>
+                                // DocumentSnapshot userDoc =
+                                //     await FirebaseFirestore.instance
+                                //         .collection('users')
+                                //         .doc(userCredential.user!.uid)
+                                //         .get();
+                                DocumentSnapshot userDoc =
+                                    await FirebaseFirestore.instance
+                                        .collection('users')
+                                        .doc(userCredential.user!.uid)
+                                        .get();
+                                Map<String, dynamic> userData =
+                                    userDoc.data()! as Map<String, dynamic>;
 
-                          if (e is FirebaseAuthException) {
-                            // Registrar intento de inicio de sesión fallido
-                            await activities.add({
-                              'user': emailTrimmed,
-                              'activity': 'Intento de Inicio de sesión fallido',
-                              'date': queryDate,
-                              'hour':
-                                  DateFormat('HH:mm:ss').format(DateTime.now()),
-                            });
+                                // Comprobando si la contraseña es igual al CI del usuario, si existe el campo CI
+                                if (userData.containsKey('CI') &&
+                                    userData['CI'] != null &&
+                                    passwordTrimmed == userData['CI']) {
+                                  Navigator.of(context, rootNavigator: true)
+                                      .pop();
+                                  GoRouter.of(context).push('/reset_password');
+                                  await activities.add({
+                                    'user': userCredential.user!.email,
+                                    'activity':
+                                        'Inicio de sesión exitoso y redirigido a restablecer contraseña',
+                                    'date': queryDate,
+                                    'hour': DateFormat('HH:mm:ss')
+                                        .format(DateTime.now()),
+                                  });
+                                  return;
+                                }
+                                // if (!mounted) return;
+                                // if (userData.containsKey('phone') &&
+                                //     userData['phone'] != null) {
+                                //   sendVerificationCode(userData['phone']);
+                                // } else {
+                                //   // Error, no hay número de teléfono
+                                //   showTopSnackBar(
+                                //     Overlay.of(context)!,
+                                //     CustomSnackBar.error(
+                                //         message:
+                                //             "No se encontró el número de teléfono asociado."),
+                                //   );
+                                // }
 
-                            showTopSnackBar(
-                              Overlay.of(context)!,
-                              CustomSnackBar.error(
-                                message: "El correo o contraseña es incorrecto",
-                              ),
-                            );
-                          }
-                        }
-                      },
+                                await activities.add({
+                                  'user': userCredential.user!.email,
+                                  'activity': 'Inicio de sesión exitoso',
+                                  'date': queryDate,
+                                  'hour': DateFormat('HH:mm:ss')
+                                      .format(DateTime.now()),
+                                });
+
+                                Navigator.of(context, rootNavigator: true)
+                                    .pop();
+                                context.goNamed('home');
+                              } catch (e) {
+                                print(e.toString());
+                                if (!mounted) return;
+                                Navigator.of(context, rootNavigator: true)
+                                    .pop();
+
+                                // Debe volver a consultar el número de intentos fallidos en caso de excepción.
+                                final currentFailedAttemptsQuery = await activities
+                                    .where('user', isEqualTo: emailTrimmed)
+                                    .where('activity',
+                                        isEqualTo:
+                                            'Intento de Inicio de sesión fallido')
+                                    .where('date', isEqualTo: queryDate)
+                                    .get();
+                                int currentFailedAttempts =
+                                    currentFailedAttemptsQuery.docs.length + 1;
+
+                                await activities.add({
+                                  'user': emailTrimmed,
+                                  'activity':
+                                      'Intento de Inicio de sesión fallido',
+                                  'date': queryDate,
+                                  'hour': DateFormat('HH:mm:ss')
+                                      .format(DateTime.now()),
+                                });
+
+                                if (currentFailedAttempts == 2) {
+                                  setState(() {
+                                    isButtonEnabled = false;
+                                    startTimer();
+                                  });
+                                  showTopSnackBar(
+                                    Overlay.of(context)!,
+                                    CustomSnackBar.error(
+                                      message:
+                                          "Tienes que esperar 15 minutos antes de intentar iniciar sesión nuevamente.",
+                                    ),
+                                  );
+                                } else if (currentFailedAttempts >= 3) {
+                                  showTopSnackBar(
+                                    Overlay.of(context)!,
+                                    CustomSnackBar.error(
+                                      message:
+                                          "Has excedido el número máximo de intentos de inicio de sesión para hoy. Inténtalo mañana.",
+                                    ),
+                                  );
+                                } else {
+                                  showTopSnackBar(
+                                    Overlay.of(context)!,
+                                    CustomSnackBar.error(
+                                      message:
+                                          "El correo o contraseña es incorrecto. Intentos restantes: ${3 - currentFailedAttempts}",
+                                    ),
+                                  );
+                                }
+                              }
+                            }
+                          : null,
                       style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 100, vertical: 14),
