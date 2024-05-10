@@ -18,6 +18,7 @@ class _RegisterPageState extends State<RegisterPage> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
+  bool passwordVisible = false;
 
   @override
   Widget build(BuildContext context) {
@@ -77,8 +78,8 @@ class _RegisterPageState extends State<RegisterPage> {
               textInputAction: TextInputAction.next,
               cursorColor: Theme.of(context).primaryColor,
               style: const TextStyle(color: Colors.white70, fontSize: 18),
-              obscureText: true,
-              // obscuringCharacter: '*',
+              obscureText:
+                  !passwordVisible, // Usar el estado para controlar la visibilidad
               autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -123,33 +124,47 @@ class _RegisterPageState extends State<RegisterPage> {
               textInputAction: TextInputAction.done,
               cursorColor: Theme.of(context).primaryColor,
               style: const TextStyle(color: Colors.white70, fontSize: 18),
-              obscureText: true,
-              // obscuringCharacter: '*',
+              obscureText:
+                  !passwordVisible, // Usar el estado para controlar la visibilidad
               autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (value) =>
                   value != null && value != passwordController.text
                       ? 'Las contraseñas no coinciden'
                       : null,
               decoration: InputDecoration(
-                  labelText: "Confirmar contraseña",
-                  floatingLabelStyle:
-                      const TextStyle(color: Colors.white54, fontSize: 22),
-                  labelStyle: const TextStyle(
-                      color: Colors.white38,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500),
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                  enabledBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.white24),
-                      borderRadius: BorderRadius.circular(16)),
-                  focusedBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Theme.of(context).primaryColor),
-                      borderRadius: BorderRadius.circular(16)),
-                  border: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.white70),
-                      borderRadius: BorderRadius.circular(16))),
+                labelText: "Confirmar contraseña",
+                floatingLabelStyle:
+                    const TextStyle(color: Colors.white54, fontSize: 22),
+                labelStyle: const TextStyle(
+                    color: Colors.white38,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                enabledBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(color: Colors.white24),
+                    borderRadius: BorderRadius.circular(16)),
+                focusedBorder: OutlineInputBorder(
+                    borderSide:
+                        BorderSide(color: Theme.of(context).primaryColor),
+                    borderRadius: BorderRadius.circular(16)),
+                border: OutlineInputBorder(
+                    borderSide: const BorderSide(color: Colors.white70),
+                    borderRadius: BorderRadius.circular(16)),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    // Ícono cambia según el estado de visibilidad
+                    passwordVisible ? Icons.visibility_off : Icons.visibility,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                  onPressed: () {
+                    // Cambiar el estado de visibilidad al presionar el ícono
+                    setState(() {
+                      passwordVisible = !passwordVisible;
+                    });
+                  },
+                ),
+              ),
             ),
             const SizedBox(height: 20),
             Row(
@@ -177,48 +192,50 @@ class _RegisterPageState extends State<RegisterPage> {
                 ElevatedButton(
                   onPressed: () {
                     final isValid = formKey.currentState!.validate();
-
                     if (!isValid) return;
-
                     showDialog(
                         context: context,
                         barrierDismissible: false,
                         builder: (context) => Center(
-                                child: CircularProgressIndicator(
-                              color: Theme.of(context).primaryColor,
-                            )));
+                            child: CircularProgressIndicator(
+                                color: Theme.of(context).primaryColor)));
 
                     FirebaseAuth.instance
                         .createUserWithEmailAndPassword(
                             email: emailController.text.trim(),
                             password: passwordController.text.trim())
-                        .then((userRegister) =>
-                            users.doc(userRegister.user!.uid).set({
-                              'money': 0,
-                              'name': null,
-                              'CI': null,
-                              'email': userRegister.user!.email,
-                              'phone': null,
-                              'address': null,
-                              'role': 'client',
-                            }))
-                        .then((_) {
+                        .then((userCredential) {
+                      // Almacenar información del usuario en Firestore
+                      return users.doc(userCredential.user!.uid).set({
+                        'money': 0,
+                        'name': null,
+                        'CI': null,
+                        'email': userCredential.user!.email,
+                        'phone': null,
+                        'address': null,
+                        'role': 'client',
+                      }).then((_) => userCredential
+                          .user!.email); // Pasar el email al siguiente then
+                    }).then((email) {
+                      // Cierre del diálogo de progreso
                       Navigator.of(context, rootNavigator: true).pop();
-
+                      // Mostrar notificación de éxito
                       showTopSnackBar(
                           Overlay.of(context) as OverlayState,
-                          displayDuration: const Duration(milliseconds: 1500),
                           const CustomSnackBar.success(
-                              message:
-                                  'Success, your account has been created!'));
-
-                      context.goNamed('login');
+                              message: 'Su cuenta se creó correctamente'));
+                      // Redireccionar a la página de verificación de email
+                      GoRouter.of(context)
+                          .push('/verify_email', extra: email);
                     }).catchError((e) {
+                      // Cierre del diálogo de progreso en caso de error
                       Navigator.of(context, rootNavigator: true).pop();
-
-                      showTopSnackBar(Overlay.of(context) as OverlayState,
-                          CustomSnackBar.error(message: e.message));
-                      // Utils.showSnackBarError(e.message);
+                      // Mostrar notificación de error
+                      showTopSnackBar(
+                          Overlay.of(context) as OverlayState,
+                          CustomSnackBar.error(
+                              message:
+                                  "Ocurrió un error al registrarse"));
                     });
                   },
                   style: ElevatedButton.styleFrom(

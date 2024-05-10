@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:is_dpelicula/pages/forgot_pw_page.dart';
 import 'package:is_dpelicula/pages/register_employee.dart';
 import 'package:is_dpelicula/pages/register_movie_page.dart';
 import 'package:is_dpelicula/pages/register_page.dart'; // Asegúrate de usar la ruta correcta al archivo
@@ -18,17 +19,18 @@ import 'package:is_dpelicula/pages/home_page.dart';
 import 'package:is_dpelicula/pages/login_page.dart';
 import 'package:is_dpelicula/pages/register_page.dart';
 import 'package:is_dpelicula/pages/about_us.dart';
+import 'package:is_dpelicula/pages/verify_email.dart';
+import 'package:is_dpelicula/widgets/loading_spinner.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(
-    ProviderScope(child: MyApp())  // Asegúrate de envolver MyApp con ProviderScope
-  );
+  runApp(ProviderScope(
+          child: MyApp()) // Asegúrate de envolver MyApp con ProviderScope
+      );
 }
-
 
 class MyApp extends StatelessWidget {
   MyApp({Key? key}) : super(key: key);
@@ -86,14 +88,31 @@ class MyApp extends StatelessWidget {
         return const RegisterEmployee();
       },
     ),
-     GoRoute(
+    GoRoute(
       path: '/register_movie',
       name: 'registerMovie',
       builder: (context, state) {
         return RegisterMovie();
       },
     ),
-    
+    GoRoute(
+      path: '/verify_email',
+      name: 'verifyEmail',
+      builder: (context, state) {
+        final email = state.extra as String?;
+        if (email == null) {
+          return const LoadingSpinner();
+        }
+        return EmailVerificationPage(email: email);
+      },
+    ),
+    GoRoute(
+      path: '/reset_password',
+      name: 'resetPassword',
+      builder: (context, state) {
+        return ForgotPasswordPage();
+      },
+    ),
   ], initialLocation: '/home');
 
   @override
