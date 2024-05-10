@@ -265,7 +265,6 @@ Widget _buildVisionCard(BuildContext context, bool isWideScreen) {
     return Center(child: Text('No hay películas disponibles'));
   }
 
-  // Envuelve tu ListView.builder en un Container o SizedBox con una altura definida
   return SizedBox(
     height: 300,  // Define una altura adecuada para tus elementos dentro del ListView
     child: ListView.builder(
@@ -280,7 +279,7 @@ Widget _buildVisionCard(BuildContext context, bool isWideScreen) {
           child: InkWell(
             borderRadius: BorderRadius.circular(30),
             onTap: () {
-              context.goNamed('detail', pathParameters: {'id': '${movie.id}'});
+              context.push('/movie/${movie.id}');
             },
             child: ClipRRect(
               borderRadius: BorderRadius.circular(30),
@@ -293,15 +292,21 @@ Widget _buildVisionCard(BuildContext context, bool isWideScreen) {
   );
 }
 
+
     Widget _buildComingSoonCarousel(List<Movie> movies) {
-    if (movies.isEmpty) {
-      return Center(child: Text('No hay próximas películas'));
-    }
-    return CarouselSlider.builder(
-      itemCount: movies.length,
-      itemBuilder: (context, index, realIndex) {
-        final movie = movies[index];
-        return Container(
+  if (movies.isEmpty) {
+    return Center(child: Text('No hay próximas películas'));
+  }
+
+  return CarouselSlider.builder(
+    itemCount: movies.length,
+    itemBuilder: (context, index, realIndex) {
+      final movie = movies[index];
+      return GestureDetector(
+        onTap: () {
+          context.push('/movie/${movie.id}');
+        },
+        child: Container(
           width: MediaQuery.of(context).size.width * 0.7,  // Ajusta este valor según el diseño que prefieras
           margin: const EdgeInsets.symmetric(horizontal: 5),
           decoration: BoxDecoration(
@@ -311,34 +316,20 @@ Widget _buildVisionCard(BuildContext context, bool isWideScreen) {
               fit: BoxFit.cover,
             ),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Spacer(),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                decoration: BoxDecoration(color: Colors.black.withOpacity(0.4)),
-                child: Text(
-                  movie.title,
-                  textAlign: TextAlign.start,
-                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
-                ),
-              ),
-              const SizedBox(height: 10),
-            ],
-          ),
-        );
-      },
-      options: CarouselOptions(
-        height: 350,  // Ajusta la altura según sea necesario
-        initialPage: 0,
-        viewportFraction: 0.7,  // Este valor afecta el ancho de los elementos dentro del carrusel
-        enlargeCenterPage: true,
-        autoPlay: true,
-        autoPlayInterval: const Duration(seconds: 3),
-        autoPlayAnimationDuration: const Duration(milliseconds: 1000),
-        autoPlayCurve: Curves.fastOutSlowIn,
-      ),
-    );
-  }
+        ),
+      );
+    },
+    options: CarouselOptions(
+      height: 350,
+      initialPage: 0,
+      viewportFraction: 0.7,
+      enlargeCenterPage: true,
+      autoPlay: true,
+      autoPlayInterval: const Duration(seconds: 3),
+      autoPlayAnimationDuration: const Duration(milliseconds: 1000),
+      autoPlayCurve: Curves.fastOutSlowIn,
+    ),
+  );
+}
+
 }
