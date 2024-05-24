@@ -85,7 +85,7 @@ class _RegisterMovieState extends State<RegisterMovie> {
     }
   }
 
-Future<void> addMovie(Movie movie, BuildContext context) async {
+  Future<void> addMovie(Movie movie, BuildContext context) async {
     try {
       final DocumentReference docRef = await movies.add(movie.toJson());
       final DocumentSnapshot docSnapshot = await docRef.get();
@@ -94,15 +94,14 @@ Future<void> addMovie(Movie movie, BuildContext context) async {
         // Verifica que el widget sigue montado.
         if (docSnapshot.exists) {
           showTopSnackBar(
-            Overlay.of(
-                context), // Utiliza 'context' directamente.
+            Overlay.of(context), // Utiliza 'context' directamente.
             const CustomSnackBar.success(
               message: "Película registrada exitosamente",
             ),
           );
         } else {
           showTopSnackBar(
-            Overlay.of(context ),
+            Overlay.of(context),
             const CustomSnackBar.error(
               message: "Error: Documento no encontrado después de registro",
             ),
@@ -126,7 +125,7 @@ Future<void> addMovie(Movie movie, BuildContext context) async {
     } catch (e) {
       if (mounted) {
         showTopSnackBar(
-          Overlay.of(context ),
+          Overlay.of(context),
           CustomSnackBar.error(
             message: "Error registrando película: $e",
           ),
@@ -141,7 +140,27 @@ Future<void> addMovie(Movie movie, BuildContext context) async {
     double fieldWidth = isDesktop ? 400 : double.infinity;
 
     return Scaffold(
-      appBar: CustomAppBar(isDesktop: isDesktop),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(60.0),
+        child: ClipRRect(
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(50.0),
+            bottomRight: Radius.circular(50.0),
+          ),
+          child: AppBar(
+            title: Text(
+              'Registrar Pelicula',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            centerTitle: true,
+            backgroundColor: Colors.grey[700],
+          ),
+        ),
+      ),
       body: Center(
         child: SingleChildScrollView(
           child: Padding(
@@ -285,7 +304,7 @@ Future<void> addMovie(Movie movie, BuildContext context) async {
                         if (formKey.currentState!.validate()) {
                           if (_posterFile == null || _backdropFile == null) {
                             showTopSnackBar(
-                              Overlay.of(context ),
+                              Overlay.of(context),
                               const CustomSnackBar.error(
                                 message:
                                     "Por favor, seleccione ambos archivos de imagen antes de registrar.",
@@ -317,10 +336,11 @@ Future<void> addMovie(Movie movie, BuildContext context) async {
                               id: '',
                             );
 
-      await addMovie(movie, context);  // Pasar 'context' aquí
+                            await addMovie(
+                                movie, context); // Pasar 'context' aquí
                           } catch (e) {
                             showTopSnackBar(
-                              Overlay.of(context ),
+                              Overlay.of(context),
                               CustomSnackBar.error(
                                 message: "Error registrando película: $e",
                               ),

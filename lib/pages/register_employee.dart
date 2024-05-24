@@ -258,8 +258,26 @@ class _RegisterEmployeeState extends State<RegisterEmployee> {
             ? Center(child: SizedBox(width: 400, child: registerForm))
             : ListView(children: [registerForm]),
       ),
-      appBar: CustomAppBar(
-        isDesktop: isDesktop,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(60.0),
+        child: ClipRRect(
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(50.0),
+            bottomRight: Radius.circular(50.0),
+          ),
+          child: AppBar(
+            title: Text(
+              'Registrar Empleado',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            centerTitle: true,
+            backgroundColor: Colors.grey[700],
+          ),
+        ),
       ),
       drawer: !isDesktop
           ? Drawer(
