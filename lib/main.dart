@@ -9,6 +9,8 @@ import 'package:is_dpelicula/pages/control_employee.dart';
 import 'package:is_dpelicula/pages/movie_detail_page.dart';
 import 'package:is_dpelicula/pages/options_page.dart';
 import 'package:is_dpelicula/pages/forgot_pw_page.dart';
+import 'package:is_dpelicula/pages/profile_edit_page.dart';
+import 'package:is_dpelicula/pages/profile_page.dart';
 import 'package:is_dpelicula/pages/register_employee.dart';
 import 'package:is_dpelicula/pages/register_movie_page.dart';
 import 'package:is_dpelicula/pages/register_page.dart'; // Asegúrate de usar la ruta correcta al archivo
@@ -145,6 +147,32 @@ class MyApp extends StatelessWidget {
         return ControlClient();
       },
     ),
+    GoRoute(
+        path: '/profile',
+        name: 'profile',
+        pageBuilder: (context, state) {
+          return CustomTransitionPage(
+            key: state.pageKey,
+            child: ProfilePage(),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+              return FadeTransition(
+                opacity:
+                    CurveTween(curve: Curves.easeInOutCirc).animate(animation),
+                child: child,
+              );
+            },
+          );
+        },
+        routes: [
+          GoRoute(
+            path: 'edit',
+            name: 'edit',
+            builder: (context, state) {
+              return const ProfileEditPage();
+            },
+          ),
+        ]),
   ], initialLocation: '/home');
 
   @override
