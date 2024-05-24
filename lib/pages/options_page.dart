@@ -6,9 +6,7 @@ import 'package:is_dpelicula/pages/profile_edit_page.dart';
 import 'package:is_dpelicula/pages/profile_page.dart';
 import 'package:is_dpelicula/pages/register_employee.dart';
 import 'package:is_dpelicula/widgets/custom_app_bar.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:is_dpelicula/controllers/movie_controllers.dart';
-import 'package:is_dpelicula/models/movie.dart';
+import 'package:is_dpelicula/pages/registered_movies.dart';
 import 'control_employee.dart';
 import 'control_client.dart';
 import 'register_movie_page.dart';
@@ -111,83 +109,6 @@ class _OptionsPageState extends State<OptionsPage> {
       leading: Icon(icon, color: Colors.orange),
       title: Text(title),
       onTap: onTap,
-    );
-  }
-}
-
-class RegisteredMoviesPage extends ConsumerStatefulWidget {
-  @override
-  _RegisteredMoviesPageState createState() => _RegisteredMoviesPageState();
-}
-
-class _RegisteredMoviesPageState extends ConsumerState<RegisteredMoviesPage> {
-  String filter = '';
-
-  @override
-  Widget build(BuildContext context) {
-    final movieListAsyncValue = ref.watch(getAllMoviesProvider);
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Películas Registradas'),
-      ),
-      body: movieListAsyncValue.when(
-        data: (movies) {
-          final filteredMovies = movies.where((movie) {
-            return movie.title.toLowerCase().contains(filter.toLowerCase());
-          }).toList();
-          return Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextField(
-                  decoration: InputDecoration(
-                    labelText: 'Buscar por título',
-                    prefixIcon: Icon(Icons.search),
-                  ),
-                  onChanged: (value) {
-                    setState(() {
-                      filter = value;
-                    });
-                  },
-                ),
-              ),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: filteredMovies.length,
-                  itemBuilder: (context, index) {
-                    final movie = filteredMovies[index];
-                    return Card(
-                      margin: EdgeInsets.all(10),
-                      child: ListTile(
-                        contentPadding: EdgeInsets.all(20),
-                        leading: AspectRatio(
-                          aspectRatio: 2 / 3,
-                          child: Image.network(
-                            movie.posterPath,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        title: Text(movie.title),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Calificación: ${movie.voteAverage}'),
-                            Text('Estado: ${movie.status}'),
-                            Text('Descripción: ${movie.overview}'),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ],
-          );
-        },
-        loading: () => Center(child: CircularProgressIndicator()),
-        error: (err, stack) => Center(child: Text('Error: $err')),
-      ),
     );
   }
 }
