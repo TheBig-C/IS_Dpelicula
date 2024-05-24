@@ -4,6 +4,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:is_dpelicula/pages/control_client.dart';
+import 'package:is_dpelicula/pages/control_employee.dart';
 import 'package:is_dpelicula/pages/movie_detail_page.dart';
 import 'package:is_dpelicula/pages/options_page.dart';
 import 'package:is_dpelicula/pages/forgot_pw_page.dart';
@@ -104,7 +106,7 @@ class MyApp extends StatelessWidget {
         return RegisterMovie();
       },
     ),
-     GoRoute(
+    GoRoute(
       path: '/movie/:id',
       builder: (BuildContext context, GoRouterState state) {
         final String id = state.pathParameters['id']!;
@@ -127,6 +129,20 @@ class MyApp extends StatelessWidget {
       name: 'resetPassword',
       builder: (context, state) {
         return ForgotPasswordPage();
+      },
+    ),
+    GoRoute(
+      path: '/control_employee',
+      name: 'controlEmployee',
+      builder: (context, state) {
+        return ControlEmployee();
+      },
+    ),
+    GoRoute(
+      path: '/control_client',
+      name: 'controlClient',
+      builder: (context, state) {
+        return ControlClient();
       },
     ),
   ], initialLocation: '/home');
