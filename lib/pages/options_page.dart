@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:is_dpelicula/controllers/movie_controllers.dart';
 import 'package:is_dpelicula/widgets/custom_app_bar.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:is_dpelicula/models/movie.dart';
 
 class OptionsPage extends StatefulWidget {
   @override
@@ -14,7 +11,6 @@ class OptionsPage extends StatefulWidget {
 
 class _OptionsPageState extends State<OptionsPage> {
   bool isAdmin = false;
-  String selectedPage = 'home';
 
   @override
   void initState() {
@@ -25,7 +21,10 @@ class _OptionsPageState extends State<OptionsPage> {
   Future<void> _checkRole() async {
     var user = FirebaseAuth.instance.currentUser;
     if (user != null) {
-      var docSnapshot = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+      var docSnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
       if (docSnapshot.exists && docSnapshot.data()?['role'] == 'admin') {
         setState(() {
           isAdmin = true;
@@ -47,15 +46,16 @@ class _OptionsPageState extends State<OptionsPage> {
               child: ListView(
                 padding: EdgeInsets.zero,
                 children: <Widget>[
-                  _buildDrawerItem(Icons.home, 'Inicio', () => setState(() { selectedPage = 'home'; })),
-                  _buildDrawerItem(Icons.history, 'Historial', () => setState(() { selectedPage = 'history'; })),
-                  _buildDrawerItem(Icons.account_circle, 'Perfil', () => setState(() { selectedPage = 'profile'; })),
+                  _buildDrawerItem(Icons.home, 'Inicio', () => context.goNamed('home')),
+                  _buildDrawerItem(Icons.history, 'Historial', () => context.goNamed('history')),
+                  _buildDrawerItem(Icons.account_circle, 'Perfil', () => context.goNamed('profile')),
                   _buildDrawerItem(Icons.exit_to_app, 'Cerrar sesión', () {
-                    FirebaseAuth.instance.signOut().then((_) => context.goNamed('login'));
+                    FirebaseAuth.instance
+                        .signOut()
+                        .then((_) => context.goNamed('login'));
                   }),
-                  if (isAdmin) _buildDrawerItem(Icons.person_add, 'Registrar Empleado', () => setState(() { selectedPage = 'registerEmployee'; })),
-                  if (isAdmin) _buildDrawerItem(Icons.movie, 'Registrar Película', () => setState(() { selectedPage = 'registerMovie'; })),
-                  if (isAdmin) _buildDrawerItem(Icons.list, 'Ver Películas', () => setState(() { selectedPage = 'registeredMovies'; })),
+                  if (isAdmin) _buildDrawerItem(Icons.person_add, 'Registrar Empleado', () => context.goNamed('registerEmployee')),
+                  if (isAdmin) _buildDrawerItem(Icons.movie, 'Registrar Película', () => context.goNamed('registerMovie')),
                 ],
               ),
             ),
@@ -63,13 +63,19 @@ class _OptionsPageState extends State<OptionsPage> {
           Expanded(
             child: Container(
               child: Center(
-                child: _getPageContent(selectedPage),
+                child: Text('Contenido principal aquí'),
               ),
             ),
           ),
         ],
       ),
     );
+  }
+
+  void _updateMainContent(Widget content) {
+    setState(() {
+      mainContent = content;
+    });
   }
 
   Widget _buildDrawerItem(IconData icon, String title, VoidCallback onTap) {

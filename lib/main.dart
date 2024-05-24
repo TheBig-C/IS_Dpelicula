@@ -4,9 +4,13 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:is_dpelicula/pages/control_client.dart';
+import 'package:is_dpelicula/pages/control_employee.dart';
 import 'package:is_dpelicula/pages/movie_detail_page.dart';
 import 'package:is_dpelicula/pages/options_page.dart';
 import 'package:is_dpelicula/pages/forgot_pw_page.dart';
+import 'package:is_dpelicula/pages/profile_edit_page.dart';
+import 'package:is_dpelicula/pages/profile_page.dart';
 import 'package:is_dpelicula/pages/register_employee.dart';
 import 'package:is_dpelicula/pages/register_movie_page.dart';
 import 'package:is_dpelicula/pages/register_page.dart'; // Asegúrate de usar la ruta correcta al archivo
@@ -104,7 +108,7 @@ class MyApp extends StatelessWidget {
         return RegisterMovie();
       },
     ),
-     GoRoute(
+    GoRoute(
       path: '/movie/:id',
       builder: (BuildContext context, GoRouterState state) {
         final String id = state.pathParameters['id']!;
@@ -129,6 +133,46 @@ class MyApp extends StatelessWidget {
         return ForgotPasswordPage();
       },
     ),
+    GoRoute(
+      path: '/control_employee',
+      name: 'controlEmployee',
+      builder: (context, state) {
+        return ControlEmployee();
+      },
+    ),
+    GoRoute(
+      path: '/control_client',
+      name: 'controlClient',
+      builder: (context, state) {
+        return ControlClient();
+      },
+    ),
+    GoRoute(
+        path: '/profile',
+        name: 'profile',
+        pageBuilder: (context, state) {
+          return CustomTransitionPage(
+            key: state.pageKey,
+            child: ProfilePage(),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+              return FadeTransition(
+                opacity:
+                    CurveTween(curve: Curves.easeInOutCirc).animate(animation),
+                child: child,
+              );
+            },
+          );
+        },
+        routes: [
+          GoRoute(
+            path: 'edit',
+            name: 'edit',
+            builder: (context, state) {
+              return const ProfileEditPage();
+            },
+          ),
+        ]),
   ], initialLocation: '/home');
 
   @override
