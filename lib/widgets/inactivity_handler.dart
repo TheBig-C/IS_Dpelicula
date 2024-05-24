@@ -10,7 +10,7 @@ class InactivityHandler extends StatefulWidget {
   const InactivityHandler({
     Key? key,
     required this.child,
-    this.inactivityTimeoutInSeconds = 30, // tiempo por defecto de 30 segundos
+    this.inactivityTimeoutInSeconds = 3600, // tiempo por defecto de 30 segundos
   }) : super(key: key);
 
   @override

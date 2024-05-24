@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -48,12 +49,12 @@ class MovieDetailPage extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
-                flex: 3,
-                child: _loadImageWidget(movie.posterPath, 400, BoxFit.cover),
+                flex: 4,
+                child: _loadImageWidget(movie.posterPath, 600, BoxFit.cover),
               ),
               const SizedBox(width: 20),
               Expanded(
-                flex: 7,
+                flex: 6,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -90,19 +91,25 @@ class MovieDetailPage extends ConsumerWidget {
         ? FutureBuilder<Uint8List>(
             future: _loadFirebaseImage(imageUrl),
             builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
-                return Image.memory(
-                  snapshot.data!,
-                  fit: fit,
-                );
-              } else {
-                return const CircularProgressIndicator();
+              if (snapshot.connectionState == ConnectionState.done) {
+                if (snapshot.hasData) {
+                  return Image.memory(
+                    snapshot.data!,
+                    fit: fit,
+                  );
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                }
               }
+              return const CircularProgressIndicator();
             },
           )
         : Image.network(
             imageUrl,
             fit: fit,
+            errorBuilder: (context, error, stackTrace) {
+              return Center(child: Text('Error loading image'));
+            },
           ),
     );
   }
@@ -112,9 +119,19 @@ class MovieDetailPage extends ConsumerWidget {
   }
 
   Future<Uint8List> _loadFirebaseImage(String path) async {
-    final ref = FirebaseStorage.instance.refFromURL(path);
-    final bytes = await ref.getData();
-    return bytes!;
+    try {
+      final ref = FirebaseStorage.instance.refFromURL(path);
+      final bytes = await ref.getData();
+      if (bytes != null) {
+        print('Image loaded successfully: $path');
+        return bytes;
+      } else {
+        throw Exception('No data found at path: $path');
+      }
+    } catch (e) {
+      print('Error loading image from Firebase: $e');
+      throw Exception('Error loading image from Firebase: $e');
+    }
   }
 
   Widget _buildDetailedInfo(Movie movie) {
