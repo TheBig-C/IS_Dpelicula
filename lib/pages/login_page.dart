@@ -41,7 +41,7 @@ class _LoginPageState extends State<LoginPage> {
   void startTimer() {
     countdownTimer?.cancel();
     const oneSec = Duration(seconds: 1);
-    remainingTime = 10;
+    remainingTime = 10; //900 15 min
 
     countdownTimer = Timer.periodic(oneSec, (Timer timer) {
       if (remainingTime == 0) {

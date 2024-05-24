@@ -1,9 +1,16 @@
+import 'dart:io';
+import 'dart:typed_data';
+import 'package:path/path.dart';
+
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:is_dpelicula/models/movie.dart';
 import 'package:is_dpelicula/widgets/custom_app_bar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
+import 'package:file_picker/file_picker.dart';
 
 class RegisterMovie extends StatefulWidget {
   const RegisterMovie({Key? key}) : super(key: key);
@@ -14,87 +21,123 @@ class RegisterMovie extends StatefulWidget {
 
 class _RegisterMovieState extends State<RegisterMovie> {
   final formKey = GlobalKey<FormState>();
-  TextEditingController titleController = TextEditingController();
-  TextEditingController overviewController = TextEditingController();
-  TextEditingController posterPathController = TextEditingController();
-  TextEditingController backdropPathController = TextEditingController();
-  TextEditingController voteAverageController = TextEditingController();
-  TextEditingController statusController = TextEditingController();
-
-  // Agrega estos controladores
-  TextEditingController genresController = TextEditingController();
-  TextEditingController directorNamesController = TextEditingController();
-  TextEditingController leadActorsController = TextEditingController();
-  TextEditingController registeredByController = TextEditingController();
-
-  // Agrega una instancia de FirebaseFirestore
+  final TextEditingController titleController = TextEditingController();
+  final TextEditingController overviewController = TextEditingController();
+  final TextEditingController posterPathController = TextEditingController();
+  final TextEditingController backdropPathController = TextEditingController();
+  final TextEditingController voteAverageController = TextEditingController();
+  final TextEditingController statusController = TextEditingController();
+  final TextEditingController genresController = TextEditingController();
+  final TextEditingController directorNamesController = TextEditingController();
+  final TextEditingController leadActorsController = TextEditingController();
+  final TextEditingController registeredByController = TextEditingController();
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
+  final CollectionReference movies =
+      FirebaseFirestore.instance.collection('movies');
+  String? _posterUploadConfirmation;
+  String? _backdropUploadConfirmation;
 
-  // Agrega una referencia a la colección 'movies'
-  final CollectionReference movies = FirebaseFirestore.instance.collection('movies');
+  String? _posterFileName;
+  String? _backdropFileName;
 
-  // Método para agregar una película
- // Método para agregar una película
-Future<void> addMovie(Movie movie) async {
-  try {
-    // Mostrar un mensaje de carga o indicador de progreso
-    // setState(() {
-    //   isLoading = true;
-    // });
+  Uint8List? _posterFile;
+  Uint8List? _backdropFile;
 
-    // Agregar la película a Firestore
-    final DocumentReference docRef = await movies.add(movie.toJson());
+  // Función para subir imágenes a Firebase Storage
+  Future<String> _uploadImageToFirebase(
+      Uint8List fileBytes, String type) async {
+    String fileName = '$type-${DateTime.now().millisecondsSinceEpoch}';
+    Reference ref =
+        FirebaseStorage.instance.ref().child('movies_image/$fileName');
+    UploadTask uploadTask = ref.putData(fileBytes);
+    TaskSnapshot taskSnapshot = await uploadTask;
+    String imageUrl = await taskSnapshot.ref.getDownloadURL();
 
-    // Obtener el snapshot del documento recién agregado
-    final DocumentSnapshot docSnapshot = await docRef.get();
+    setState(() {
+      if (type == 'poster') {
+        _posterUploadConfirmation = 'Póster subido: $fileName';
+      } else {
+        _backdropUploadConfirmation = 'Imagen de fondo subida: $fileName';
+      }
+    });
 
-    // Mostrar un mensaje de éxito
-    showTopSnackBar(
-      context as OverlayState,
-      const CustomSnackBar.success(
-        message: "Película registrada exitosamente",
-      ),
-    );
-
-    // Limpiar los campos del formulario
-    titleController.clear();
-    overviewController.clear();
-    posterPathController.clear();
-    backdropPathController.clear();
-    voteAverageController.clear();
-    statusController.clear();
-    genresController.clear();
-    directorNamesController.clear();
-    leadActorsController.clear();
-    registeredByController.clear();
-
-    // Navegar de regreso a la página de inicio
-    Navigator.of(context).pop(); // Esto cierra la pantalla actual y vuelve a la anterior
-
-    // setState(() {
-    //   isLoading = false;
-    // });
-  } catch (e) {
-    // Manejar el error
-    showTopSnackBar(
-      context as OverlayState,
-      CustomSnackBar.error(
-        message: "Error registrando película: $e",
-      ),
-    );
-
-    // setState(() {
-    //   isLoading = false;
-    // });
+    return imageUrl;
   }
-}
 
+  Future<void> _pickImage(String type) async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.image,
+      withData: true,
+    );
+
+    if (result != null) {
+      PlatformFile file = result.files.first;
+
+      setState(() {
+        if (type == 'poster') {
+          _posterFile = file.bytes; // Almacena los bytes directamente
+          _posterFileName = file.name;
+        } else {
+          _backdropFile = file.bytes; // Almacena los bytes directamente
+          _backdropFileName = file.name;
+        }
+      });
+    }
+  }
+
+Future<void> addMovie(Movie movie, BuildContext context) async {
+    try {
+      final DocumentReference docRef = await movies.add(movie.toJson());
+      final DocumentSnapshot docSnapshot = await docRef.get();
+
+      if (mounted) {
+        // Verifica que el widget sigue montado.
+        if (docSnapshot.exists) {
+          showTopSnackBar(
+            Overlay.of(
+                context), // Utiliza 'context' directamente.
+            const CustomSnackBar.success(
+              message: "Película registrada exitosamente",
+            ),
+          );
+        } else {
+          showTopSnackBar(
+            Overlay.of(context ),
+            const CustomSnackBar.error(
+              message: "Error: Documento no encontrado después de registro",
+            ),
+          );
+        }
+
+        // Limpiar campos y navegar de regreso solo si el widget sigue montado.
+        titleController.clear();
+        overviewController.clear();
+        posterPathController.clear();
+        backdropPathController.clear();
+        voteAverageController.clear();
+        statusController.clear();
+        genresController.clear();
+        directorNamesController.clear();
+        leadActorsController.clear();
+        registeredByController.clear();
+
+        //   Navigator.of(context).pop();
+      }
+    } catch (e) {
+      if (mounted) {
+        showTopSnackBar(
+          Overlay.of(context ),
+          CustomSnackBar.error(
+            message: "Error registrando película: $e",
+          ),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     bool isDesktop = MediaQuery.of(context).size.width > 800;
-
-    // Definir un ancho máximo para los campos
     double fieldWidth = isDesktop ? 400 : double.infinity;
 
     return Scaffold(
@@ -130,61 +173,82 @@ Future<void> addMovie(Movie movie) async {
                     const SizedBox(height: 20),
                     Container(
                       width: fieldWidth,
-                      child: TextFormField(
-                        controller: posterPathController,
-                        decoration: _inputDecoration(context, "Ruta del Póster"),
+                      child: ElevatedButton(
+                        onPressed: () => _pickImage('poster'),
+                        child: Text("Cargar Póster"),
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    if (_posterUploadConfirmation != null)
+                      Padding(
+                        key: ValueKey(
+                            _posterUploadConfirmation), // Forzar reconstrucción
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        child: Text(_posterUploadConfirmation!),
+                      ),
+
                     Container(
                       width: fieldWidth,
-                      child: TextFormField(
-                        controller: backdropPathController,
-                        decoration: _inputDecoration(context, "Ruta del Fondo"),
+                      child: ElevatedButton(
+                        onPressed: () => _pickImage('backdrop'),
+                        child: Text("Cargar Imagen de Fondo"),
                       ),
                     ),
+                    if (_backdropUploadConfirmation != null)
+                      Padding(
+                        key: ValueKey(
+                            _backdropUploadConfirmation), // Forzar reconstrucción
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        child: Text(_backdropUploadConfirmation!),
+                      ),
+
                     const SizedBox(height: 20),
                     Container(
                       width: fieldWidth,
                       child: TextFormField(
                         controller: voteAverageController,
-                        decoration: _inputDecoration(context, "Calificación Promedio"),
+                        decoration:
+                            _inputDecoration(context, "Calificación Promedio"),
                       ),
                     ),
                     const SizedBox(height: 20),
                     Container(
-      width: fieldWidth,
-      child: DropdownButtonFormField<String>(
-        value: statusController.text.isNotEmpty ? statusController.text : null,
-        onChanged: (value) {
-          setState(() {
-            statusController.text = value!;
-          });
-        },
-        items: [
-          DropdownMenuItem(
-            child: Text('Muy Pronto', style: TextStyle(color: Colors.black)),
-            value: 'muy pronto',
-          ),
-          DropdownMenuItem(
-            child: Text('En Cartelera', style: TextStyle(color: Colors.black)),
-            value: 'en cartelera',
-          ),
-          DropdownMenuItem(
-            child: Text('Acabado', style: TextStyle(color: Colors.black)),
-            value: 'acabado',
-          ),
-        ],
-        decoration: _inputDecoration(context, "Estado"),
-        style: TextStyle(color: Colors.black),
-        dropdownColor: Colors.white,
-        icon: Icon(Icons.arrow_drop_down),
-        iconEnabledColor: Colors.black,
-        elevation: 2,
-        isExpanded: true,
-        hint: Text('Seleccione un estado'),
-      ),
-    ),
+                      width: fieldWidth,
+                      child: DropdownButtonFormField<String>(
+                        value: statusController.text.isNotEmpty
+                            ? statusController.text
+                            : null,
+                        onChanged: (value) {
+                          setState(() {
+                            statusController.text = value!;
+                          });
+                        },
+                        items: [
+                          DropdownMenuItem(
+                            child: Text('Muy Pronto',
+                                style: TextStyle(color: Colors.black)),
+                            value: 'muy pronto',
+                          ),
+                          DropdownMenuItem(
+                            child: Text('En Cartelera',
+                                style: TextStyle(color: Colors.black)),
+                            value: 'en cartelera',
+                          ),
+                          DropdownMenuItem(
+                            child: Text('Acabado',
+                                style: TextStyle(color: Colors.black)),
+                            value: 'acabado',
+                          ),
+                        ],
+                        decoration: _inputDecoration(context, "Estado"),
+                        style: TextStyle(color: Colors.black),
+                        dropdownColor: Colors.white,
+                        icon: Icon(Icons.arrow_drop_down),
+                        iconEnabledColor: Colors.black,
+                        elevation: 2,
+                        isExpanded: true,
+                        hint: Text('Seleccione un estado'),
+                      ),
+                    ),
                     const SizedBox(height: 20),
                     // Agrega los nuevos campos
                     Container(
@@ -199,7 +263,8 @@ Future<void> addMovie(Movie movie) async {
                       width: fieldWidth,
                       child: TextFormField(
                         controller: directorNamesController,
-                        decoration: _inputDecoration(context, "Nombres de los Directores"),
+                        decoration: _inputDecoration(
+                            context, "Nombres de los Directores"),
                       ),
                     ),
                     const SizedBox(height: 20),
@@ -207,7 +272,8 @@ Future<void> addMovie(Movie movie) async {
                       width: fieldWidth,
                       child: TextFormField(
                         controller: leadActorsController,
-                        decoration: _inputDecoration(context, "Actores Principales"),
+                        decoration:
+                            _inputDecoration(context, "Actores Principales"),
                       ),
                     ),
                     const SizedBox(height: 20),
@@ -217,30 +283,60 @@ Future<void> addMovie(Movie movie) async {
                     ElevatedButton(
                       onPressed: () async {
                         if (formKey.currentState!.validate()) {
-                          // Crear la instancia de la película utilizando los controladores
-                          Movie movie = Movie(
-                            id: '', // Esto se llenará automáticamente al agregar la película
-                            title: titleController.text.trim(),
-                            overview: overviewController.text.trim(),
-                            posterPath: posterPathController.text.trim(),
-                            backdropPath: backdropPathController.text.trim(),
-                            voteAverage: double.parse(voteAverageController.text.trim() ?? "0"),
-                            status: statusController.text.trim(),
-                            genres: [genresController.text.trim()],
-                            directorNames: [directorNamesController.text.trim()],
-                            leadActors: [leadActorsController.text.trim()],
-                            registeredBy: registeredByController.text.trim(), // Aunque se llenará automáticamente, aquí lo mantenemos por completitud
-                          );
+                          if (_posterFile == null || _backdropFile == null) {
+                            showTopSnackBar(
+                              Overlay.of(context ),
+                              const CustomSnackBar.error(
+                                message:
+                                    "Por favor, seleccione ambos archivos de imagen antes de registrar.",
+                              ),
+                            );
+                            return;
+                          }
+                          try {
+                            String posterUrl = await _uploadImageToFirebase(
+                                _posterFile!, 'poster');
+                            String backdropUrl = await _uploadImageToFirebase(
+                                _backdropFile!, 'backdrop');
 
-                          // Llamar al método addMovie
-                          await addMovie(movie);
+                            Movie movie = Movie(
+                              title: titleController.text.trim(),
+                              overview: overviewController.text.trim(),
+                              posterPath: posterUrl,
+                              backdropPath: backdropUrl,
+                              voteAverage: double.tryParse(
+                                      voteAverageController.text.trim()) ??
+                                  0,
+                              status: statusController.text.trim(),
+                              genres: [genresController.text.trim()],
+                              directorNames: [
+                                directorNamesController.text.trim()
+                              ],
+                              leadActors: [leadActorsController.text.trim()],
+                              registeredBy: registeredByController.text.trim(),
+                              id: '',
+                            );
+
+      await addMovie(movie, context);  // Pasar 'context' aquí
+                          } catch (e) {
+                            showTopSnackBar(
+                              Overlay.of(context ),
+                              CustomSnackBar.error(
+                                message: "Error registrando película: $e",
+                              ),
+                            );
+                          }
                         }
                       },
                       style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(horizontal: 160, vertical: 14),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 160, vertical: 14),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16)),
                       ),
-                      child: const Text("Registrar", style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600)),
+                      child: const Text("Registrar",
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.w600)),
                     ),
                   ],
                 ),
@@ -256,11 +352,18 @@ Future<void> addMovie(Movie movie) async {
     return InputDecoration(
       labelText: label,
       floatingLabelStyle: const TextStyle(color: Colors.white54, fontSize: 22),
-      labelStyle: const TextStyle(color: Colors.white38, fontSize: 16, fontWeight: FontWeight.w500),
+      labelStyle: const TextStyle(
+          color: Colors.white38, fontSize: 16, fontWeight: FontWeight.w500),
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-      enabledBorder: OutlineInputBorder(borderSide: const BorderSide(color: Colors.white24), borderRadius: BorderRadius.circular(16)),
-      focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(16)),
-      border: OutlineInputBorder(borderSide: const BorderSide(color: Colors.white70), borderRadius: BorderRadius.circular(16)),
+      enabledBorder: OutlineInputBorder(
+          borderSide: const BorderSide(color: Colors.white24),
+          borderRadius: BorderRadius.circular(16)),
+      focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Theme.of(context).primaryColor),
+          borderRadius: BorderRadius.circular(16)),
+      border: OutlineInputBorder(
+          borderSide: const BorderSide(color: Colors.white70),
+          borderRadius: BorderRadius.circular(16)),
     );
   }
 }
