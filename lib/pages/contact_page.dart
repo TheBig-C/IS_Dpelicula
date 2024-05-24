@@ -124,21 +124,21 @@ class ContactDetails extends StatelessWidget {
           CrossAxisAlignment.center, // Centra los detalles horizontalmente
       children: const [
         ContactDetail(
-            icon: Icons.email, label: 'Email', text: 'contacto@dpelicula.com'),
+            icon: Icons.email, label: 'Email', text: 'callcenterlp@multicine.com.bo'),
         ContactDetail(
-            icon: Icons.phone, label: 'Teléfono', text: '+1 234 567 8900'),
+            icon: Icons.phone, label: 'Teléfono', text: '+591 22113463'),
         ContactDetail(
             icon: Icons.location_on,
             label: 'Dirección',
-            text: 'Calle Falsa 123, Ciudad, País'),
+            text: 'Av. Arce 2631, La Paz, Bolivia'),
         ContactDetail(
-            icon: Icons.web, label: 'Sitio Web', text: 'www.dpelicula.com'),
+            icon: Icons.web, label: 'Sitio Web:', text: 'www.multicine.com.bo'),
         ContactDetail(
             icon: Icons.facebook,
             label: 'Facebook',
-            text: '@DpeliculaOfficial'),
+            text: 'MulticineBolivia'),
         ContactDetail(
-            icon: Icons.camera_alt, label: 'Instagram', text: '@Dpelicula'),
+            icon: Icons.camera_alt, label: 'Instagram', text: '@multicinebolivia'),
       ],
     );
   }

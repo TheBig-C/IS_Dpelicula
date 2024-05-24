@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:go_router/go_router.dart';
 import 'package:is_dpelicula/widgets/custom_app_bar.dart';
 import 'package:is_dpelicula/widgets/desktop_footer.dart';
 import 'dart:math' as math;
@@ -83,11 +84,15 @@ class _AboutUsPageState extends State<AboutUsPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Container(
-                    height: 500,
-                    width: 500,
-                    child: Image.asset('assets/pareja_m.jpeg', fit: BoxFit.cover),
-                  ),
+                  GestureDetector(
+                      onTap: () => context.go('/home'),
+                      child: Container(
+                        height: 500,
+                        width: 500,
+                        child: Image.asset('assets/pareja_m.jpeg', fit: BoxFit.cover),
+                      ),
+                    ),
+
                   SizedBox(width: 10),
                   GestureDetector(
                     onTap: toggleCard,

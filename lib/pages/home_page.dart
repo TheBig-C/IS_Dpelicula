@@ -40,7 +40,6 @@ class HomePage extends ConsumerWidget {
             _buildComingSoonMoviesSection(ref),
                         const SizedBox(height: 30),
 
-                        _buildMissionVisionSection(context), // Sección de Misión y Visión añadida
             const SizedBox(height: 30),
 
             if (isDesktop) const DesktopFooter(),
@@ -52,7 +51,7 @@ class HomePage extends ConsumerWidget {
 
  Widget _buildBanner(BuildContext context) {
   return Container(
-    height: 500,
+    height: 300,
     decoration: BoxDecoration(
       image: DecorationImage(
         image: NetworkImage("https://th.bing.com/th/id/R.cde6a7cfb6f085bc4e55286d6731f877?rik=9TffBuibVgxpWQ&pid=ImgRaw&r=0"),
@@ -67,11 +66,11 @@ class HomePage extends ConsumerWidget {
           child: Container(
             width: MediaQuery.of(context).size.width * 0.7,
             child: Text(
-              "Multicine - Donde las historias cobran vida",
+              " Donde las historias cobran vida... ",
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 48,  // Tamaño aumentado
+                fontSize: 60,  // Tamaño aumentado
                 fontWeight: FontWeight.w900,  // Hace el texto más grueso
                 fontStyle: FontStyle.italic,  // Estilo itálico
                 shadows: [
