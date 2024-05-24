@@ -4,6 +4,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:is_dpelicula/pages/movie_detail_page.dart';
+import 'package:is_dpelicula/pages/options_page.dart';
 import 'package:is_dpelicula/pages/forgot_pw_page.dart';
 import 'package:is_dpelicula/pages/register_employee.dart';
 import 'package:is_dpelicula/pages/register_movie_page.dart';
@@ -71,7 +73,7 @@ class MyApp extends StatelessWidget {
       path: '/aboutUs',
       name: 'aboutUs',
       builder: (context, state) {
-        return const AboutUsPage();
+        return AboutUsPage();
       },
     ),
     GoRoute(
@@ -79,6 +81,13 @@ class MyApp extends StatelessWidget {
       name: 'contact',
       builder: (context, state) {
         return const ContactPage();
+      },
+    ),
+    GoRoute(
+      path: '/options',
+      name: 'optionsPage',
+      builder: (context, state) {
+        return OptionsPage();
       },
     ),
     GoRoute(
@@ -93,6 +102,13 @@ class MyApp extends StatelessWidget {
       name: 'registerMovie',
       builder: (context, state) {
         return RegisterMovie();
+      },
+    ),
+     GoRoute(
+      path: '/movie/:id',
+      builder: (BuildContext context, GoRouterState state) {
+        final String id = state.pathParameters['id']!;
+        return MovieDetailPage(movieId: id);
       },
     ),
     GoRoute(
