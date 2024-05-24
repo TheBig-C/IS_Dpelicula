@@ -2,7 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:is_dpelicula/pages/profile_edit_page.dart';
+import 'package:is_dpelicula/pages/profile_page.dart';
+import 'package:is_dpelicula/pages/register_employee.dart';
 import 'package:is_dpelicula/widgets/custom_app_bar.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:is_dpelicula/controllers/movie_controllers.dart';
+import 'package:is_dpelicula/models/movie.dart';
+import 'control_employee.dart';
+import 'control_client.dart';
+import 'register_movie_page.dart';
 
 class OptionsPage extends StatefulWidget {
   @override
@@ -11,6 +20,7 @@ class OptionsPage extends StatefulWidget {
 
 class _OptionsPageState extends State<OptionsPage> {
   bool isAdmin = false;
+  Widget mainContent = Center(child: Text('Contenido principal aquí'));
 
   @override
   void initState() {
@@ -46,25 +56,43 @@ class _OptionsPageState extends State<OptionsPage> {
               child: ListView(
                 padding: EdgeInsets.zero,
                 children: <Widget>[
-                  _buildDrawerItem(Icons.home, 'Inicio', () => context.goNamed('home')),
-                  _buildDrawerItem(Icons.history, 'Historial', () => context.goNamed('history')),
-                  _buildDrawerItem(Icons.account_circle, 'Perfil', () => context.goNamed('profile')),
+                  _buildDrawerItem(
+                      Icons.home, 'Inicio', () => context.goNamed('home')),
+                  _buildDrawerItem(Icons.history, 'Historial',
+                      () => context.goNamed('history')),
+                  _buildDrawerItem(Icons.account_circle, 'Perfil',
+                      () => _updateMainContent(ProfilePage())),
+                  _buildDrawerItem(
+                      Icons.manage_accounts_rounded,
+                      'Editar Perfil',
+                      () => _updateMainContent(ProfileEditPage())),
+                  if (isAdmin)
+                    _buildDrawerItem(Icons.person_add, 'Registrar Empleado',
+                        () => _updateMainContent(RegisterEmployee())),
+                  if (isAdmin)
+                    _buildDrawerItem(Icons.movie, 'Registrar Película',
+                        () => _updateMainContent(RegisterMovie())),
+                  if (isAdmin)
+                    _buildDrawerItem(Icons.people, 'Control de empleados',
+                        () => _updateMainContent(ControlEmployee())),
+                  if (isAdmin)
+                    _buildDrawerItem(Icons.people, 'Control de clientes',
+                        () => _updateMainContent(ControlClient())),
+                  if (isAdmin)
+                    _buildDrawerItem(Icons.list, 'Ver Películas',
+                        () => _updateMainContent(RegisteredMoviesPage())),
                   _buildDrawerItem(Icons.exit_to_app, 'Cerrar sesión', () {
                     FirebaseAuth.instance
                         .signOut()
                         .then((_) => context.goNamed('login'));
                   }),
-                  if (isAdmin) _buildDrawerItem(Icons.person_add, 'Registrar Empleado', () => context.goNamed('registerEmployee')),
-                  if (isAdmin) _buildDrawerItem(Icons.movie, 'Registrar Película', () => context.goNamed('registerMovie')),
                 ],
               ),
             ),
           ),
           Expanded(
             child: Container(
-              child: Center(
-                child: Text('Contenido principal aquí'),
-              ),
+              child: mainContent,
             ),
           ),
         ],
@@ -84,20 +112,6 @@ class _OptionsPageState extends State<OptionsPage> {
       title: Text(title),
       onTap: onTap,
     );
-  }
-
-  Widget _getPageContent(String page) {
-    switch (page) {
-      case 'registeredMovies':
-        return RegisteredMoviesPage();
-      case 'home':
-      case 'history':
-      case 'profile':
-      case 'registerEmployee':
-      case 'registerMovie':
-      default:
-        return Text('Contenido principal aquí');
-    }
   }
 }
 
@@ -151,7 +165,7 @@ class _RegisteredMoviesPageState extends ConsumerState<RegisteredMoviesPage> {
                           aspectRatio: 2 / 3,
                           child: Image.network(
                             movie.posterPath,
-                            fit: BoxFit.cover, // Aseguramos que la imagen cubra todo el espacio sin recortes
+                            fit: BoxFit.cover,
                           ),
                         ),
                         title: Text(movie.title),
