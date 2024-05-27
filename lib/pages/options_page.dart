@@ -2,14 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:is_dpelicula/pages/profile_edit_page.dart';
-import 'package:is_dpelicula/pages/profile_page.dart';
-import 'package:is_dpelicula/pages/register_employee.dart';
+import 'package:is_dpelicula/pages/auth/register_employee.dart';
+import 'package:is_dpelicula/pages/billBoard/create_billboard_page.dart';
+import 'package:is_dpelicula/pages/movies/register_movie_page.dart';
+import 'package:is_dpelicula/pages/movies/registered_movies.dart';
+import 'package:is_dpelicula/pages/room/RegisteredRoomsPage.dart';
+import 'package:is_dpelicula/pages/room/roomCreationPage.dart';
+import 'package:is_dpelicula/pages/users/control_client.dart';
+import 'package:is_dpelicula/pages/users/control_employee.dart';
+import 'package:is_dpelicula/pages/users/profile_edit_page.dart';
+import 'package:is_dpelicula/pages/users/profile_page.dart';
 import 'package:is_dpelicula/widgets/custom_app_bar.dart';
-import 'package:is_dpelicula/pages/registered_movies.dart';
-import 'control_employee.dart';
-import 'control_client.dart';
-import 'register_movie_page.dart';
 
 class OptionsPage extends StatefulWidget {
   @override
@@ -79,6 +82,15 @@ class _OptionsPageState extends State<OptionsPage> {
                   if (isAdmin)
                     _buildDrawerItem(Icons.list, 'Ver Películas',
                         () => _updateMainContent(RegisteredMoviesPage())),
+                  if (isAdmin)
+                    _buildDrawerItem(Icons.list, 'Agregar Sala',
+                        () => _updateMainContent(RoomCreationPage())),
+                  if (isAdmin)
+                    _buildDrawerItem(Icons.list, 'Control Salas',
+                        () => _updateMainContent(RegisteredRoomsPage())),
+                  if (isAdmin)
+                    _buildDrawerItem(Icons.list, 'Crear Cartelera',
+                        () => _updateMainContent(CreateBillboardPage())),
                   _buildDrawerItem(Icons.exit_to_app, 'Cerrar sesión', () {
                     FirebaseAuth.instance
                         .signOut()

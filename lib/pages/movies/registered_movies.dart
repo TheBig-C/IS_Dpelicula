@@ -147,7 +147,7 @@ class _RegisteredMoviesPageState extends ConsumerState<RegisteredMoviesPage> {
                           child: AspectRatio(
                             aspectRatio: 2 / 3,
                             child: Image.network(
-                              movie.posterPath,
+                              movie.posterPath as String,
                               fit: BoxFit.cover,
                             ),
                           ),

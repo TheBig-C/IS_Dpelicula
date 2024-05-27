@@ -22,18 +22,18 @@ Movie _$MovieFromJson(Map<String, dynamic> json) {
 mixin _$Movie {
   String get id => throw _privateConstructorUsedError;
   String get title => throw _privateConstructorUsedError;
-  @JsonKey(name: 'vote_average')
   double get voteAverage => throw _privateConstructorUsedError;
   String get overview => throw _privateConstructorUsedError;
   String get status => throw _privateConstructorUsedError;
-  @JsonKey(name: 'poster_path')
-  String get posterPath => throw _privateConstructorUsedError;
-  @JsonKey(name: 'backdrop_path')
+  String? get posterPath => throw _privateConstructorUsedError;
   String? get backdropPath => throw _privateConstructorUsedError;
   List<String>? get genres => throw _privateConstructorUsedError;
   List<String> get directorNames => throw _privateConstructorUsedError;
   List<String> get leadActors => throw _privateConstructorUsedError;
   String get registeredBy => throw _privateConstructorUsedError;
+  int get durationInMinutes =>
+      throw _privateConstructorUsedError; // Nueva propiedad para la duración de la película
+  int get usBoxOffice => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -48,15 +48,17 @@ abstract class $MovieCopyWith<$Res> {
   $Res call(
       {String id,
       String title,
-      @JsonKey(name: 'vote_average') double voteAverage,
+      double voteAverage,
       String overview,
       String status,
-      @JsonKey(name: 'poster_path') String posterPath,
-      @JsonKey(name: 'backdrop_path') String? backdropPath,
+      String? posterPath,
+      String? backdropPath,
       List<String>? genres,
       List<String> directorNames,
       List<String> leadActors,
-      String registeredBy});
+      String registeredBy,
+      int durationInMinutes,
+      int usBoxOffice});
 }
 
 /// @nodoc
@@ -77,12 +79,14 @@ class _$MovieCopyWithImpl<$Res, $Val extends Movie>
     Object? voteAverage = null,
     Object? overview = null,
     Object? status = null,
-    Object? posterPath = null,
+    Object? posterPath = freezed,
     Object? backdropPath = freezed,
     Object? genres = freezed,
     Object? directorNames = null,
     Object? leadActors = null,
     Object? registeredBy = null,
+    Object? durationInMinutes = null,
+    Object? usBoxOffice = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -105,10 +109,10 @@ class _$MovieCopyWithImpl<$Res, $Val extends Movie>
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
               as String,
-      posterPath: null == posterPath
+      posterPath: freezed == posterPath
           ? _value.posterPath
           : posterPath // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       backdropPath: freezed == backdropPath
           ? _value.backdropPath
           : backdropPath // ignore: cast_nullable_to_non_nullable
@@ -129,6 +133,14 @@ class _$MovieCopyWithImpl<$Res, $Val extends Movie>
           ? _value.registeredBy
           : registeredBy // ignore: cast_nullable_to_non_nullable
               as String,
+      durationInMinutes: null == durationInMinutes
+          ? _value.durationInMinutes
+          : durationInMinutes // ignore: cast_nullable_to_non_nullable
+              as int,
+      usBoxOffice: null == usBoxOffice
+          ? _value.usBoxOffice
+          : usBoxOffice // ignore: cast_nullable_to_non_nullable
+              as int,
     ) as $Val);
   }
 }
@@ -143,15 +155,17 @@ abstract class _$$MovieImplCopyWith<$Res> implements $MovieCopyWith<$Res> {
   $Res call(
       {String id,
       String title,
-      @JsonKey(name: 'vote_average') double voteAverage,
+      double voteAverage,
       String overview,
       String status,
-      @JsonKey(name: 'poster_path') String posterPath,
-      @JsonKey(name: 'backdrop_path') String? backdropPath,
+      String? posterPath,
+      String? backdropPath,
       List<String>? genres,
       List<String> directorNames,
       List<String> leadActors,
-      String registeredBy});
+      String registeredBy,
+      int durationInMinutes,
+      int usBoxOffice});
 }
 
 /// @nodoc
@@ -170,12 +184,14 @@ class __$$MovieImplCopyWithImpl<$Res>
     Object? voteAverage = null,
     Object? overview = null,
     Object? status = null,
-    Object? posterPath = null,
+    Object? posterPath = freezed,
     Object? backdropPath = freezed,
     Object? genres = freezed,
     Object? directorNames = null,
     Object? leadActors = null,
     Object? registeredBy = null,
+    Object? durationInMinutes = null,
+    Object? usBoxOffice = null,
   }) {
     return _then(_$MovieImpl(
       id: null == id
@@ -198,10 +214,10 @@ class __$$MovieImplCopyWithImpl<$Res>
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
               as String,
-      posterPath: null == posterPath
+      posterPath: freezed == posterPath
           ? _value.posterPath
           : posterPath // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       backdropPath: freezed == backdropPath
           ? _value.backdropPath
           : backdropPath // ignore: cast_nullable_to_non_nullable
@@ -222,6 +238,14 @@ class __$$MovieImplCopyWithImpl<$Res>
           ? _value.registeredBy
           : registeredBy // ignore: cast_nullable_to_non_nullable
               as String,
+      durationInMinutes: null == durationInMinutes
+          ? _value.durationInMinutes
+          : durationInMinutes // ignore: cast_nullable_to_non_nullable
+              as int,
+      usBoxOffice: null == usBoxOffice
+          ? _value.usBoxOffice
+          : usBoxOffice // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
@@ -232,15 +256,17 @@ class _$MovieImpl implements _Movie {
   const _$MovieImpl(
       {required this.id,
       required this.title,
-      @JsonKey(name: 'vote_average') required this.voteAverage,
+      required this.voteAverage,
       required this.overview,
       required this.status,
-      @JsonKey(name: 'poster_path') required this.posterPath,
-      @JsonKey(name: 'backdrop_path') this.backdropPath,
+      required this.posterPath,
+      required this.backdropPath,
       final List<String>? genres,
       required final List<String> directorNames,
       required final List<String> leadActors,
-      required this.registeredBy})
+      required this.registeredBy,
+      this.durationInMinutes = 0,
+      this.usBoxOffice = 0})
       : _genres = genres,
         _directorNames = directorNames,
         _leadActors = leadActors;
@@ -253,17 +279,14 @@ class _$MovieImpl implements _Movie {
   @override
   final String title;
   @override
-  @JsonKey(name: 'vote_average')
   final double voteAverage;
   @override
   final String overview;
   @override
   final String status;
   @override
-  @JsonKey(name: 'poster_path')
-  final String posterPath;
+  final String? posterPath;
   @override
-  @JsonKey(name: 'backdrop_path')
   final String? backdropPath;
   final List<String>? _genres;
   @override
@@ -293,10 +316,17 @@ class _$MovieImpl implements _Movie {
 
   @override
   final String registeredBy;
+  @override
+  @JsonKey()
+  final int durationInMinutes;
+// Nueva propiedad para la duración de la película
+  @override
+  @JsonKey()
+  final int usBoxOffice;
 
   @override
   String toString() {
-    return 'Movie(id: $id, title: $title, voteAverage: $voteAverage, overview: $overview, status: $status, posterPath: $posterPath, backdropPath: $backdropPath, genres: $genres, directorNames: $directorNames, leadActors: $leadActors, registeredBy: $registeredBy)';
+    return 'Movie(id: $id, title: $title, voteAverage: $voteAverage, overview: $overview, status: $status, posterPath: $posterPath, backdropPath: $backdropPath, genres: $genres, directorNames: $directorNames, leadActors: $leadActors, registeredBy: $registeredBy, durationInMinutes: $durationInMinutes, usBoxOffice: $usBoxOffice)';
   }
 
   @override
@@ -321,7 +351,11 @@ class _$MovieImpl implements _Movie {
             const DeepCollectionEquality()
                 .equals(other._leadActors, _leadActors) &&
             (identical(other.registeredBy, registeredBy) ||
-                other.registeredBy == registeredBy));
+                other.registeredBy == registeredBy) &&
+            (identical(other.durationInMinutes, durationInMinutes) ||
+                other.durationInMinutes == durationInMinutes) &&
+            (identical(other.usBoxOffice, usBoxOffice) ||
+                other.usBoxOffice == usBoxOffice));
   }
 
   @JsonKey(ignore: true)
@@ -338,7 +372,9 @@ class _$MovieImpl implements _Movie {
       const DeepCollectionEquality().hash(_genres),
       const DeepCollectionEquality().hash(_directorNames),
       const DeepCollectionEquality().hash(_leadActors),
-      registeredBy);
+      registeredBy,
+      durationInMinutes,
+      usBoxOffice);
 
   @JsonKey(ignore: true)
   @override
@@ -358,15 +394,17 @@ abstract class _Movie implements Movie {
   const factory _Movie(
       {required final String id,
       required final String title,
-      @JsonKey(name: 'vote_average') required final double voteAverage,
+      required final double voteAverage,
       required final String overview,
       required final String status,
-      @JsonKey(name: 'poster_path') required final String posterPath,
-      @JsonKey(name: 'backdrop_path') final String? backdropPath,
+      required final String? posterPath,
+      required final String? backdropPath,
       final List<String>? genres,
       required final List<String> directorNames,
       required final List<String> leadActors,
-      required final String registeredBy}) = _$MovieImpl;
+      required final String registeredBy,
+      final int durationInMinutes,
+      final int usBoxOffice}) = _$MovieImpl;
 
   factory _Movie.fromJson(Map<String, dynamic> json) = _$MovieImpl.fromJson;
 
@@ -375,17 +413,14 @@ abstract class _Movie implements Movie {
   @override
   String get title;
   @override
-  @JsonKey(name: 'vote_average')
   double get voteAverage;
   @override
   String get overview;
   @override
   String get status;
   @override
-  @JsonKey(name: 'poster_path')
-  String get posterPath;
+  String? get posterPath;
   @override
-  @JsonKey(name: 'backdrop_path')
   String? get backdropPath;
   @override
   List<String>? get genres;
@@ -395,6 +430,10 @@ abstract class _Movie implements Movie {
   List<String> get leadActors;
   @override
   String get registeredBy;
+  @override
+  int get durationInMinutes;
+  @override // Nueva propiedad para la duración de la película
+  int get usBoxOffice;
   @override
   @JsonKey(ignore: true)
   _$$MovieImplCopyWith<_$MovieImpl> get copyWith =>

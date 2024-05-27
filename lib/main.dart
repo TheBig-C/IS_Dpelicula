@@ -4,16 +4,14 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:is_dpelicula/pages/control_client.dart';
-import 'package:is_dpelicula/pages/control_employee.dart';
-import 'package:is_dpelicula/pages/movie_detail_page.dart';
+import 'package:is_dpelicula/pages/auth/forgot_pw_page.dart';
+import 'package:is_dpelicula/pages/auth/login_page%20copy.dart';
+import 'package:is_dpelicula/pages/auth/register_employee.dart';
+import 'package:is_dpelicula/pages/auth/register_page.dart';
+import 'package:is_dpelicula/pages/auth/verify_email.dart';
+import 'package:is_dpelicula/pages/movies/movie_detail_page.dart';
+import 'package:is_dpelicula/pages/movies/register_movie_page.dart';
 import 'package:is_dpelicula/pages/options_page.dart';
-import 'package:is_dpelicula/pages/forgot_pw_page.dart';
-import 'package:is_dpelicula/pages/profile_edit_page.dart';
-import 'package:is_dpelicula/pages/profile_page.dart';
-import 'package:is_dpelicula/pages/register_employee.dart';
-import 'package:is_dpelicula/pages/register_movie_page.dart';
-import 'package:is_dpelicula/pages/register_page.dart'; // Asegúrate de usar la ruta correcta al archivo
 
 import 'package:go_router/go_router.dart';
 import 'package:is_dpelicula/cubit/money_cubit.dart';
@@ -22,10 +20,14 @@ import 'package:is_dpelicula/firebase_options.dart';
 import 'package:is_dpelicula/models/utils.dart';
 import 'package:is_dpelicula/pages/contact_page.dart';
 import 'package:is_dpelicula/pages/home_page.dart';
-import 'package:is_dpelicula/pages/login_page.dart';
-import 'package:is_dpelicula/pages/register_page.dart';
+
 import 'package:is_dpelicula/pages/about_us.dart';
-import 'package:is_dpelicula/pages/verify_email.dart';
+import 'package:is_dpelicula/pages/room/RegisteredRoomsPage.dart';
+import 'package:is_dpelicula/pages/room/roomCreationPage.dart';
+import 'package:is_dpelicula/pages/users/control_client.dart';
+import 'package:is_dpelicula/pages/users/control_employee.dart';
+import 'package:is_dpelicula/pages/users/profile_edit_page.dart';
+import 'package:is_dpelicula/pages/users/profile_page.dart';
 import 'package:is_dpelicula/widgets/loading_spinner.dart';
 
 void main() async {
@@ -173,6 +175,20 @@ class MyApp extends StatelessWidget {
             },
           ),
         ]),
+    GoRoute(
+      path: '/create-room',
+      name: 'createRoom',
+      builder: (context, state) {
+        return const RoomCreationPage();
+      },
+    ),
+    GoRoute(
+  path: '/registered_rooms',
+  name: 'registeredRooms',
+  builder: (context, state) {
+    return RegisteredRoomsPage();
+  },
+),
   ], initialLocation: '/home');
 
   @override

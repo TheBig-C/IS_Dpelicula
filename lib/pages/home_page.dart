@@ -274,7 +274,7 @@ class HomePage extends ConsumerWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(30),
               child: Image.network(
-                movie.posterPath,
+                movie.posterPath as String,
                 fit: BoxFit.cover,
               ),
             ),

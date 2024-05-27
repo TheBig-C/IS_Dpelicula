@@ -50,7 +50,7 @@ class MovieDetailPage extends ConsumerWidget {
             children: [
               Expanded(
                 flex: 4,
-                child: _loadImageWidget(movie.posterPath, 600, BoxFit.cover),
+                child: _loadImageWidget(movie.posterPath as String, 600, BoxFit.cover),
               ),
               const SizedBox(width: 20),
               Expanded(
