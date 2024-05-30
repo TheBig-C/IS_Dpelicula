@@ -22,28 +22,39 @@ class CalculosPage extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Matriz de Costos',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                'Cálculos de la Matriz de Costos y Asignación',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
-              _buildMatrixTable(costsMatrix),
+              SizedBox(height: 10),
+              Text(
+                'Este cálculo se realizó utilizando el método del noroeste para asignar películas a las salas y horarios disponibles de manera óptima.',
+                style: TextStyle(fontSize: 16),
+              ),
+              SizedBox(height: 20),
+              Text(
+                'Matriz de Costos',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              _buildMatrixTable(costsMatrix, "Películas/Funciones", "Películas", "Funciones"),
               SizedBox(height: 20),
               Text(
                 'Matriz de Asignación',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
-              _buildMatrixTable(assignmentMatrix),
+              _buildMatrixTable(assignmentMatrix, "Asignación de Funciones", "Películas", "Funciones"),
               SizedBox(height: 20),
               Text(
                 'Grafo Correspondiente a la Matriz de Costos',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               GrafoWidget(matrix: costsMatrix),
               SizedBox(height: 20),
               Text(
                 'Grafo Correspondiente a la Matriz de Asignación',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               GrafoWidget(matrix: assignmentMatrix),
             ],
@@ -53,23 +64,57 @@ class CalculosPage extends StatelessWidget {
     );
   }
 
-  Widget _buildMatrixTable(List<List<int>> matrix) {
-    return Table(
-      border: TableBorder.all(),
+  Widget _buildMatrixTable(List<List<int>> matrix, String label, String rowLabel, String colLabel) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        for (var row in matrix)
-          TableRow(
-            children: [
-              for (var value in row)
+        Text(
+          label,
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        Table(
+          border: TableBorder.all(),
+          children: [
+            TableRow(
+              children: [
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    value.toString(),
-                    textAlign: TextAlign.center,
-                  ),
+                  child: Text(''),
                 ),
-            ],
-          ),
+                for (int i = 0; i < matrix[0].length; i++)
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      '$colLabel ${i + 1}',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+              ],
+            ),
+            for (int i = 0; i < matrix.length; i++)
+              TableRow(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      '$rowLabel ${i + 1}',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  for (var value in matrix[i])
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        value.toString(),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                ],
+              ),
+          ],
+        ),
       ],
     );
   }

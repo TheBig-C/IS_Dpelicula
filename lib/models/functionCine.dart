@@ -23,8 +23,8 @@ class FunctionCine with _$FunctionCine {
     return FunctionCine(
       id: functionCineId,
       movieId: map['movieId'] as String,
-      startTime: (map['startTime'] as Timestamp).toDate(),
-      endTime: (map['endTime'] as Timestamp).toDate(),
+      startTime: (map['startTime']).toDate(),
+      endTime: (map['endTime'] ).toDate(),
       roomId: map['roomId'] as String,
       price: (map['price'] as num).toDouble(),
       type: map['type'] as String,

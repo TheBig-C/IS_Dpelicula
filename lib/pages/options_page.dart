@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:is_dpelicula/pages/auth/register_employee.dart';
+import 'package:is_dpelicula/pages/billBoard/active_schedule_page.dart';
 import 'package:is_dpelicula/pages/billBoard/create_billboard_page.dart';
 import 'package:is_dpelicula/pages/movies/register_movie_page.dart';
 import 'package:is_dpelicula/pages/movies/registered_movies.dart';
@@ -91,6 +92,9 @@ class _OptionsPageState extends State<OptionsPage> {
                   if (isAdmin)
                     _buildDrawerItem(Icons.list, 'Crear Cartelera',
                         () => _updateMainContent(CreateBillboardPage())),
+                         if (isAdmin)
+                    _buildDrawerItem(Icons.list, 'Cartelera Actual',
+                        () => _updateMainContent(ActiveSchedulePage())),
                   _buildDrawerItem(Icons.exit_to_app, 'Cerrar sesión', () {
                     FirebaseAuth.instance
                         .signOut()
