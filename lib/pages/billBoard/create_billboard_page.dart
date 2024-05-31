@@ -166,7 +166,7 @@ class _CreateBillboardPageState extends ConsumerState<CreateBillboardPage> {
     return costsMatrix;
   }
 
-  List<List<int>> northWest(List<List<int>> costsMatrix) {
+List<List<int>> northWest(List<List<int>> costsMatrix) {
     int numRows = costsMatrix.length;
     int numCols = costsMatrix[0].length;
     List<List<int>> assignmentMatrix = List.generate(numRows - 1, (i) => List.filled(numCols - 1, 0));
@@ -183,20 +183,282 @@ class _CreateBillboardPageState extends ConsumerState<CreateBillboardPage> {
       supply[i] -= amount;
       demand[j] -= amount;
 
-      if (supply[i] == 0 && i < supply.length) i++;
-      if (demand[j] == 0 && j < demand.length) j++;
+      if ( supply[i] == 0 && i < supply.length) i++;
+      if ( demand[j] == 0 && j < demand.length) j++;
     }
 
     return assignmentMatrix;
   }
 
-  List<int> getSupply(List<List<int>> matrix) {
-    return matrix.take(matrix.length - 1).map((row) => row.last).toList();
+// Funciones de apoyo
+List<int> getSupply(List<List<int>> matrix) {
+  return matrix.take(matrix.length - 1).map((row) => row.last).toList();
+}
+
+List<int> getDemand(List<List<int>> matrix) {
+  return matrix.last.take(matrix[0].length - 1).toList();
+}
+
+// Incluye aquí las funciones convertidas de JS a Dart
+
+void modiMethodMax(List<List<int>> costsMatrix, List<List<int>> assignmentMatrix) {
+  bool improvement = true;
+  int ccc = 0;
+  while (improvement) {
+    ccc++;
+    print(ccc);
+    if(ccc >= 100){
+      break;
+    }
+    int numRows = costsMatrix.length - 1;
+    int numCols = costsMatrix[0].length - 1;
+    List<int?> u = List.filled(numRows, null);
+    List<int?> v = List.filled(numCols, null);
+    List<List<int>> markedIndices = [];
+
+    for (int i = 0; i < numRows; i++) {
+      for (int j = 0; j < numCols; j++) {
+        if (assignmentMatrix[i][j] > 0) {
+          markedIndices.add([i, j]);
+        }
+      }
+    }
+
+    u[0] = 0;
+    bool progressMade;
+    int ddd = 0;
+    do {
+      print(u);
+      print(v);
+      progressMade = false;
+      List<List<int>> remainingIndices = [];
+      for (int index = 0; index < markedIndices.length; index++) {
+        int i = markedIndices[index][0];
+        int j = markedIndices[index][1];
+        if (u[i] != null && v[j] == null) {
+          v[j] = costsMatrix[i][j] - u[i]!;
+          progressMade = true;
+        } else if (u[i] == null && v[j] != null) {
+          u[i] = costsMatrix[i][j] - v[j]!;
+          progressMade = true;
+        } else {
+          remainingIndices.add([i, j]);
+        }
+      }
+      markedIndices = remainingIndices;
+      if (!progressMade && markedIndices.isNotEmpty) {
+        int i = markedIndices[0][0];
+        int j = markedIndices[0][1];
+        if (u[i] == null) {
+          u[i] = 0;
+        } else {
+          v[j] = 0;
+        }
+        progressMade = true;
+      }
+      ddd++;
+      if(ddd >= 1000){
+        break;
+      }
+    } while (progressMade && markedIndices.isNotEmpty);
+
+    print(u);
+    print(v);
+
+    List<List<int>> d = List.generate(numRows, (_) => List.filled(numCols, 0));
+    bool canImprove = false;
+    for (int i = 0; i < numRows; i++) {
+      for (int j = 0; j < numCols; j++) {
+        if (assignmentMatrix[i][j] == 0) {
+          d[i][j] = u[i]! + v[j]! - costsMatrix[i][j];
+          if (d[i][j] < 0) canImprove = true;
+        }
+      }
+    }
+    print("matrixd");
+    for (int i = 0; i < d.length; i++) {
+      print(d[i]);
+    }
+    var matrix1 = List<List<int>>.generate(assignmentMatrix.length, (i) => List<int>.from(assignmentMatrix[i]));
+    print("matrix");
+    for (int i = 0; i < matrix1.length; i++) {
+      print(matrix1[i]);
+    }
+    if (canImprove) {
+      int maxPositive = 0;
+      List<List<int>> cellsToImprove = [];
+      for (int i = 0; i < numRows; i++) {
+        for (int j = 0; j < numCols; j++) {
+          if (d[i][j] < maxPositive) {
+            maxPositive = d[i][j];
+            cellsToImprove = [[i, j]];
+          } else if (d[i][j] == maxPositive) {
+            cellsToImprove.add([i, j]);
+          }
+        }
+      }
+
+      print(cellsToImprove);
+      bool cycleFound = false;
+      for (var cell in cellsToImprove) {
+        try {
+          var cycle = findCycle(assignmentMatrix, cell);
+          if (cycle != null) {
+            adjustAssignmentsMax(assignmentMatrix, cycle);
+            print("Se puede mejorar la solución, se encontró un ciclo para la celda: $cell");
+            cycleFound = true;
+            break;
+          } else {
+            improvement = false;
+          }
+        } catch (e) {
+          if (e is TypeError && e.toString().contains("null")) {
+            print("Valor nulo encontrado, continuando con el siguiente elemento.");
+            continue;
+          } else {
+            print("Error encontrado: $e");
+            break;
+          }
+        }
+      }
+
+      if (!cycleFound) {
+        print("No se puede mejorar, no se encontró un ciclo para ninguna celda candidata");
+        improvement = false;
+      }
+    } else {
+      improvement = false;
+    }
+  }
+}
+
+void adjustAssignmentsMax(List<List<int>> assignmentMatrix, List<List<int>> cycle) {
+  int min = 0;
+  for (int i = 1; i < cycle.length; i += 2) {
+    var r = cycle[i][0];
+    var c = cycle[i][1];
+    min = min > assignmentMatrix[r][c] ? assignmentMatrix[r][c] : min;
   }
 
-  List<int> getDemand(List<List<int>> matrix) {
-    return matrix.last.take(matrix[0].length - 1).toList();
+  for (int i = 0; i < cycle.length; ++i) {
+    var r = cycle[i][0];
+    var c = cycle[i][1];
+    if (i % 2 == 0) {
+      assignmentMatrix[r][c] += min;
+    } else {
+      assignmentMatrix[r][c] -= min;
+    }
   }
+}
+
+List<List<int>>? findCycle(List<List<int>> matrix, List<int> startCell) {
+  bool cantB = true;
+  int c = 0;
+  List<List<int>> d = [], matriz = [], valor1 = [], valo2 = [];
+  String va = "primero";
+  List<int>? anterior;
+  final directions = [
+    [-1, 0],
+    [1, 0],
+    [0, -1],
+    [0, 1],
+  ];
+  final dire1 = [
+    [-1, 0],
+    [1, 0],
+  ];
+  final dire2 = [
+    [0, -1],
+    [0, 1],
+  ];
+  int contador = 0;
+  copiarMatriz(matrix, matriz);
+  List<int> siguiente = startCell;
+
+  do {
+    print("va: $va");
+
+    if (contador == 0) {
+      cantB = false;
+      c = 0;
+      int auxi = startCell[0];
+      int auxj = startCell[1];
+      if (auxi + 1 < matrix.length && matrix[auxi + 1][auxj] > 0) c++;
+      if (auxi - 1 >= 0 && matrix[auxi - 1][auxj] > 0) c++;
+      if (auxj + 1 < matrix[0].length && matrix[auxi][auxj + 1] > 0) c++;
+      if (auxj - 1 >= 0 && matrix[auxi][auxj - 1] > 0) c++;
+      if (c < 2) {
+        cantB = true;
+        break;
+      }
+      anterior = null;
+      siguiente = startCell;
+      valor1 = [];
+      valo2 = [];
+      copiarMatriz(matrix, matriz);
+      contador++;
+    }
+
+    if (va == "primero") {
+      matriz[siguiente[0]][siguiente[1]] = 0;
+      anterior = siguiente;
+      siguiente = buscarPrimero(anterior, matriz, dire1);
+      valor1.add(anterior);
+      va = "segundo";
+      continue;
+    }
+
+    if (va == "segundo") {
+      matriz[siguiente[0]][siguiente[1]] = 0;
+      anterior = siguiente;
+      siguiente = buscarPrimero(anterior, matriz, dire2);
+      valo2.add(anterior);
+      if (siguiente[0] == startCell[0] && siguiente[1] == startCell[1]) {
+        print("anterior: $anterior");
+        print("startCell: $startCell");
+        valor1.add(anterior);
+        valor1.add(startCell);
+        va = "encontrado";
+        break;
+      }
+      va = "primero";
+      continue;
+    }
+  } while (contador <= 10000);
+
+  if (va != "encontrado" || cantB) return null;
+
+  for (var i = 0; i < valor1.length; i++) {
+    d.add(valor1[i]);
+  }
+  for (var i = valo2.length - 1; i >= 0; i--) {
+    d.add(valo2[i]);
+  }
+
+  return d;
+}
+
+void copiarMatriz(List<List<int>> original, List<List<int>> copia) {
+  copia.clear();
+  for (var fila in original) {
+    copia.add(List.from(fila));
+  }
+}
+
+List<int> buscarPrimero(List<int>? anterior, List<List<int>> matriz, List<List<int>> direccion) {
+  List<int> siguiente = [];
+  if (anterior != null) {
+    for (var dir in direccion) {
+      int nuevaFila = anterior[0] + dir[0];
+      int nuevaColumna = anterior[1] + dir[1];
+      if (nuevaFila >= 0 && nuevaFila < matriz.length && nuevaColumna >= 0 && nuevaColumna < matriz[0].length && matriz[nuevaFila][nuevaColumna] != 0) {
+        siguiente = [nuevaFila, nuevaColumna];
+        break;
+      }
+    }
+  }
+  return siguiente;
+}
 
   void _applyAssignmentToSchedule(List<List<int>> assignmentMatrix, List<Movie> movies, List<Room> rooms) {
     int numMovies = movies.length;
@@ -234,7 +496,7 @@ class _CreateBillboardPageState extends ConsumerState<CreateBillboardPage> {
             startTime: startTime,
             endTime: endTime,
             roomId: roomSlot.room.id,
-            price: 50.0, // Precio fijo según tu especificación
+            price: roomSlot.room.name=='normal'? 30.0 : 50.0, // Precio fijo según tu especificación
             type: roomSlot.room.type,
             createdBy: 'Admin',
           ),
@@ -541,11 +803,16 @@ class _CreateBillboardPageState extends ConsumerState<CreateBillboardPage> {
               : function.id;
           function = function.copyWith(id: functionId);
 
+          // Convierte las fechas a Timestamp
+          Map<String, dynamic> functionData = function.toJson();
+          functionData['startTime'] = Timestamp.fromDate(function.startTime);
+          functionData['endTime'] = Timestamp.fromDate(function.endTime);
+
           // Guarda la función en Firestore
           await FirebaseFirestore.instance
               .collection('functions')
               .doc(functionId)
-              .set(function.toJson());
+              .set(functionData);
           functionIds.add(functionId);
         }
       }
@@ -560,10 +827,15 @@ class _CreateBillboardPageState extends ConsumerState<CreateBillboardPage> {
         createdBy: 'Admin',
       );
 
+      // Convierte las fechas a Timestamp
+      Map<String, dynamic> billboardData = billboard.toJson();
+      billboardData['startDate'] = Timestamp.fromDate(billboard.startDate);
+      billboardData['endDate'] = Timestamp.fromDate(billboard.endDate);
+
       // Guarda el BillBoard en Firestore
-      await ref
-          .read(billboardControllerProvider.notifier)
-          .addBillboard(billboard);
+      await FirebaseFirestore.instance
+          .collection('billboards')
+          .add(billboardData);
 
       // Muestra la confirmación y limpia el horario
       _showConfirmation();

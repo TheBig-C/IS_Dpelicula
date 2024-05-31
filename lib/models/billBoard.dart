@@ -17,15 +17,23 @@ class BillBoard with _$BillBoard {
 
   factory BillBoard.fromJson(Map<String, dynamic> json) => _$BillBoardFromJson(json);
 
-  static BillBoard fromMap(Map<String, dynamic> map, {required String billBoardId}) {
-    DateTime startDate = (map['startDate'] as Timestamp).toDate();
+  factory BillBoard.fromMap(Map<String, dynamic> map, {required String billBoardId}) {
     return BillBoard(
       id: billBoardId,
       functionIds: List<String>.from(map['functionIds']),
       isActive: map['isActive'] as bool,
-      startDate: startDate,
-      endDate: startDate.add(Duration(days: 7)),
+      startDate: (map['startDate'] as Timestamp).toDate(),
+      endDate: (map['endDate'] as Timestamp).toDate(),
       createdBy: map['createdBy'] as String,
     );
   }
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'functionIds': functionIds,
+    'isActive': isActive,
+    'startDate': Timestamp.fromDate(startDate),
+    'endDate': Timestamp.fromDate(endDate),
+    'createdBy': createdBy,
+  };
 }
