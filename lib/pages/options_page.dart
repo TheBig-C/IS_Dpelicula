@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:is_dpelicula/pages/Dashboard/dashboard.dart';
 import 'package:is_dpelicula/pages/auth/register_employee.dart';
 import 'package:is_dpelicula/pages/billBoard/active_schedule_page.dart';
 import 'package:is_dpelicula/pages/billBoard/create_billboard_page.dart';
@@ -22,7 +23,7 @@ class OptionsPage extends StatefulWidget {
 
 class _OptionsPageState extends State<OptionsPage> {
   bool isAdmin = false;
-  Widget mainContent = Center(child: Text('Contenido principal aquí'));
+  Widget mainContent = ProfilePage();
 
   @override
   void initState() {
@@ -40,6 +41,7 @@ class _OptionsPageState extends State<OptionsPage> {
       if (docSnapshot.exists && docSnapshot.data()?['role'] == 'admin') {
         setState(() {
           isAdmin = true;
+          mainContent = DashboardPage();
         });
       }
     }
@@ -69,6 +71,9 @@ class _OptionsPageState extends State<OptionsPage> {
                       'Editar Perfil',
                       () => _updateMainContent(ProfileEditPage())),
                   if (isAdmin)
+                    _buildDrawerItem(Icons.dashboard, 'Panel de control',
+                        () => _updateMainContent(DashboardPage())),
+                  if (isAdmin)
                     _buildDrawerItem(Icons.person_add, 'Registrar Empleado',
                         () => _updateMainContent(RegisterEmployee())),
                   if (isAdmin)
@@ -92,7 +97,7 @@ class _OptionsPageState extends State<OptionsPage> {
                   if (isAdmin)
                     _buildDrawerItem(Icons.list, 'Crear Cartelera',
                         () => _updateMainContent(CreateBillboardPage())),
-                         if (isAdmin)
+                  if (isAdmin)
                     _buildDrawerItem(Icons.list, 'Cartelera Actual',
                         () => _updateMainContent(ActiveSchedulePage())),
                   _buildDrawerItem(Icons.exit_to_app, 'Cerrar sesión', () {
