@@ -38,19 +38,19 @@ class ProfilePage extends StatelessWidget {
                                   final data = snapshot.data!.data()
                                       as Map<String, dynamic>;
 
-                                  if (data['image_url'] == null ||
-                                      data['image_url'] == '') {
+                                  if ((data['image_url'] == null ||
+                                      data['image_url'] == 'null')) {
                                     return const CircleAvatar(
                                       backgroundImage: AssetImage(
-                                          './assets/img/profile.jpg'),
-                                      radius: 46,
+                                          './assets/peaceMaker.jpg'),
+                                      radius: 60,
                                     );
                                   }
 
                                   return CircleAvatar(
                                     backgroundImage:
                                         NetworkImage(data['image_url']),
-                                    radius: 46,
+                                    radius: 60,
                                   );
                                 } else {
                                   return const LoadingSpinner();
@@ -62,7 +62,7 @@ class ProfilePage extends StatelessWidget {
                               return Text(
                                 money != 0
                                     ? formatterCurrency.format(money)
-                                    : 'DPs 0',
+                                    : '',
                                 style: TextStyle(
                                     color: Theme.of(context).primaryColor,
                                     fontSize: 20,
