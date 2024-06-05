@@ -20,7 +20,7 @@ class DashboardPage extends StatelessWidget {
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: Colors.deepPurple,
+                color: Colors.white,
               ),
             ),
             const SizedBox(height: 20),
@@ -247,18 +247,59 @@ class ActivityCharts extends StatelessWidget {
                                       .toList(),
                                   isCurved: true,
                                   barWidth: 2,
-                                  color: Colors.blue,
+                                  color: Colors.deepPurple,
                                 ),
                               ],
                               titlesData: FlTitlesData(
                                 leftTitles: AxisTitles(
-                                  sideTitles: SideTitles(showTitles: true),
+                                  sideTitles: SideTitles(
+                                    showTitles: true,
+                                    reservedSize: 35,
+                                    interval: 10,
+                                    getTitlesWidget: (value, meta) {
+                                      return Text(
+                                        value.toString(),
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 10,
+                                        ),
+                                      );
+                                    },
+                                  ),
                                 ),
+                                rightTitles: AxisTitles(
+          sideTitles: SideTitles(
+            showTitles: true,
+            getTitlesWidget: (value, meta) {
+              return Text(
+                value.toString(),
+                style: TextStyle(
+                  color: Colors.transparent, // Mismo color del fondo
+                  fontSize: 10,
+                ),
+              );
+            },
+          ),
+        ),
+        topTitles: AxisTitles(
+          sideTitles: SideTitles(
+            showTitles: true,
+            getTitlesWidget: (value, meta) {
+              return Text(
+                value.toString(),
+                style: TextStyle(
+                  color: Colors.transparent, // Mismo color del fondo
+                  fontSize: 10,
+                ),
+              );
+            },
+          ),
+        ),
                                 bottomTitles: AxisTitles(
                                   sideTitles: SideTitles(
                                     showTitles: true,
-                                    reservedSize: 22,
-                                    interval: 0.4,
+                                    reservedSize: 30,
+                                    interval: 0.5,
                                     getTitlesWidget: (value, meta) {
                                       int interval =
                                           (sortedDailyLogins.length / 5).ceil();
@@ -303,8 +344,49 @@ class ActivityCharts extends StatelessWidget {
                                   .toList(),
                               titlesData: FlTitlesData(
                                 leftTitles: AxisTitles(
-                                  sideTitles: SideTitles(showTitles: true),
+                                  sideTitles: SideTitles(
+                                    showTitles: true,
+                                    reservedSize: 30,
+                                    interval: 2,
+                                    getTitlesWidget: (value, meta) {
+                                      return Text(
+                                        value.toString(),
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 12,
+                                        ),
+                                      );
+                                    },
+                                  ),
                                 ),
+                                rightTitles: AxisTitles(
+          sideTitles: SideTitles(
+            showTitles: true,
+            getTitlesWidget: (value, meta) {
+              return Text(
+                value.toString(),
+                style: TextStyle(
+                  color: Colors.transparent, // Mismo color del fondo
+                  fontSize: 10,
+                ),
+              );
+            },
+          ),
+        ),
+        topTitles: AxisTitles(
+          sideTitles: SideTitles(
+            showTitles: true,
+            getTitlesWidget: (value, meta) {
+              return Text(
+                value.toString(),
+                style: TextStyle(
+                  color: Colors.transparent, // Mismo color del fondo
+                  fontSize: 10,
+                ),
+              );
+            },
+          ),
+        ),
                                 bottomTitles: AxisTitles(
                                   sideTitles: SideTitles(
                                     showTitles: true,
@@ -332,7 +414,7 @@ class ActivityCharts extends StatelessWidget {
                                         barRods: [
                                           BarChartRodData(
                                             toY: e.value.toDouble(),
-                                            color: Colors.purple,
+                                            color: Colors.orange,
                                             width: 16,
                                           ),
                                         ],
@@ -340,21 +422,71 @@ class ActivityCharts extends StatelessWidget {
                                   .toList(),
                               titlesData: FlTitlesData(
                                 leftTitles: AxisTitles(
-                                  sideTitles: SideTitles(showTitles: true),
+                                  sideTitles: SideTitles(
+                                    showTitles: true,
+                                    reservedSize: 20,
+                                    interval: 2,
+                                    getTitlesWidget: (value, meta) {
+                                      return Text(
+                                        value.toString(),
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 12,
+                                        ),
+                                      );
+                                    },
+                                  ),
                                 ),
+                                rightTitles: AxisTitles(
+          sideTitles: SideTitles(
+            showTitles: true,
+            getTitlesWidget: (value, meta) {
+              return Text(
+                value.toString(),
+                style: TextStyle(
+                  color: Colors.transparent, // Mismo color del fondo
+                  fontSize: 10,
+                ),
+              );
+            },
+          ),
+        ),
+        topTitles: AxisTitles(
+          sideTitles: SideTitles(
+            showTitles: true,
+            getTitlesWidget: (value, meta) {
+              return Text(
+                value.toString(),
+                style: TextStyle(
+                  color: Colors.transparent, // Mismo color del fondo
+                  fontSize: 10,
+                ),
+              );
+            },
+          ),
+        ),
                                 bottomTitles: AxisTitles(
                                   sideTitles: SideTitles(
                                     showTitles: true,
+                                    reservedSize: 50,
                                     getTitlesWidget: (value, meta) {
                                       final movie = movieDocs.firstWhere(
                                           (doc) =>
                                               doc.id.hashCode == value.toInt());
                                       return movie != null
-                                          ? Text(
-                                              movie['title'],
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 10),
+                                          ? Container(
+                                              width: 50,
+                                              child: Text(
+                                                movie['title'],
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 10),
+                                                maxLines:
+                                                    3, // Permite hasta 2 líneas
+                                                overflow: TextOverflow.ellipsis,
+                                                softWrap: true,
+                                                textAlign: TextAlign.center,
+                                              ),
                                             )
                                           : Text('');
                                     },
@@ -375,7 +507,7 @@ class ActivityCharts extends StatelessWidget {
                                         barRods: [
                                           BarChartRodData(
                                             toY: e.value,
-                                            color: Colors.green,
+                                            color: Colors.deepPurple,
                                             width: 16,
                                           ),
                                         ],
@@ -383,8 +515,49 @@ class ActivityCharts extends StatelessWidget {
                                   .toList(),
                               titlesData: FlTitlesData(
                                 leftTitles: AxisTitles(
-                                  sideTitles: SideTitles(showTitles: true),
+                                  sideTitles: SideTitles(
+                                    showTitles: true,
+                                    reservedSize: 20,
+                                    interval: 3,
+                                    getTitlesWidget: (value, meta) {
+                                      return Text(
+                                        value.toString(),
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 12,
+                                        ),
+                                      );
+                                    },
+                                  ),
                                 ),
+                                rightTitles: AxisTitles(
+          sideTitles: SideTitles(
+            showTitles: true,
+            getTitlesWidget: (value, meta) {
+              return Text(
+                value.toString(),
+                style: TextStyle(
+                  color: Colors.transparent, // Mismo color del fondo
+                  fontSize: 10,
+                ),
+              );
+            },
+          ),
+        ),
+        topTitles: AxisTitles(
+          sideTitles: SideTitles(
+            showTitles: true,
+            getTitlesWidget: (value, meta) {
+              return Text(
+                value.toString(),
+                style: TextStyle(
+                  color: Colors.transparent, // Mismo color del fondo
+                  fontSize: 10,
+                ),
+              );
+            },
+          ),
+        ),
                                 bottomTitles: AxisTitles(
                                   sideTitles: SideTitles(
                                     showTitles: true,
@@ -397,7 +570,7 @@ class ActivityCharts extends StatelessWidget {
                                               genre,
                                               style: TextStyle(
                                                   color: Colors.black,
-                                                  fontSize: 10),
+                                                  fontSize: 12),
                                             )
                                           : Text('');
                                     },
@@ -409,28 +582,67 @@ class ActivityCharts extends StatelessWidget {
                         ),
                         buildCard(
                           'Películas por Género',
-                          PieChart(
-                            PieChartData(
-                              sections: moviesByGenre.entries
-                                  .map((e) => PieChartSectionData(
-                                        color: Colors.primaries[moviesByGenre
-                                                .keys
-                                                .toList()
-                                                .indexOf(e.key) %
-                                            Colors.primaries.length],
-                                        value: e.value.toDouble(),
-                                        title: '${e.key} (${e.value})',
-                                        radius: 50,
-                                        titleStyle: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white,
-                                        ),
-                                      ))
-                                  .toList(),
+                          Container(
+                            width: 600, 
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: PieChart(
+                                    PieChartData(
+                                      sections: moviesByGenre.entries
+                                          .map((e) => PieChartSectionData(
+                                                color: Colors.primaries[
+                                                    moviesByGenre.keys
+                                                            .toList()
+                                                            .indexOf(e.key) %
+                                                        Colors
+                                                            .primaries.length],
+                                                value: e.value.toDouble(),
+                                                title:
+                                                    '', 
+                                                radius: 50,
+                                                titleStyle: TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.black,
+                                                ),
+                                              ))
+                                          .toList(),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(width: 16),
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: moviesByGenre.entries
+                                      .map((e) => Row(
+                                            children: [
+                                              Container(
+                                                width: 16,
+                                                height: 16,
+                                                color: Colors.primaries[
+                                                    moviesByGenre.keys
+                                                            .toList()
+                                                            .indexOf(e.key) %
+                                                        Colors
+                                                            .primaries.length],
+                                              ),
+                                              SizedBox(width: 8),
+                                              Text(
+                                                '${e.key} (${e.value})',
+                                                style: TextStyle(
+                                                    fontSize: 14,
+                                                    color: Colors.black),
+                                              ),
+                                            ],
+                                          ))
+                                      .toList(),
+                                ),
+                              ],
                             ),
                           ),
-                        ),
+                        )
                       ];
 
                       if (isDesktop) {
