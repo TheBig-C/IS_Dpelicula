@@ -4,6 +4,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:is_dpelicula/controllers/function_controller.dart';
+import 'package:is_dpelicula/controllers/movie_controllers.dart';
 import 'package:is_dpelicula/pages/auth/forgot_pw_page.dart';
 import 'package:is_dpelicula/pages/auth/login_page%20copy.dart';
 import 'package:is_dpelicula/pages/auth/register_employee.dart';
@@ -12,6 +14,8 @@ import 'package:is_dpelicula/pages/auth/verify_email.dart';
 import 'package:is_dpelicula/pages/movies/movie_detail_page.dart';
 import 'package:is_dpelicula/pages/movies/register_movie_page.dart';
 import 'package:is_dpelicula/pages/options_page.dart';
+import 'package:is_dpelicula/pages/tickets/FunctionDatailsPage.dart';
+import 'package:is_dpelicula/pages/tickets/TicketPurchasePage.dart';
 
 import 'package:go_router/go_router.dart';
 import 'package:is_dpelicula/cubit/money_cubit.dart';
@@ -183,12 +187,35 @@ class MyApp extends StatelessWidget {
       },
     ),
     GoRoute(
-  path: '/registered_rooms',
-  name: 'registeredRooms',
-  builder: (context, state) {
-    return RegisteredRoomsPage();
-  },
-),
+      path: '/registered_rooms',
+      name: 'registeredRooms',
+      builder: (context, state) {
+        return RegisteredRoomsPage();
+      },
+    ),
+    GoRoute(
+      path: '/function/:id',
+      builder: (BuildContext context, GoRouterState state) {
+        final String id = state.pathParameters['id']!;
+        return Consumer(
+          builder: (context, ref, child) {
+            final functionCineFuture = ref.watch(functionCineProvider(id));
+            return functionCineFuture.when(
+              data: (functionCine) {
+                final movieFuture = ref.watch(movieProviderFamily(functionCine.movieId));
+                return movieFuture.when(
+                  data: (movie) => FunctionDetailsPage(function: functionCine, movie: movie),
+                  loading: () => const LoadingSpinner(),
+                  error: (error, stackTrace) => Center(child: Text('Error: $error')),
+                );
+              },
+              loading: () => const LoadingSpinner(),
+              error: (error, stackTrace) => Center(child: Text('Error: $error')),
+            );
+          },
+        );
+      },
+    ),
   ], initialLocation: '/home');
 
   @override

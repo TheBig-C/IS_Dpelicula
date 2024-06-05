@@ -124,18 +124,45 @@ class HomePage extends ConsumerWidget {
                 margin: const EdgeInsets.symmetric(horizontal: 5),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(10),
-                  child: Image.network(
-                    movie.posterPath as String, // Get poster path from movie
-                    fit: BoxFit.cover,
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: Image.network(
+                          movie.posterPath ?? '',
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              color: Colors.grey,
+                              child: Icon(Icons.error, color: Colors.red, size: 50),
+                            );
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        movie.title,
+                        style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '${function.startTime.toLocal()} - ${function.endTime.toLocal()}',
+                        style: TextStyle(fontSize: 14.0),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '${function.roomId} - ${function.type}',
+                        style: TextStyle(fontSize: 14.0),
+                      ),
+                    ],
                   ),
                 ),
               ),
             );
           },
           options: CarouselOptions(
-            height: 650, // Aumenta la altura para hacer que los pósters sean más grandes
+            height: 650,
             initialPage: 0,
-            viewportFraction: 0.4, // Ajusta este valor para hacer que los pósters sean más grandes
+            viewportFraction: 0.4,
             enlargeCenterPage: true,
             autoPlay: true,
             autoPlayInterval: const Duration(seconds: 3),
@@ -402,8 +429,14 @@ class HomePage extends ConsumerWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(30),
               child: Image.network(
-                movie.posterPath as String,
+                movie.posterPath ?? '',
                 fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    color: Colors.grey,
+                    child: Icon(Icons.error, color: Colors.red, size: 50),
+                  );
+                },
               ),
             ),
           ),
@@ -442,7 +475,7 @@ class HomePage extends ConsumerWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
               image: DecorationImage(
-                image: NetworkImage('${movie.backdropPath}'),
+                image: NetworkImage(movie.backdropPath ?? ''),
                 fit: BoxFit.cover,
               ),
             ),

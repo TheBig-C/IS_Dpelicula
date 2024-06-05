@@ -3,6 +3,7 @@ import 'package:is_dpelicula/models/functionCine.dart';
 
 class FunctionCineApi {
   final CollectionReference _functionCinesCollection = FirebaseFirestore.instance.collection('functions');
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Future<List<FunctionCine>> getAllFunctionCines() async {
     try {
@@ -12,18 +13,10 @@ class FunctionCineApi {
       rethrow;
     }
   }
-
-  Future<FunctionCine?> getFunctionCineById(String id) async {
-    try {
-      final docSnapshot = await _functionCinesCollection.doc(id).get();
-      if (docSnapshot.exists) {
-        return FunctionCine.fromMap(docSnapshot.data() as Map<String, dynamic>, functionCineId: docSnapshot.id);
-      } else {
-        return null;
-      }
-    } catch (e) {
-      rethrow;
-    }
+  
+  Future<FunctionCine> getFunctionById(String id) async {
+    final doc = await _firestore.collection('functions').doc(id).get();
+    return FunctionCine.fromMap(doc.data() as Map<String, dynamic>, functionCineId: doc.id);
   }
 
   Future<void> addFunctionCine(FunctionCine functionCine) async {

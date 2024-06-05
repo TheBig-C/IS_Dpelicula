@@ -11,6 +11,7 @@ import 'package:is_dpelicula/pages/movies/register_movie_page.dart';
 import 'package:is_dpelicula/pages/movies/registered_movies.dart';
 import 'package:is_dpelicula/pages/room/RegisteredRoomsPage.dart';
 import 'package:is_dpelicula/pages/room/roomCreationPage.dart';
+import 'package:is_dpelicula/pages/tickets/registered_tickets.dart';
 import 'package:is_dpelicula/pages/users/control_client.dart';
 import 'package:is_dpelicula/pages/users/control_employee.dart';
 import 'package:is_dpelicula/pages/users/profile_edit_page.dart';
@@ -102,6 +103,9 @@ class _OptionsPageState extends State<OptionsPage> {
                   if (isAdmin)
                     _buildDrawerItem(Icons.schedule, 'Cartelera Actual',
                         () => _updateMainContent(ActiveSchedulePage())),
+                        if (isAdmin)
+                    _buildDrawerItem(Icons.airplane_ticket, 'Cartelera Actual',
+                        () => _updateMainContent(RegisteredTicketsPage())),
                   _buildDrawerItem(Icons.exit_to_app, 'Cerrar sesión', () {
                     FirebaseAuth.instance
                         .signOut()

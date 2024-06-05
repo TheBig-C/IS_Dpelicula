@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-
 part 'billBoard.freezed.dart';
 part 'billBoard.g.dart';
 
@@ -22,18 +21,19 @@ class BillBoard with _$BillBoard {
       id: billBoardId,
       functionIds: List<String>.from(map['functionIds']),
       isActive: map['isActive'] as bool,
-      startDate: (map['startDate'] as Timestamp).toDate(),
-      endDate: (map['endDate'] as Timestamp).toDate(),
+      startDate: _convertToDateTime(map['startDate']),
+      endDate: _convertToDateTime(map['endDate']),
       createdBy: map['createdBy'] as String,
     );
   }
 
-  Map<String, dynamic> toJson() => {
-    'id': id,
-    'functionIds': functionIds,
-    'isActive': isActive,
-    'startDate': Timestamp.fromDate(startDate),
-    'endDate': Timestamp.fromDate(endDate),
-    'createdBy': createdBy,
-  };
+  static DateTime _convertToDateTime(dynamic value) {
+    if (value is Timestamp) {
+      return value.toDate();
+    } else if (value is String) {
+      return DateTime.parse(value);
+    } else {
+      throw ArgumentError('Invalid date format');
+    }
+  }
 }

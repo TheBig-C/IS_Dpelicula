@@ -23,12 +23,22 @@ class FunctionCine with _$FunctionCine {
     return FunctionCine(
       id: functionCineId,
       movieId: map['movieId'] as String,
-      startTime: (map['startTime'] as Timestamp).toDate(),
-      endTime: (map['endTime'] as Timestamp).toDate(),
+      startTime: _convertToDateTime(map['startTime']),
+      endTime: _convertToDateTime(map['endTime']),
       roomId: map['roomId'] as String,
       price: (map['price'] as num).toDouble(),
       type: map['type'] as String,
       createdBy: map['createdBy'] as String,
     );
+  }
+
+  static DateTime _convertToDateTime(dynamic value) {
+    if (value is Timestamp) {
+      return value.toDate();
+    } else if (value is String) {
+      return DateTime.parse(value);
+    } else {
+      throw ArgumentError('Invalid date format');
+    }
   }
 }
