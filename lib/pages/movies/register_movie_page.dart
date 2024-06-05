@@ -1,8 +1,9 @@
 import 'dart:typed_data';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/material.dart';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
 import 'package:is_dpelicula/models/movie.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
@@ -24,10 +25,13 @@ class _RegisterMovieState extends State<RegisterMovie> {
   final TextEditingController directorNamesController = TextEditingController();
   final TextEditingController leadActorsController = TextEditingController();
   final TextEditingController registeredByController = TextEditingController();
-  final TextEditingController durationInMinutesController = TextEditingController();
-  final TextEditingController usBoxOfficeController = TextEditingController(text: '0');
+  final TextEditingController durationInMinutesController =
+      TextEditingController();
+  final TextEditingController usBoxOfficeController =
+      TextEditingController(text: '0');
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
-  final CollectionReference movies = FirebaseFirestore.instance.collection('movies');
+  final CollectionReference movies =
+      FirebaseFirestore.instance.collection('movies');
 
   String? _posterUploadConfirmation;
   String? _backdropUploadConfirmation;
@@ -37,9 +41,11 @@ class _RegisterMovieState extends State<RegisterMovie> {
   Uint8List? _backdropFile;
   int _currentStep = 0;
 
-  Future<String> _uploadImageToFirebase(Uint8List fileBytes, String type) async {
+  Future<String> _uploadImageToFirebase(
+      Uint8List fileBytes, String type) async {
     String fileName = '$type-${DateTime.now().millisecondsSinceEpoch}';
-    Reference ref = FirebaseStorage.instance.ref().child('movies_image/$fileName');
+    Reference ref =
+        FirebaseStorage.instance.ref().child('movies_image/$fileName');
     UploadTask uploadTask = ref.putData(fileBytes);
     TaskSnapshot taskSnapshot = await uploadTask;
     String imageUrl = await taskSnapshot.ref.getDownloadURL();
@@ -56,7 +62,8 @@ class _RegisterMovieState extends State<RegisterMovie> {
   }
 
   Future<void> _pickImage(String type) async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(type: FileType.image, withData: true);
+    FilePickerResult? result = await FilePicker.platform
+        .pickFiles(type: FileType.image, withData: true);
     if (result != null) {
       PlatformFile file = result.files.first;
       setState(() {
@@ -145,8 +152,12 @@ class _RegisterMovieState extends State<RegisterMovie> {
             child: Stepper(
               currentStep: _currentStep,
               onStepTapped: (step) => setState(() => _currentStep = step),
-              onStepContinue: _currentStep < 3 ? () => setState(() => _currentStep += 1) : _submitForm,
-              onStepCancel: _currentStep > 0 ? () => setState(() => _currentStep -= 1) : null,
+              onStepContinue: _currentStep < 3
+                  ? () => setState(() => _currentStep += 1)
+                  : _submitForm,
+              onStepCancel: _currentStep > 0
+                  ? () => setState(() => _currentStep -= 1)
+                  : null,
               steps: <Step>[
                 Step(
                   title: Text('Detalles Básicos'),
@@ -155,18 +166,21 @@ class _RegisterMovieState extends State<RegisterMovie> {
                     children: [
                       _buildInputField(titleController, "Título"),
                       SizedBox(height: 20),
-                      _buildInputField(overviewController, "Descripción", maxLines: 10),
+                      _buildInputField(overviewController, "Descripción",
+                          maxLines: 10),
                     ],
                   ),
                   isActive: _currentStep >= 0,
-                  state: _currentStep > 0 ? StepState.complete : StepState.editing,
+                  state:
+                      _currentStep > 0 ? StepState.complete : StepState.editing,
                 ),
                 Step(
                   title: Text('Calificación y Estado'),
                   content: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildInputField(voteAverageController, "Calificación Promedio"),
+                      _buildInputField(
+                          voteAverageController, "Calificación Promedio"),
                       SizedBox(height: 20),
                       _buildDropdownField(),
                       SizedBox(height: 20),
@@ -174,7 +188,8 @@ class _RegisterMovieState extends State<RegisterMovie> {
                     ],
                   ),
                   isActive: _currentStep >= 1,
-                  state: _currentStep > 1 ? StepState.complete : StepState.editing,
+                  state:
+                      _currentStep > 1 ? StepState.complete : StepState.editing,
                 ),
                 Step(
                   title: Text('Subir Imágenes'),
@@ -189,7 +204,7 @@ class _RegisterMovieState extends State<RegisterMovie> {
                       if (_posterUploadConfirmation != null)
                         Padding(
                           key: ValueKey(_posterUploadConfirmation),
-                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          padding: const EdgeInsets.symmetric(vertical: 6),
                           child: Text(_posterUploadConfirmation!),
                         ),
                       SizedBox(height: 20),
@@ -197,50 +212,75 @@ class _RegisterMovieState extends State<RegisterMovie> {
                         onPressed: () => _pickImage('backdrop'),
                         child: Text("Cargar Imagen de Fondo"),
                       ),
-                      if (_backdropFile != null) _buildImagePreview(_backdropFile),
+                      if (_backdropFile != null)
+                        _buildImagePreview(_backdropFile),
                       if (_backdropUploadConfirmation != null)
                         Padding(
                           key: ValueKey(_backdropUploadConfirmation),
-                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          padding: const EdgeInsets.symmetric(vertical: 6),
                           child: Text(_backdropUploadConfirmation!),
                         ),
                     ],
                   ),
                   isActive: _currentStep >= 2,
-                  state: _currentStep > 2 ? StepState.complete : StepState.editing,
+                  state:
+                      _currentStep > 2 ? StepState.complete : StepState.editing,
                 ),
                 Step(
                   title: Text('Detalles de Producción'),
                   content: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildInputField(directorNamesController, "Nombres de los Directores"),
+                      _buildInputField(
+                          directorNamesController, "Nombres de los Directores"),
                       SizedBox(height: 20),
-                      _buildInputField(leadActorsController, "Actores Principales"),
+                      _buildInputField(
+                          leadActorsController, "Actores Principales"),
                       SizedBox(height: 20),
-                      _buildInputField(durationInMinutesController, "Duración en Minutos"),
+                      _buildInputField(
+                          durationInMinutesController, "Duración en Minutos"),
                       SizedBox(height: 20),
-                      _buildInputField(usBoxOfficeController, "Taquilla Provisional (EE.UU.)"),
+                      _buildInputField(usBoxOfficeController,
+                          "Taquilla Provisional (EE.UU.)"),
                     ],
                   ),
                   isActive: _currentStep >= 3,
-                  state: _currentStep == 3 ? StepState.editing : StepState.complete,
+                  state: _currentStep == 3
+                      ? StepState.editing
+                      : StepState.complete,
                 ),
               ],
               controlsBuilder: (BuildContext context, ControlsDetails details) {
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    if (_currentStep != 0)
+                return Padding(
+                  padding: const EdgeInsets.symmetric(
+                      vertical:
+                          20.0), // Añade espacio entre los botones y los contenedores
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      if (_currentStep != 0)
+                        ElevatedButton(
+                          onPressed: details.onStepCancel,
+                          child: const Text('Anterior'),
+                          style: ElevatedButton.styleFrom(
+                            foregroundColor: const Color(0xff222222),
+                            backgroundColor: const Color(0xfff4b33c),
+                            shape: const StadiumBorder(),
+                          ),
+                        ),
                       ElevatedButton(
-                        onPressed: details.onStepCancel,
-                        child: const Text('Anterior'),
+                        onPressed: details.onStepContinue,
+                        child: _currentStep == 3
+                            ? const Text('Registrar')
+                            : const Text('Siguiente'),
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: const Color(0xff222222),
+                          backgroundColor: const Color(0xfff4b33c),
+                          shape: const StadiumBorder(),
+                        ),
                       ),
-                    ElevatedButton(
-                      onPressed: details.onStepContinue,
-                      child: _currentStep == 3 ? const Text('Registrar') : const Text('Siguiente'),
-                    ),
-                  ],
+                    ],
+                  ),
                 );
               },
             ),
@@ -250,44 +290,61 @@ class _RegisterMovieState extends State<RegisterMovie> {
     );
   }
 
-  Widget _buildInputField(TextEditingController controller, String label, {int maxLines = 1}) {
-    return TextFormField(
-      controller: controller,
-      decoration: _inputDecoration(context, label),
-      maxLines: maxLines,
+  Widget _buildInputField(TextEditingController controller, String label,
+      {int maxLines = 1}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+          vertical: 6.0), // Ajusta el padding para un mejor espaciado
+      child: TextFormField(
+        controller: controller,
+        decoration: _inputDecoration(context, label),
+        maxLines: maxLines,
+        style: TextStyle(
+          color: const Color(0xfff4b33c).withOpacity(0.7),
+          fontSize: 18,
+        ),
+      ),
     );
   }
 
   Widget _buildDropdownField() {
-    return DropdownButtonFormField<String>(
-      value: statusController.text.isNotEmpty ? statusController.text : null,
-      onChanged: (value) {
-        setState(() {
-          statusController.text = value!;
-        });
-      },
-      items: [
-        DropdownMenuItem(
-          child: Text('Muy Pronto', style: TextStyle(color: Colors.white)),
-          value: 'muy pronto',
-        ),
-        DropdownMenuItem(
-          child: Text('En Cartelera', style: TextStyle(color: Colors.white)),
-          value: 'en cartelera',
-        ),
-        DropdownMenuItem(
-          child: Text('Ya no disponible', style: TextStyle(color: Colors.white)),
-          value: 'ya no disponible',
-        ),
-      ],
-      decoration: _inputDecoration(context, "Estado"),
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+          vertical: 6.0), // Ajusta el padding para un mejor espaciado
+      child: DropdownButtonFormField<String>(
+        value: statusController.text.isNotEmpty ? statusController.text : null,
+        onChanged: (value) {
+          setState(() {
+            statusController.text = value!;
+          });
+        },
+        items: [
+          DropdownMenuItem(
+            child: Text('Muy Pronto',
+                style: TextStyle(color: const Color(0xfff4b33c))),
+            value: 'muy pronto',
+          ),
+          DropdownMenuItem(
+            child: Text('En Cartelera',
+                style: TextStyle(color: const Color(0xfff4b33c))),
+            value: 'en cartelera',
+          ),
+          DropdownMenuItem(
+            child: Text('Ya no disponible',
+                style: TextStyle(color: const Color(0xfff4b33c))),
+            value: 'ya no disponible',
+          ),
+        ],
+        dropdownColor: const Color(0xff1C1C27), // Azul oscuro
+        decoration: _inputDecoration(context, "Estado"),
+      ),
     );
   }
 
   Widget _buildImagePreview(Uint8List? fileBytes) {
     return fileBytes != null
         ? Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10),
+            padding: const EdgeInsets.symmetric(vertical: 6),
             child: Image.memory(
               fileBytes,
               height: 200,
@@ -321,7 +378,8 @@ class _RegisterMovieState extends State<RegisterMovie> {
         directorNames: [directorNamesController.text.trim()],
         leadActors: [leadActorsController.text.trim()],
         registeredBy: registeredByController.text.trim(),
-        durationInMinutes: int.tryParse(durationInMinutesController.text.trim()) ?? 0,
+        durationInMinutes:
+            int.tryParse(durationInMinutesController.text.trim()) ?? 0,
         usBoxOffice: int.tryParse(usBoxOfficeController.text.trim()) ?? 0,
       );
 
@@ -332,23 +390,26 @@ class _RegisterMovieState extends State<RegisterMovie> {
   InputDecoration _inputDecoration(BuildContext context, String label) {
     return InputDecoration(
       labelText: label,
-      floatingLabelStyle: const TextStyle(color: Colors.white54, fontSize: 22),
-      labelStyle: const TextStyle(
-        color: Colors.white38,
+      floatingLabelStyle: TextStyle(
+        color: const Color(0xfff4b33c).withOpacity(0.7),
+        fontSize: 22,
+      ),
+      labelStyle: TextStyle(
+        color: const Color(0xfff4b33c).withOpacity(0.7),
         fontSize: 16,
         fontWeight: FontWeight.w500,
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       enabledBorder: OutlineInputBorder(
-        borderSide: const BorderSide(color: Colors.white24),
+        borderSide: BorderSide(color: const Color(0xfff4b33c).withOpacity(0.4)),
         borderRadius: BorderRadius.circular(16),
       ),
       focusedBorder: OutlineInputBorder(
-        borderSide: BorderSide(color: Theme.of(context).primaryColor),
+        borderSide: BorderSide(color: const Color(0xfff4b33c).withOpacity(0.7)),
         borderRadius: BorderRadius.circular(16),
       ),
       border: OutlineInputBorder(
-        borderSide: const BorderSide(color: Colors.white70),
+        borderSide: BorderSide(color: const Color(0xfff4b33c).withOpacity(0.7)),
         borderRadius: BorderRadius.circular(16),
       ),
     );

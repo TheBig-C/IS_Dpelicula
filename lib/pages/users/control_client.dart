@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 
 class ControlClient extends StatefulWidget {
   const ControlClient({super.key});
@@ -69,10 +69,7 @@ class _ControlClientState extends State<ControlClient> {
               Expanded(
                 child: TextField(
                   controller: nameFilterController,
-                  decoration: InputDecoration(
-                    labelText: 'Buscar por nombre',
-                    border: OutlineInputBorder(),
-                  ),
+                  decoration: _inputDecoration('Buscar por nombre'),
                   onChanged: (value) {
                     setState(() {});
                   },
@@ -82,10 +79,7 @@ class _ControlClientState extends State<ControlClient> {
               Expanded(
                 child: TextField(
                   controller: ciFilterController,
-                  decoration: InputDecoration(
-                    labelText: 'Buscar por Telefono',
-                    border: OutlineInputBorder(),
-                  ),
+                  decoration: _inputDecoration('Buscar por Telefono'),
                   onChanged: (value) {
                     setState(() {});
                   },
@@ -95,10 +89,7 @@ class _ControlClientState extends State<ControlClient> {
               Expanded(
                 child: TextField(
                   controller: emailFilterController,
-                  decoration: InputDecoration(
-                    labelText: 'Buscar por email',
-                    border: OutlineInputBorder(),
-                  ),
+                  decoration: _inputDecoration('Buscar por email'),
                   onChanged: (value) {
                     setState(() {});
                   },
@@ -122,15 +113,26 @@ class _ControlClientState extends State<ControlClient> {
     );
   }
 
+  InputDecoration _inputDecoration(String labelText) {
+    return InputDecoration(
+      labelText: labelText,
+      labelStyle: TextStyle(color: Color(0xfff4b33c)),
+      focusedBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: Color(0xfff4b33c)),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: Color(0xfff4b33c)),
+      ),
+    );
+  }
+
   Widget _buildUserList(CollectionReference users) {
     String nameQuery = nameFilterController.text.toLowerCase();
     String ciQuery = ciFilterController.text.toLowerCase();
     String emailQuery = emailFilterController.text.toLowerCase();
 
     return StreamBuilder<QuerySnapshot>(
-      stream: users
-          .where('role', whereIn: ['client'])
-          .snapshots(),
+      stream: users.where('role', whereIn: ['client']).snapshots(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.hasError) {
           return Text('Algo salió mal');
@@ -142,15 +144,19 @@ class _ControlClientState extends State<ControlClient> {
 
         var filteredDocs = snapshot.data!.docs.where((doc) {
           var data = doc.data() as Map<String, dynamic>;
-          bool matchesName = nameQuery.isEmpty || data['name'].toString().toLowerCase().contains(nameQuery);
-          bool matchesCI = ciQuery.isEmpty || data['phone'].toString().toLowerCase().contains(ciQuery);
-          bool matchesEmail = emailQuery.isEmpty || data['email'].toString().toLowerCase().contains(emailQuery);
+          bool matchesName = nameQuery.isEmpty ||
+              data['name'].toString().toLowerCase().contains(nameQuery);
+          bool matchesCI = ciQuery.isEmpty ||
+              data['phone'].toString().toLowerCase().contains(ciQuery);
+          bool matchesEmail = emailQuery.isEmpty ||
+              data['email'].toString().toLowerCase().contains(emailQuery);
           return matchesName && matchesCI && matchesEmail;
         }).toList();
 
         return ListView(
           children: filteredDocs.map((DocumentSnapshot document) {
-            Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+            Map<String, dynamic> data =
+                document.data()! as Map<String, dynamic>;
             return Card(
               margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
               child: Padding(
@@ -190,7 +196,8 @@ class _ControlClientState extends State<ControlClient> {
                         IconButton(
                           icon: Icon(Icons.delete, color: Colors.red),
                           onPressed: () {
-                            _showDeleteConfirmationDialog(document.id, data['email']);
+                            _showDeleteConfirmationDialog(
+                                document.id, data['email']);
                           },
                         ),
                       ],
@@ -204,6 +211,7 @@ class _ControlClientState extends State<ControlClient> {
       },
     );
   }
+
   void _showEditUserDialog(String userId, Map<String, dynamic> userData) {
     nameController.text = userData['name'] ?? '';
     ciController.text = userData['CI']?.toString() ?? '';
@@ -225,7 +233,9 @@ class _ControlClientState extends State<ControlClient> {
                 children: [
                   TextFormField(
                     controller: nameController,
-                    decoration: InputDecoration(labelText: 'Nombre', labelStyle: TextStyle(color: Colors.black)),
+                    decoration: InputDecoration(
+                        labelText: 'Nombre',
+                        labelStyle: TextStyle(color: Colors.black)),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Por favor ingrese un nombre';
@@ -236,12 +246,16 @@ class _ControlClientState extends State<ControlClient> {
                   ),
                   TextFormField(
                     controller: addressController,
-                    decoration: InputDecoration(labelText: 'Dirección', labelStyle: TextStyle(color: Colors.black)),
+                    decoration: InputDecoration(
+                        labelText: 'Dirección',
+                        labelStyle: TextStyle(color: Colors.black)),
                     style: TextStyle(color: Colors.black),
                   ),
                   TextFormField(
                     controller: emailController,
-                    decoration: InputDecoration(labelText: 'Email', labelStyle: TextStyle(color: Colors.black)),
+                    decoration: InputDecoration(
+                        labelText: 'Email',
+                        labelStyle: TextStyle(color: Colors.black)),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Por favor ingrese un email';
@@ -252,12 +266,16 @@ class _ControlClientState extends State<ControlClient> {
                   ),
                   TextFormField(
                     controller: moneyController,
-                    decoration: InputDecoration(labelText: 'Dinero', labelStyle: TextStyle(color: Colors.black)),
+                    decoration: InputDecoration(
+                        labelText: 'Dinero',
+                        labelStyle: TextStyle(color: Colors.black)),
                     style: TextStyle(color: Colors.black),
                   ),
                   TextFormField(
                     controller: phoneController,
-                    decoration: InputDecoration(labelText: 'Teléfono', labelStyle: TextStyle(color: Colors.black)),
+                    decoration: InputDecoration(
+                        labelText: 'Teléfono',
+                        labelStyle: TextStyle(color: Colors.black)),
                     style: TextStyle(color: Colors.black),
                   ),
                 ],
@@ -313,8 +331,10 @@ class _ControlClientState extends State<ControlClient> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Confirmar eliminación', style: TextStyle(color: Colors.black)),
-          content: Text('¿Estás seguro de que deseas eliminar este usuario?', style: TextStyle(color: Colors.black)),
+          title: Text('Confirmar eliminación',
+              style: TextStyle(color: Colors.black)),
+          content: Text('¿Estás seguro de que deseas eliminar este usuario?',
+              style: TextStyle(color: Colors.black)),
           actions: [
             TextButton(
               child: Text('Cancelar', style: TextStyle(color: Colors.black)),
@@ -355,7 +375,8 @@ class _ControlClientState extends State<ControlClient> {
 
   Future<User?> _findUserByEmail(String email) async {
     try {
-      var methods = await FirebaseAuth.instance.fetchSignInMethodsForEmail(email);
+      var methods =
+          await FirebaseAuth.instance.fetchSignInMethodsForEmail(email);
       if (methods.isNotEmpty) {
         var signInMethod = methods.first;
         if (signInMethod == 'password') {

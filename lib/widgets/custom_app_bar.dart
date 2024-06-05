@@ -1,6 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart'; // Asegúrate de importar FirebaseAuth
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:firebase_auth/firebase_auth.dart';  // Asegúrate de importar FirebaseAuth
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool isDesktop;
@@ -41,17 +41,19 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             child: Text("Contáctanos", style: TextStyle(color: Colors.white)),
           ),
         ],
-        if (user != null) ...[  // Verifica si el usuario está autenticado
+        if (user != null) ...[
+          // Verifica si el usuario está autenticado
           IconButton(
             icon: const Icon(Icons.more_vert, color: Colors.white),
             onPressed: () {
               context.goNamed('optionsPage');
             },
           ),
-        ] else ...[  // Si no hay usuario autenticado, muestra el botón de Login
+        ] else ...[
+          // Si no hay usuario autenticado, muestra el botón de Login
           TextButton(
             onPressed: () => context.goNamed('login'),
-            child: Text("Login", style: TextStyle(color: Colors.white)),
+            child: Text("Inicia Sesión", style: TextStyle(color: Colors.white)),
           ),
         ],
       ],

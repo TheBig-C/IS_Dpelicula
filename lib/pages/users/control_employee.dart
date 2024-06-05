@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 
 class ControlEmployee extends StatefulWidget {
   const ControlEmployee({super.key});
@@ -23,6 +23,7 @@ class _ControlEmployeeState extends State<ControlEmployee> {
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController roleController = TextEditingController();
   String selectedRole = 'admin';
+
   @override
   Widget build(BuildContext context) {
     bool isDesktop = MediaQuery.of(context).size.width > 800;
@@ -69,10 +70,7 @@ class _ControlEmployeeState extends State<ControlEmployee> {
               Expanded(
                 child: TextField(
                   controller: nameFilterController,
-                  decoration: InputDecoration(
-                    labelText: 'Buscar por nombre',
-                    border: OutlineInputBorder(),
-                  ),
+                  decoration: _inputDecoration('Buscar por nombre'),
                   onChanged: (value) {
                     setState(() {});
                   },
@@ -82,10 +80,7 @@ class _ControlEmployeeState extends State<ControlEmployee> {
               Expanded(
                 child: TextField(
                   controller: ciFilterController,
-                  decoration: InputDecoration(
-                    labelText: 'Buscar por CI',
-                    border: OutlineInputBorder(),
-                  ),
+                  decoration: _inputDecoration('Buscar por CI'),
                   onChanged: (value) {
                     setState(() {});
                   },
@@ -95,10 +90,7 @@ class _ControlEmployeeState extends State<ControlEmployee> {
               Expanded(
                 child: TextField(
                   controller: emailFilterController,
-                  decoration: InputDecoration(
-                    labelText: 'Buscar por email',
-                    border: OutlineInputBorder(),
-                  ),
+                  decoration: _inputDecoration('Buscar por email'),
                   onChanged: (value) {
                     setState(() {});
                   },
@@ -119,6 +111,19 @@ class _ControlEmployeeState extends State<ControlEmployee> {
         ),
         Expanded(child: _buildUserList(users)),
       ],
+    );
+  }
+
+  InputDecoration _inputDecoration(String labelText) {
+    return InputDecoration(
+      labelText: labelText,
+      labelStyle: TextStyle(color: Color(0xfff4b33c)),
+      focusedBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: Color(0xfff4b33c)),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: Color(0xfff4b33c)),
+      ),
     );
   }
 

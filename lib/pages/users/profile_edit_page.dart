@@ -85,45 +85,17 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                                   keyboardType: TextInputType.name,
                                   cursorColor: Theme.of(context).primaryColor,
                                   enabled: false,
-                                  style: const TextStyle(
-                                      color: Colors.white38, fontSize: 18),
+                                  style: TextStyle(
+                                      color: Color(0xfff4b33c).withOpacity(0.7),
+                                      fontSize: 18),
                                   autovalidateMode:
                                       AutovalidateMode.onUserInteraction,
                                   validator: (email) =>
                                       email != null && email.isEmpty
                                           ? 'Email can\'t be empty'
                                           : null,
-                                  decoration: InputDecoration(
-                                      labelText: "Email",
-                                      floatingLabelStyle: const TextStyle(
-                                          color: Colors.white54, fontSize: 22),
-                                      labelStyle: const TextStyle(
-                                          color: Colors.white38,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w500),
-                                      contentPadding:
-                                          const EdgeInsets.symmetric(
-                                              horizontal: 20, vertical: 20),
-                                      enabledBorder: OutlineInputBorder(
-                                          borderSide: const BorderSide(
-                                              color: Colors.white24),
-                                          borderRadius:
-                                              BorderRadius.circular(16)),
-                                      disabledBorder: OutlineInputBorder(
-                                          borderSide: const BorderSide(
-                                              color: Colors.white24),
-                                          borderRadius:
-                                              BorderRadius.circular(16)),
-                                      focusedBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                              color: Theme.of(context)
-                                                  .primaryColor),
-                                          borderRadius:
-                                              BorderRadius.circular(16)),
-                                      border: OutlineInputBorder(
-                                          borderSide: const BorderSide(
-                                              color: Colors.white70),
-                                          borderRadius: BorderRadius.circular(16))),
+                                  decoration:
+                                      _inputDecoration('Email', context),
                                 ),
                                 const SizedBox(height: 20),
                                 TextFormField(
@@ -134,41 +106,17 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                                   onSaved: (value) {
                                     profileData['name'] = value!.trim();
                                   },
-                                  style: const TextStyle(
-                                      color: Colors.white70, fontSize: 18),
+                                  style: TextStyle(
+                                      color: Color(0xfff4b33c).withOpacity(0.7),
+                                      fontSize: 18),
                                   autovalidateMode:
                                       AutovalidateMode.onUserInteraction,
                                   validator: (name) =>
                                       name != null && name.isEmpty
                                           ? 'Name can\'t be empty'
                                           : null,
-                                  decoration: InputDecoration(
-                                      labelText: "Nombre",
-                                      floatingLabelStyle: const TextStyle(
-                                          color: Colors.white54, fontSize: 22),
-                                      labelStyle: const TextStyle(
-                                          color: Colors.white38,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w500),
-                                      contentPadding:
-                                          const EdgeInsets.symmetric(
-                                              horizontal: 20, vertical: 20),
-                                      enabledBorder: OutlineInputBorder(
-                                          borderSide: const BorderSide(
-                                              color: Colors.white24),
-                                          borderRadius:
-                                              BorderRadius.circular(16)),
-                                      focusedBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                              color: Theme.of(context)
-                                                  .primaryColor),
-                                          borderRadius:
-                                              BorderRadius.circular(16)),
-                                      border: OutlineInputBorder(
-                                          borderSide: const BorderSide(
-                                              color: Colors.white70),
-                                          borderRadius:
-                                              BorderRadius.circular(16))),
+                                  decoration:
+                                      _inputDecoration('Nombre', context),
                                 ),
                                 const SizedBox(height: 20),
                                 TextFormField(
@@ -179,8 +127,9 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                                   onSaved: (value) {
                                     profileData['phone'] = value!.trim();
                                   },
-                                  style: const TextStyle(
-                                      color: Colors.white70, fontSize: 18),
+                                  style: TextStyle(
+                                      color: Color(0xfff4b33c).withOpacity(0.7),
+                                      fontSize: 18),
                                   autovalidateMode:
                                       AutovalidateMode.onUserInteraction,
                                   validator: (phone) {
@@ -192,33 +141,8 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
 
                                     return null;
                                   },
-                                  decoration: InputDecoration(
-                                      labelText: "Telefono",
-                                      floatingLabelStyle: const TextStyle(
-                                          color: Colors.white54, fontSize: 22),
-                                      labelStyle: const TextStyle(
-                                          color: Colors.white38,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w500),
-                                      contentPadding:
-                                          const EdgeInsets.symmetric(
-                                              horizontal: 20, vertical: 20),
-                                      enabledBorder: OutlineInputBorder(
-                                          borderSide: const BorderSide(
-                                              color: Colors.white24),
-                                          borderRadius:
-                                              BorderRadius.circular(16)),
-                                      focusedBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                              color: Theme.of(context)
-                                                  .primaryColor),
-                                          borderRadius:
-                                              BorderRadius.circular(16)),
-                                      border: OutlineInputBorder(
-                                          borderSide: const BorderSide(
-                                              color: Colors.white70),
-                                          borderRadius:
-                                              BorderRadius.circular(16))),
+                                  decoration:
+                                      _inputDecoration('Telefono', context),
                                 ),
                                 const SizedBox(height: 20),
                                 TextFormField(
@@ -229,41 +153,17 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                                   onSaved: (value) {
                                     profileData['address'] = value!.trim();
                                   },
-                                  style: const TextStyle(
-                                      color: Colors.white70, fontSize: 18),
+                                  style: TextStyle(
+                                      color: Color(0xfff4b33c).withOpacity(0.7),
+                                      fontSize: 18),
                                   autovalidateMode:
                                       AutovalidateMode.onUserInteraction,
                                   validator: (address) =>
                                       address != null && address.isEmpty
                                           ? 'Address can\'t be empty'
                                           : null,
-                                  decoration: InputDecoration(
-                                      labelText: "Direccion",
-                                      floatingLabelStyle: const TextStyle(
-                                          color: Colors.white54, fontSize: 22),
-                                      labelStyle: const TextStyle(
-                                          color: Colors.white38,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w500),
-                                      contentPadding:
-                                          const EdgeInsets.symmetric(
-                                              horizontal: 20, vertical: 20),
-                                      enabledBorder: OutlineInputBorder(
-                                          borderSide: const BorderSide(
-                                              color: Colors.white24),
-                                          borderRadius:
-                                              BorderRadius.circular(16)),
-                                      focusedBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                              color: Theme.of(context)
-                                                  .primaryColor),
-                                          borderRadius:
-                                              BorderRadius.circular(16)),
-                                      border: OutlineInputBorder(
-                                          borderSide: const BorderSide(
-                                              color: Colors.white70),
-                                          borderRadius:
-                                              BorderRadius.circular(16))),
+                                  decoration:
+                                      _inputDecoration('Direccion', context),
                                 ),
                                 const SizedBox(height: 40),
                                 Center(
@@ -335,5 +235,30 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                     })),
           ],
         ));
+  }
+
+  InputDecoration _inputDecoration(String labelText, BuildContext context) {
+    return InputDecoration(
+      labelText: labelText,
+      floatingLabelStyle: TextStyle(color: Color(0xfff4b33c), fontSize: 22),
+      labelStyle: TextStyle(
+        color: Color(0xfff4b33c).withOpacity(0.7),
+        fontSize: 16,
+        fontWeight: FontWeight.w500,
+      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      enabledBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: Color(0xfff4b33c).withOpacity(0.7)),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: Color(0xfff4b33c)),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      border: OutlineInputBorder(
+        borderSide: BorderSide(color: Color(0xfff4b33c).withOpacity(0.7)),
+        borderRadius: BorderRadius.circular(16),
+      ),
+    );
   }
 }

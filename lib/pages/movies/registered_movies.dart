@@ -46,7 +46,8 @@ class _RegisteredMoviesPageState extends ConsumerState<RegisteredMoviesPage> {
       body: SafeArea(
         child: MediaQuery.of(context).size.width > 800
             ? Center(
-                child: SizedBox(width: 800, child: _buildContent(movieListAsyncValue)),
+                child: SizedBox(
+                    width: 800, child: _buildContent(movieListAsyncValue)),
               )
             : ListView(children: [_buildContent(movieListAsyncValue)]),
       ),
@@ -63,10 +64,7 @@ class _RegisteredMoviesPageState extends ConsumerState<RegisteredMoviesPage> {
               Expanded(
                 child: TextField(
                   controller: titleFilterController,
-                  decoration: InputDecoration(
-                    labelText: 'Buscar por título',
-                    border: OutlineInputBorder(),
-                  ),
+                  decoration: _inputDecoration('Buscar por título'),
                   onChanged: (value) {
                     setState(() {});
                   },
@@ -76,10 +74,7 @@ class _RegisteredMoviesPageState extends ConsumerState<RegisteredMoviesPage> {
               Expanded(
                 child: TextField(
                   controller: ratingFilterController,
-                  decoration: InputDecoration(
-                    labelText: 'Buscar por calificación',
-                    border: OutlineInputBorder(),
-                  ),
+                  decoration: _inputDecoration('Buscar por calificación'),
                   onChanged: (value) {
                     setState(() {});
                   },
@@ -89,10 +84,7 @@ class _RegisteredMoviesPageState extends ConsumerState<RegisteredMoviesPage> {
               Expanded(
                 child: TextField(
                   controller: statusFilterController,
-                  decoration: InputDecoration(
-                    labelText: 'Buscar por estado',
-                    border: OutlineInputBorder(),
-                  ),
+                  decoration: _inputDecoration('Buscar por estado'),
                   onChanged: (value) {
                     setState(() {});
                   },
@@ -116,16 +108,35 @@ class _RegisteredMoviesPageState extends ConsumerState<RegisteredMoviesPage> {
     );
   }
 
+  InputDecoration _inputDecoration(String labelText) {
+    return InputDecoration(
+      labelText: labelText,
+      labelStyle: TextStyle(color: Color(0xfff4b33c)),
+      focusedBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: Color(0xfff4b33c)),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: Color(0xfff4b33c)),
+      ),
+    );
+  }
+
   Widget _buildMovieList(AsyncValue<List<Movie>> movieListAsyncValue) {
     return movieListAsyncValue.when(
       data: (movies) {
         final filteredMovies = movies.where((movie) {
           bool matchesTitle = titleFilterController.text.isEmpty ||
-              movie.title.toLowerCase().contains(titleFilterController.text.toLowerCase());
+              movie.title
+                  .toLowerCase()
+                  .contains(titleFilterController.text.toLowerCase());
           bool matchesRating = ratingFilterController.text.isEmpty ||
-              movie.voteAverage.toString().contains(ratingFilterController.text);
+              movie.voteAverage
+                  .toString()
+                  .contains(ratingFilterController.text);
           bool matchesStatus = statusFilterController.text.isEmpty ||
-              movie.status.toLowerCase().contains(statusFilterController.text.toLowerCase());
+              movie.status
+                  .toLowerCase()
+                  .contains(statusFilterController.text.toLowerCase());
           return matchesTitle && matchesRating && matchesStatus;
         }).toList();
 
@@ -186,7 +197,8 @@ class _RegisteredMoviesPageState extends ConsumerState<RegisteredMoviesPage> {
                             IconButton(
                               icon: Icon(Icons.delete, color: Colors.red),
                               onPressed: () {
-                                _showDeleteConfirmationDialog(movie.id, movie.title);
+                                _showDeleteConfirmationDialog(
+                                    movie.id, movie.title);
                               },
                             ),
                           ],
@@ -207,7 +219,8 @@ class _RegisteredMoviesPageState extends ConsumerState<RegisteredMoviesPage> {
 
   void _showEditMovieDialog(String movieId, Movie movieData) {
     final titleController = TextEditingController(text: movieData.title);
-    final voteAverageController = TextEditingController(text: movieData.voteAverage.toString());
+    final voteAverageController =
+        TextEditingController(text: movieData.voteAverage.toString());
     final statusController = TextEditingController(text: movieData.status);
     final overviewController = TextEditingController(text: movieData.overview);
 
@@ -252,7 +265,8 @@ class _RegisteredMoviesPageState extends ConsumerState<RegisteredMoviesPage> {
                     ),
                     ConstrainedBox(
                       constraints: BoxConstraints(
-                        maxHeight: 200, // Limita la altura del campo de descripción
+                        maxHeight:
+                            200, // Limita la altura del campo de descripción
                       ),
                       child: TextFormField(
                         controller: overviewController,
@@ -280,7 +294,12 @@ class _RegisteredMoviesPageState extends ConsumerState<RegisteredMoviesPage> {
               child: Text('Guardar', style: TextStyle(color: Colors.black)),
               onPressed: () {
                 if (formKey.currentState!.validate()) {
-                  _updateMovie(movieId, titleController.text, voteAverageController.text, statusController.text, overviewController.text);
+                  _updateMovie(
+                      movieId,
+                      titleController.text,
+                      voteAverageController.text,
+                      statusController.text,
+                      overviewController.text);
                   Navigator.of(context).pop();
                 }
               },
@@ -291,9 +310,13 @@ class _RegisteredMoviesPageState extends ConsumerState<RegisteredMoviesPage> {
     );
   }
 
-  Future<void> _updateMovie(String movieId, String title, String voteAverage, String status, String overview) async {
+  Future<void> _updateMovie(String movieId, String title, String voteAverage,
+      String status, String overview) async {
     try {
-      await FirebaseFirestore.instance.collection('movies').doc(movieId).update({
+      await FirebaseFirestore.instance
+          .collection('movies')
+          .doc(movieId)
+          .update({
         'title': title,
         'voteAverage': double.parse(voteAverage),
         'status': status,
@@ -341,7 +364,10 @@ class _RegisteredMoviesPageState extends ConsumerState<RegisteredMoviesPage> {
 
   Future<void> _deleteMovie(String movieId) async {
     try {
-      await FirebaseFirestore.instance.collection('movies').doc(movieId).delete();
+      await FirebaseFirestore.instance
+          .collection('movies')
+          .doc(movieId)
+          .delete();
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Película eliminada con éxito')),

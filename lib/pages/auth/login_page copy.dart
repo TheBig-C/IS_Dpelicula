@@ -1,4 +1,3 @@
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +7,6 @@ import 'package:is_dpelicula/cubit/money_cubit.dart';
 import 'package:is_dpelicula/widgets/custom_app_bar.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
-
 
 final navigatorKey = GlobalKey<NavigatorState>();
 
@@ -39,7 +37,7 @@ class _LoginPageState extends State<LoginPage> {
           children: [
             const SizedBox(height: 20),
             const Text(
-              "Let's sign you in.",
+              "Vamos a Iniciar Sesión",
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
             ),
             const SizedBox(height: 20),
@@ -54,9 +52,8 @@ class _LoginPageState extends State<LoginPage> {
               cursorColor: Theme.of(context).primaryColor,
               style: const TextStyle(color: Colors.white70, fontSize: 18),
               autovalidateMode: AutovalidateMode.onUserInteraction,
-              validator: (email) => email != null && email.isEmpty
-                  ? 'Ingrese un email'
-                  : null,
+              validator: (email) =>
+                  email != null && email.isEmpty ? 'Ingrese un email' : null,
               decoration: InputDecoration(
                   labelText: "Email",
                   floatingLabelStyle:
@@ -116,7 +113,7 @@ class _LoginPageState extends State<LoginPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Text(
-                  "Don't have an account?",
+                  "No tienes una cuenta?",
                   style: TextStyle(color: Colors.white70, fontSize: 16),
                 ),
                 TextButton(
@@ -124,7 +121,7 @@ class _LoginPageState extends State<LoginPage> {
                     context.goNamed('register');
                   },
                   child: Text(
-                    "Register",
+                    "Regístrate",
                     style: TextStyle(
                         color: Theme.of(context).primaryColor, fontSize: 16),
                   ),

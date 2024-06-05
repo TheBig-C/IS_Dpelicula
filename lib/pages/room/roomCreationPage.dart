@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:is_dpelicula/controllers/room_controllers.dart';
 import 'package:is_dpelicula/models/room.dart';
@@ -61,29 +62,39 @@ class _RoomCreationPageState extends ConsumerState<RoomCreationPage> {
                     const SizedBox(height: 16),
                     _buildInputField(typeController, 'Tipo de Sala'),
                     const SizedBox(height: 16),
-                    _buildInputField(rowsController, 'Número de Filas', isNumber: true, onChanged: (value) {
-                      setState(() {
-                        rows = int.tryParse(value) ?? 0;
-                      });
-                    }),
+                    _buildInputField(
+                      rowsController,
+                      'Número de Filas',
+                      isNumber: true,
+                      onChanged: (value) {
+                        setState(() {
+                          rows = int.tryParse(value) ?? 0;
+                        });
+                      },
+                    ),
                     const SizedBox(height: 16),
-                    _buildInputField(columnsController, 'Número de Columnas', isNumber: true, onChanged: (value) {
-                      setState(() {
-                        columns = int.tryParse(value) ?? 0;
-                      });
-                    }),
+                    _buildInputField(
+                      columnsController,
+                      'Número de Columnas',
+                      isNumber: true,
+                      onChanged: (value) {
+                        setState(() {
+                          columns = int.tryParse(value) ?? 0;
+                        });
+                      },
+                    ),
                     const SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: () => _createRoom(context),
                       child: const Text('Crear Sala'),
                       style: ElevatedButton.styleFrom(
-                        foregroundColor: const Color(0xff222222), backgroundColor: const Color(0xfff4b33c),
+                        foregroundColor: const Color(0xff222222),
+                        backgroundColor: const Color(0xfff4b33c),
                         shape: const StadiumBorder(),
                       ),
                     ),
                     const SizedBox(height: 32),
-                    if (rows > 0 && columns > 0)
-                      _buildRoomPreview(),
+                    if (rows > 0 && columns > 0) _buildRoomPreview(),
                   ],
                 ),
               ),
@@ -94,14 +105,35 @@ class _RoomCreationPageState extends ConsumerState<RoomCreationPage> {
     );
   }
 
-  Widget _buildInputField(TextEditingController controller, String label, {bool isNumber = false, ValueChanged<String>? onChanged}) {
+  Widget _buildInputField(TextEditingController controller, String label,
+      {bool isNumber = false, ValueChanged<String>? onChanged}) {
     return TextFormField(
       controller: controller,
       decoration: InputDecoration(
         labelText: label,
-        border: const OutlineInputBorder(),
+        floatingLabelStyle: TextStyle(
+            color: const Color(0xfff4b33c).withOpacity(0.7), fontSize: 22),
+        labelStyle: TextStyle(
+            color: const Color(0xfff4b33c).withOpacity(0.7),
+            fontSize: 16,
+            fontWeight: FontWeight.w500),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+        enabledBorder: OutlineInputBorder(
+            borderSide:
+                BorderSide(color: const Color(0xfff4b33c).withOpacity(0.4)),
+            borderRadius: BorderRadius.circular(16)),
+        focusedBorder: OutlineInputBorder(
+            borderSide:
+                BorderSide(color: const Color(0xfff4b33c).withOpacity(0.7)),
+            borderRadius: BorderRadius.circular(16)),
+        border: OutlineInputBorder(
+            borderSide:
+                BorderSide(color: const Color(0xfff4b33c).withOpacity(0.7)),
+            borderRadius: BorderRadius.circular(16)),
       ),
       keyboardType: isNumber ? TextInputType.number : TextInputType.text,
+      inputFormatters: isNumber ? [FilteringTextInputFormatter.digitsOnly] : [],
       validator: (value) {
         if (value == null || value.isEmpty) {
           return 'Por favor ingrese $label';
@@ -109,6 +141,10 @@ class _RoomCreationPageState extends ConsumerState<RoomCreationPage> {
         return null;
       },
       onChanged: onChanged,
+      style: TextStyle(
+        color: const Color(0xfff4b33c).withOpacity(0.7),
+        fontSize: 18,
+      ),
     );
   }
 
@@ -144,7 +180,8 @@ class _RoomCreationPageState extends ConsumerState<RoomCreationPage> {
   Widget _buildRoomPreview() {
     return Column(
       children: [
-        const Text('Previsualización de la Sala', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        const Text('Previsualización de la Sala',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
         const SizedBox(height: 16),
         Container(
           decoration: BoxDecoration(
