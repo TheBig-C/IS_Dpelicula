@@ -6,6 +6,7 @@ import 'package:is_dpelicula/pages/Dashboard/dashboard.dart';
 import 'package:is_dpelicula/pages/auth/register_employee.dart';
 import 'package:is_dpelicula/pages/billBoard/active_schedule_page.dart';
 import 'package:is_dpelicula/pages/billBoard/create_billboard_page.dart';
+import 'package:is_dpelicula/pages/movies/movie_rating.dart';
 import 'package:is_dpelicula/pages/movies/register_movie_page.dart';
 import 'package:is_dpelicula/pages/movies/registered_movies.dart';
 import 'package:is_dpelicula/pages/room/RegisteredRoomsPage.dart';
@@ -80,6 +81,9 @@ class _OptionsPageState extends State<OptionsPage> {
                   if (isAdmin)
                     _buildDrawerItem(Icons.people_alt, 'Control de empleados',
                         () => _updateMainContent(ControlEmployee())),
+                  if (isAdmin)
+                    _buildDrawerItem(Icons.local_movies_rounded, 'Satisfación del cliente',
+                        () => _updateMainContent(MovieSatisfaction())),
                   if (isAdmin)
                     _buildDrawerItem(Icons.group, 'Control de clientes',
                         () => _updateMainContent(ControlClient())),
