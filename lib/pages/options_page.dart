@@ -62,8 +62,6 @@ class _OptionsPageState extends State<OptionsPage> {
                 children: <Widget>[
                   _buildDrawerItem(
                       Icons.home, 'Inicio', () => context.goNamed('home')),
-                  _buildDrawerItem(Icons.history, 'Historial',
-                      () => context.goNamed('history')),
                   _buildDrawerItem(Icons.account_circle, 'Perfil',
                       () => _updateMainContent(ProfilePage())),
                   _buildDrawerItem(
