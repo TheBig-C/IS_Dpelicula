@@ -78,25 +78,25 @@ class _OptionsPageState extends State<OptionsPage> {
                     _buildDrawerItem(Icons.movie, 'Registrar Película',
                         () => _updateMainContent(RegisterMovie())),
                   if (isAdmin)
-                    _buildDrawerItem(Icons.people, 'Control de empleados',
+                    _buildDrawerItem(Icons.people_alt, 'Control de empleados',
                         () => _updateMainContent(ControlEmployee())),
                   if (isAdmin)
-                    _buildDrawerItem(Icons.people, 'Control de clientes',
+                    _buildDrawerItem(Icons.group, 'Control de clientes',
                         () => _updateMainContent(ControlClient())),
                   if (isAdmin)
-                    _buildDrawerItem(Icons.list, 'Ver Películas',
+                    _buildDrawerItem(Icons.movie_filter, 'Ver Películas',
                         () => _updateMainContent(RegisteredMoviesPage())),
                   if (isAdmin)
-                    _buildDrawerItem(Icons.list, 'Agregar Sala',
+                    _buildDrawerItem(Icons.add_business, 'Agregar Sala',
                         () => _updateMainContent(RoomCreationPage())),
                   if (isAdmin)
-                    _buildDrawerItem(Icons.list, 'Control Salas',
+                    _buildDrawerItem(Icons.room_preferences, 'Control Salas',
                         () => _updateMainContent(RegisteredRoomsPage())),
                   if (isAdmin)
-                    _buildDrawerItem(Icons.list, 'Crear Cartelera',
+                    _buildDrawerItem(Icons.add_to_photos, 'Crear Cartelera',
                         () => _updateMainContent(CreateBillboardPage())),
                   if (isAdmin)
-                    _buildDrawerItem(Icons.list, 'Cartelera Actual',
+                    _buildDrawerItem(Icons.schedule, 'Cartelera Actual',
                         () => _updateMainContent(ActiveSchedulePage())),
                   _buildDrawerItem(Icons.exit_to_app, 'Cerrar sesión', () {
                     FirebaseAuth.instance

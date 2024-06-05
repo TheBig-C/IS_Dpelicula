@@ -23,8 +23,10 @@ class BillboardController extends StateNotifier<AsyncValue<List<BillBoard>>> {
     try {
       final billboardApi = ref.read(billboardApiProvider);
       final billboards = await billboardApi.getAllBillboards();
+      print("Fetched billboards: ${billboards.length}");
       state = AsyncValue.data(billboards);
     } catch (e, stackTrace) {
+      print("Error fetching billboards: $e");
       state = AsyncValue.error(e, stackTrace);
     }
   }
@@ -35,6 +37,7 @@ class BillboardController extends StateNotifier<AsyncValue<List<BillBoard>>> {
       await billboardApi.addBillboard(billboard);
       fetchBillboards();
     } catch (e, stackTrace) {
+      print("Error adding billboard: $e");
       state = AsyncValue.error(e, stackTrace);
     }
   }
@@ -45,6 +48,7 @@ class BillboardController extends StateNotifier<AsyncValue<List<BillBoard>>> {
       await billboardApi.updateBillboard(billboard);
       fetchBillboards();
     } catch (e, stackTrace) {
+      print("Error updating billboard: $e");
       state = AsyncValue.error(e, stackTrace);
     }
   }
@@ -55,6 +59,7 @@ class BillboardController extends StateNotifier<AsyncValue<List<BillBoard>>> {
       await billboardApi.deleteBillboard(billboardId);
       fetchBillboards();
     } catch (e, stackTrace) {
+      print("Error deleting billboard: $e");
       state = AsyncValue.error(e, stackTrace);
     }
   }

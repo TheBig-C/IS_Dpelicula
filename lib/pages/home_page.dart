@@ -3,9 +3,10 @@ import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:is_dpelicula/controllers/function_controller.dart';
 import 'package:is_dpelicula/controllers/movie_controllers.dart';
+import 'package:is_dpelicula/models/functionCine.dart';
 import 'package:is_dpelicula/models/movie.dart';
-import 'package:is_dpelicula/widgets/category_card.dart';
 import 'package:is_dpelicula/widgets/custom_app_bar.dart';
 import 'package:is_dpelicula/widgets/desktop_footer.dart';
 import 'package:is_dpelicula/widgets/inactivity_handler.dart';
@@ -32,10 +33,19 @@ class HomePage extends ConsumerWidget {
               _buildNowPlayingMoviesSection(context, ref),
               Padding(
                 padding: const EdgeInsets.all(20.0),
-                child: Text("Próximas películas a estrenarse", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+                child: Text(
+                  "Próximas películas a estrenarse",
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                ),
               ),
               const SizedBox(height: 30),
               _buildComingSoonMoviesSection(ref),
+              const SizedBox(height: 30),
+              _buildFunctionsInBillboardCarousel(context, ref),
+              const SizedBox(height: 30),
+              _buildFunctionsByRoomTypeCarousel(context, ref),
+              const SizedBox(height: 30),
+              _buildFunctionsByFunctionTypeCarousel(context, ref),
               const SizedBox(height: 30),
               if (isDesktop) const DesktopFooter(),
             ],
@@ -66,9 +76,9 @@ class HomePage extends ConsumerWidget {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 60,  // Tamaño aumentado
-                  fontWeight: FontWeight.w900,  // Hace el texto más grueso
-                  fontStyle: FontStyle.italic,  // Estilo itálico
+                  fontSize: 60,
+                  fontWeight: FontWeight.w900,
+                  fontStyle: FontStyle.italic,
                   shadows: [
                     Shadow(
                       blurRadius: 15.0,
@@ -85,12 +95,130 @@ class HomePage extends ConsumerWidget {
     );
   }
 
+  Widget _buildFunctionsCarousel(BuildContext context, List<FunctionCine> functions, List<Movie> movies, String title) {
+    if (functions.isEmpty) {
+      return Center(child: Text('No hay funciones disponibles'));
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Text(
+            title,
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          ),
+        ),
+        const SizedBox(height: 20),
+        CarouselSlider.builder(
+          itemCount: functions.length,
+          itemBuilder: (context, index, realIndex) {
+            final function = functions[index];
+            final movie = movies.firstWhere((movie) => movie.id == function.movieId);
+            return GestureDetector(
+              onTap: () {
+                context.push('/function/${function.id}');
+              },
+              child: Container(
+                margin: const EdgeInsets.symmetric(horizontal: 5),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: Image.network(
+                    movie.posterPath as String, // Get poster path from movie
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+            );
+          },
+          options: CarouselOptions(
+            height: 650, // Aumenta la altura para hacer que los pósters sean más grandes
+            initialPage: 0,
+            viewportFraction: 0.4, // Ajusta este valor para hacer que los pósters sean más grandes
+            enlargeCenterPage: true,
+            autoPlay: true,
+            autoPlayInterval: const Duration(seconds: 3),
+            autoPlayAnimationDuration: const Duration(milliseconds: 1000),
+            autoPlayCurve: Curves.fastOutSlowIn,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFunctionsInBillboardCarousel(BuildContext context, WidgetRef ref) {
+    final functionCineState = ref.watch(functionCineControllerProvider);
+    final moviesAsyncValue = ref.watch(allMoviesProviderFuture);
+
+    return functionCineState.when(
+      data: (functions) {
+        final sortedFunctions = functions.toList();
+        return moviesAsyncValue.when(
+          data: (movies) => _buildFunctionsCarousel(context, sortedFunctions, movies, "Funciones en cartelera"),
+          loading: () => Center(child: CircularProgressIndicator()),
+          error: (error, stackTrace) => Center(child: Text('Error: $error')),
+        );
+      },
+      loading: () => Center(child: CircularProgressIndicator()),
+      error: (error, stackTrace) => Center(child: Text('Error: $error')),
+    );
+  }
+
+  Widget _buildFunctionsByRoomTypeCarousel(BuildContext context, WidgetRef ref) {
+    final functionCineState = ref.watch(functionCineControllerProvider);
+    final moviesAsyncValue = ref.watch(allMoviesProviderFuture);
+
+    return functionCineState.when(
+      data: (functions) {
+        final roomTypes = functions.map((function) => function.type).toSet().toList();
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: roomTypes.map((roomType) {
+            final functionsByRoomType = functions.where((function) => function.type == roomType).toList();
+            return moviesAsyncValue.when(
+              data: (movies) => _buildFunctionsCarousel(context, functionsByRoomType, movies, "Funciones por tipo de sala: $roomType"),
+              loading: () => Center(child: CircularProgressIndicator()),
+              error: (error, stackTrace) => Center(child: Text('Error: $error')),
+            );
+          }).toList(),
+        );
+      },
+      loading: () => Center(child: CircularProgressIndicator()),
+      error: (error, stackTrace) => Center(child: Text('Error: $error')),
+    );
+  }
+
+  Widget _buildFunctionsByFunctionTypeCarousel(BuildContext context, WidgetRef ref) {
+    final functionCineState = ref.watch(functionCineControllerProvider);
+    final moviesAsyncValue = ref.watch(allMoviesProviderFuture);
+
+    return functionCineState.when(
+      data: (functions) {
+        final functionTypes = functions.map((function) => function.type).toSet().toList();
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: functionTypes.map((type) {
+            final functionsByType = functions.where((function) => function.type == type).toList();
+            return moviesAsyncValue.when(
+              data: (movies) => _buildFunctionsCarousel(context, functionsByType, movies, "Funciones por tipo de función: $type"),
+              loading: () => Center(child: CircularProgressIndicator()),
+              error: (error, stackTrace) => Center(child: Text('Error: $error')),
+            );
+          }).toList(),
+        );
+      },
+      loading: () => Center(child: CircularProgressIndicator()),
+      error: (error, stackTrace) => Center(child: Text('Error: $error')),
+    );
+  }
+
   Widget _buildMissionVisionSection(BuildContext context) {
     bool isWideScreen = MediaQuery.of(context).size.width > 800;
 
     return Wrap(
-      spacing: 20, // Espacio horizontal entre las tarjetas
-      runSpacing: 20, // Espacio vertical entre las tarjetas
+      spacing: 20,
+      runSpacing: 20,
       alignment: WrapAlignment.center,
       children: [
         _buildMissionCard(context, isWideScreen),
@@ -282,9 +410,9 @@ class HomePage extends ConsumerWidget {
         );
       },
       options: CarouselOptions(
-        height: 650, // Ajusta la altura según la altura real de los pósters
+        height: 650,
         initialPage: 0,
-        viewportFraction: 0.35, // Ajusta este valor para que las imágenes se acerquen más
+        viewportFraction: 0.7, // Ajusta este valor para hacer que los pósters sean más grandes
         enlargeCenterPage: true,
         autoPlay: true,
         autoPlayInterval: const Duration(seconds: 3),
@@ -309,7 +437,7 @@ class HomePage extends ConsumerWidget {
             context.push('/movie/${movie.id}');
           },
           child: Container(
-            width: MediaQuery.of(context).size.width * 0.7, // Ajusta este valor según el diseño que prefieras
+            width: MediaQuery.of(context).size.width * 0.8,
             margin: const EdgeInsets.symmetric(horizontal: 5),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
@@ -322,7 +450,7 @@ class HomePage extends ConsumerWidget {
         );
       },
       options: CarouselOptions(
-        height: 350,
+        height: 650,
         initialPage: 0,
         viewportFraction: 0.7,
         enlargeCenterPage: true,
