@@ -2,12 +2,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:is_dpelicula/api/function_methods.dart';
 import 'package:is_dpelicula/models/functionCine.dart';
 
-// Define the provider for FunctionCineApi
 final functionCineApiProvider = Provider<FunctionCineApi>((ref) {
   return FunctionCineApi();
 });
 
-// Define the StateNotifierProvider for FunctionCineController
+final functionCineProvider = FutureProvider.family<FunctionCine, String>((ref, functionId) async {
+  final functionCineApi = ref.watch(functionCineApiProvider);
+  return functionCineApi.getFunctionById(functionId);
+});
+
 final functionCineControllerProvider = StateNotifierProvider<FunctionCineController, AsyncValue<List<FunctionCine>>>((ref) {
   return FunctionCineController(ref);
 });

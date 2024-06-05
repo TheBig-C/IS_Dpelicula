@@ -15,10 +15,17 @@ final getAllMoviesProvider = FutureProvider<List<Movie>>((ref) async {
   final movieController = ref.watch(movieControllerProvider.notifier);
   return movieController.getAllMovies();
 });
+
 final allMoviesProviderFuture = FutureProvider<List<Movie>>((ref) {
   final movieController = ref.read(movieControllerProvider.notifier);
   return movieController.getAllMovies();
 });
+
+final movieProviderFamily = FutureProvider.family<Movie, String>((ref, movieId) async {
+  final movieController = ref.watch(movieControllerProvider.notifier);
+  return movieController.getMovieById(movieId);
+});
+
 class MovieController extends StateNotifier<bool> {
   final MovieAPI _movieAPI;
   final Ref _ref;
@@ -29,25 +36,25 @@ class MovieController extends StateNotifier<bool> {
   })  : _ref = ref,
         _movieAPI = movieAPI,
         super(false);
-Future<List<Movie>> getComingSoonMovies() async {
+
+  Future<List<Movie>> getComingSoonMovies() async {
     final result = await _movieAPI.getMoviesWithCondition('status', 'muy pronto');
     return result.docs.map((doc) => Movie.fromMap(doc.data(), movieId: doc.id)).toList();
   }
 
   Future<List<Movie>> getAllMovies() async {
-  try {
-    final movieList = await _movieAPI.getAllMovies();
-    return movieList.docs.map((doc) {
-      final movieData = doc.data();
-      final movieId = doc.id;
-      return Movie.fromMap(movieData, movieId: movieId);
-    }).toList();
-  } catch (e) {
-    print('Error fetching movies: $e');
-    return [];
+    try {
+      final movieList = await _movieAPI.getAllMovies();
+      return movieList.docs.map((doc) {
+        final movieData = doc.data();
+        final movieId = doc.id;
+        return Movie.fromMap(movieData, movieId: movieId);
+      }).toList();
+    } catch (e) {
+      print('Error fetching movies: $e');
+      return [];
+    }
   }
-}
-
 
   Future<Movie> getMovieById(String id) async {
     final doc = await _movieAPI.getMovieById(id);
