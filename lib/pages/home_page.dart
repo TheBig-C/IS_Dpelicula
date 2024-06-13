@@ -96,83 +96,89 @@ class HomePage extends ConsumerWidget {
   }
 
   Widget _buildFunctionsCarousel(BuildContext context, List<FunctionCine> functions, List<Movie> movies, String title) {
-    if (functions.isEmpty) {
-      return Center(child: Text('No hay funciones disponibles'));
-    }
+  final validFunctions = functions.where((function) {
+    return movies.any((movie) => movie.id == function.movieId);
+  }).toList();
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Text(
-            title,
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-          ),
+  if (validFunctions.isEmpty) {
+    return Center(child: Text('No hay funciones disponibles'));
+  }
+
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Text(
+          title,
+          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 20),
-        CarouselSlider.builder(
-          itemCount: functions.length,
-          itemBuilder: (context, index, realIndex) {
-            final function = functions[index];
-            final movie = movies.firstWhere((movie) => movie.id == function.movieId);
-            return GestureDetector(
-              onTap: () {
-                context.push('/function/${function.id}');
-              },
-              child: Container(
-                margin: const EdgeInsets.symmetric(horizontal: 5),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: Image.network(
-                          movie.posterPath ?? '',
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Container(
-                              color: Colors.grey,
-                              child: Icon(Icons.error, color: Colors.red, size: 50),
-                            );
-                          },
-                        ),
+      ),
+      const SizedBox(height: 20),
+      CarouselSlider.builder(
+        itemCount: validFunctions.length,
+        itemBuilder: (context, index, realIndex) {
+          final function = validFunctions[index];
+          final movie = movies.firstWhere((movie) => movie.id == function.movieId);
+
+          return GestureDetector(
+            onTap: () {
+              context.push('/function/${function.id}');
+            },
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 5),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: Image.network(
+                        movie.poster_path ?? '',
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            color: Colors.grey,
+                            child: Icon(Icons.error, color: Colors.red, size: 50),
+                          );
+                        },
                       ),
-                      const SizedBox(height: 8),
-                      Text(
-                        movie.title,
-                        style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        '${function.startTime.toLocal()} - ${function.endTime.toLocal()}',
-                        style: TextStyle(fontSize: 14.0),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        '${function.roomId} - ${function.type}',
-                        style: TextStyle(fontSize: 14.0),
-                      ),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      movie.title,
+                      style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '${function.startTime.toLocal()} - ${function.endTime.toLocal()}',
+                      style: TextStyle(fontSize: 14.0),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      ' ${function.type}',
+                      style: TextStyle(fontSize: 14.0),
+                    ),
+                  ],
                 ),
               ),
-            );
-          },
-          options: CarouselOptions(
-            height: 650,
-            initialPage: 0,
-            viewportFraction: 0.4,
-            enlargeCenterPage: true,
-            autoPlay: true,
-            autoPlayInterval: const Duration(seconds: 3),
-            autoPlayAnimationDuration: const Duration(milliseconds: 1000),
-            autoPlayCurve: Curves.fastOutSlowIn,
-          ),
+            ),
+          );
+        },
+        options: CarouselOptions(
+          height: 650,
+          initialPage: 0,
+          viewportFraction: 0.4,
+          enlargeCenterPage: true,
+          autoPlay: true,
+          autoPlayInterval: const Duration(seconds: 3),
+          autoPlayAnimationDuration: const Duration(milliseconds: 1000),
+          autoPlayCurve: Curves.fastOutSlowIn,
         ),
-      ],
-    );
-  }
+      ),
+    ],
+  );
+}
+
 
   Widget _buildFunctionsInBillboardCarousel(BuildContext context, WidgetRef ref) {
     final functionCineState = ref.watch(functionCineControllerProvider);
@@ -429,7 +435,7 @@ class HomePage extends ConsumerWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(30),
               child: Image.network(
-                movie.posterPath ?? '',
+                movie.poster_path ?? '',
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
@@ -475,7 +481,7 @@ class HomePage extends ConsumerWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
               image: DecorationImage(
-                image: NetworkImage(movie.backdropPath ?? ''),
+                image: NetworkImage(movie.backdrop_path ?? ''),
                 fit: BoxFit.cover,
               ),
             ),

@@ -164,10 +164,10 @@ class _RegisterMovieState extends State<RegisterMovie> {
                   content: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildInputField(titleController, "Título"),
+                      _buildInputField(titleController, "Título", required: true),
                       SizedBox(height: 20),
                       _buildInputField(overviewController, "Descripción",
-                          maxLines: 10),
+                          maxLines: 10, required: true),
                     ],
                   ),
                   isActive: _currentStep >= 0,
@@ -179,8 +179,7 @@ class _RegisterMovieState extends State<RegisterMovie> {
                   content: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildInputField(
-                          voteAverageController, "Calificación Promedio"),
+                      _buildInputField(voteAverageController, "Calificación Promedio", required: true, isNumeric: true),
                       SizedBox(height: 20),
                       _buildDropdownField(),
                       SizedBox(height: 20),
@@ -231,17 +230,14 @@ class _RegisterMovieState extends State<RegisterMovie> {
                   content: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildInputField(
-                          directorNamesController, "Nombres de los Directores"),
+                      _buildInputField(directorNamesController, "Nombres de los Directores", required: true),
                       SizedBox(height: 20),
-                      _buildInputField(
-                          leadActorsController, "Actores Principales"),
+                      _buildInputField(leadActorsController, "Actores Principales", required: true),
                       SizedBox(height: 20),
-                      _buildInputField(
-                          durationInMinutesController, "Duración en Minutos"),
+                      _buildInputField(durationInMinutesController, "Duración en Minutos", required: true, isNumeric: true),
                       SizedBox(height: 20),
                       _buildInputField(usBoxOfficeController,
-                          "Taquilla Provisional (EE.UU.)"),
+                          "Taquilla Provisional (EE.UU.)", isNumeric: true),
                     ],
                   ),
                   isActive: _currentStep >= 3,
@@ -291,7 +287,7 @@ class _RegisterMovieState extends State<RegisterMovie> {
   }
 
   Widget _buildInputField(TextEditingController controller, String label,
-      {int maxLines = 1}) {
+      {int maxLines = 1, bool required = false, bool isNumeric = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(
           vertical: 6.0), // Ajusta el padding para un mejor espaciado
@@ -299,6 +295,16 @@ class _RegisterMovieState extends State<RegisterMovie> {
         controller: controller,
         decoration: _inputDecoration(context, label),
         maxLines: maxLines,
+        keyboardType: isNumeric ? TextInputType.number : TextInputType.text,
+        validator: (value) {
+          if (required && (value == null || value.isEmpty)) {
+            return 'Este campo es obligatorio';
+          }
+          if (isNumeric && value != null && double.tryParse(value) == null) {
+            return 'Debe ser un número válido';
+          }
+          return null;
+        },
         style: TextStyle(
           color: const Color(0xfff4b33c).withOpacity(0.7),
           fontSize: 18,
@@ -317,6 +323,12 @@ class _RegisterMovieState extends State<RegisterMovie> {
           setState(() {
             statusController.text = value!;
           });
+        },
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Este campo es obligatorio';
+          }
+          return null;
         },
         items: [
           DropdownMenuItem(
@@ -359,20 +371,20 @@ class _RegisterMovieState extends State<RegisterMovie> {
       String? backdropUrl;
 
       if (_posterFile != null) {
-        posterUrl = await _uploadImageToFirebase(_posterFile!, 'poster');
+        posterUrl = await _uploadImageToFirebase(_posterFile!, 'poster_path');
       }
 
       if (_backdropFile != null) {
-        backdropUrl = await _uploadImageToFirebase(_backdropFile!, 'backdrop');
+        backdropUrl = await _uploadImageToFirebase(_backdropFile!, 'backdrop_path');
       }
 
       Movie movie = Movie(
         id: '',
         title: titleController.text.trim(),
         overview: overviewController.text.trim(),
-        posterPath: posterUrl ?? '',
-        backdropPath: backdropUrl,
-        voteAverage: double.tryParse(voteAverageController.text.trim()) ?? 0,
+        poster_path: posterUrl ?? '',
+        backdrop_path: backdropUrl,
+        vote_average: double.tryParse(voteAverageController.text.trim()) ?? 0,
         status: statusController.text.trim(),
         genres: [genresController.text.trim()],
         directorNames: [directorNamesController.text.trim()],

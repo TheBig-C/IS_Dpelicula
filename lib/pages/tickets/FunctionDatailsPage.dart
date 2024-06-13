@@ -54,7 +54,7 @@ class FunctionDetailsPage extends ConsumerWidget {
           children: [
             Expanded(
               flex: 4,
-              child: _loadImageWidget(movie.posterPath as String, 600, BoxFit.cover),
+              child: _loadImageWidget(movie.poster_path as String, 600, BoxFit.cover),
             ),
             const SizedBox(width: 20),
             Expanded(
@@ -150,7 +150,7 @@ class FunctionDetailsPage extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(movie.title, style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.purple)),
-            Text('Rating: ${movie.voteAverage}', style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black)),
+            Text('Rating: ${movie.vote_average}', style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black)),
             const Text(
               'Descripción',
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black),

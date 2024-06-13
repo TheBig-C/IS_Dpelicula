@@ -128,7 +128,7 @@ class _ActiveSchedulePageState extends ConsumerState<ActiveSchedulePage> {
                         data: (rooms) {
                           final filteredFunctions = activeFunctions.where((function) {
                             final movie = movies.firstWhere(
-                              (movie) => movie.id == function.movieId,
+                              (movie) => movie.id == function.movieId
                             );
                             return movie != null && movie.title.toLowerCase().contains(searchQuery);
                           }).toList();
@@ -138,10 +138,10 @@ class _ActiveSchedulePageState extends ConsumerState<ActiveSchedulePage> {
                             itemBuilder: (context, index) {
                               final function = filteredFunctions[index];
                               final movie = movies.firstWhere(
-                                (movie) => movie.id == function.movieId,
+                                (movie) => movie.id == function.movieId
                               );
                               final room = rooms.firstWhere(
-                                (room) => room.id == function.roomId,
+                                (room) => room.id == function.roomId
                               );
                               final startTimeFormatted = DateFormat('yyyy-MM-dd – kk:mm').format(function.startTime);
                               final endTimeFormatted = DateFormat('yyyy-MM-dd – kk:mm').format(function.endTime);
@@ -159,11 +159,11 @@ class _ActiveSchedulePageState extends ConsumerState<ActiveSchedulePage> {
                                             width: 100,
                                             child: AspectRatio(
                                               aspectRatio: 2 / 3,
-                                              child: movie != null && movie.posterPath != null
+                                              child: movie != null && movie.poster_path != null
                                                   ? ClipRRect(
                                                       borderRadius: BorderRadius.circular(10),
                                                       child: Image.network(
-                                                        movie.posterPath!,
+                                                        movie.poster_path!,
                                                         fit: BoxFit.cover,
                                                       ),
                                                     )

@@ -130,7 +130,7 @@ class _RegisteredMoviesPageState extends ConsumerState<RegisteredMoviesPage> {
                   .toLowerCase()
                   .contains(titleFilterController.text.toLowerCase());
           bool matchesRating = ratingFilterController.text.isEmpty ||
-              movie.voteAverage
+              movie.vote_average
                   .toString()
                   .contains(ratingFilterController.text);
           bool matchesStatus = statusFilterController.text.isEmpty ||
@@ -158,7 +158,7 @@ class _RegisteredMoviesPageState extends ConsumerState<RegisteredMoviesPage> {
                           child: AspectRatio(
                             aspectRatio: 2 / 3,
                             child: Image.network(
-                              movie.posterPath as String,
+                              movie.poster_path as String,
                               fit: BoxFit.cover,
                             ),
                           ),
@@ -177,7 +177,7 @@ class _RegisteredMoviesPageState extends ConsumerState<RegisteredMoviesPage> {
                                 ),
                               ),
                               SizedBox(height: 8),
-                              Text('Calificación: ${movie.voteAverage}',
+                              Text('Calificación: ${movie.vote_average}',
                                   style: TextStyle(color: Colors.black)),
                               Text('Estado: ${movie.status}',
                                   style: TextStyle(color: Colors.black)),
@@ -220,7 +220,7 @@ class _RegisteredMoviesPageState extends ConsumerState<RegisteredMoviesPage> {
   void _showEditMovieDialog(String movieId, Movie movieData) {
     final titleController = TextEditingController(text: movieData.title);
     final voteAverageController =
-        TextEditingController(text: movieData.voteAverage.toString());
+        TextEditingController(text: movieData.vote_average.toString());
     final statusController = TextEditingController(text: movieData.status);
     final overviewController = TextEditingController(text: movieData.overview);
 
@@ -318,7 +318,7 @@ class _RegisteredMoviesPageState extends ConsumerState<RegisteredMoviesPage> {
           .doc(movieId)
           .update({
         'title': title,
-        'voteAverage': double.parse(voteAverage),
+        'vote_average': double.parse(voteAverage),
         'status': status,
         'overview': overview,
       });

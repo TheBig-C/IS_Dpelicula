@@ -555,18 +555,18 @@ List<int> buscarPrimero(List<int>? anterior, List<List<int>> matriz, List<List<i
                     child: Draggable<Movie>(
                       data: movie,
                       feedback: Material(
-                        child: _buildMovieImage(movie.posterPath),
+                        child: _buildMovieImage(movie.poster_path),
                       ),
                       childWhenDragging: Container(
                         margin: EdgeInsets.symmetric(vertical: 8),
                         child: Opacity(
                           opacity: 0.5,
-                          child: _buildMovieImage(movie.posterPath),
+                          child: _buildMovieImage(movie.poster_path),
                         ),
                       ),
                       child: Container(
                         margin: EdgeInsets.symmetric(vertical: 8),
-                        child: _buildMovieImage(movie.posterPath),
+                        child: _buildMovieImage(movie.poster_path),
                       ),
                     ),
                   );
@@ -724,7 +724,7 @@ List<int> buscarPrimero(List<int>? anterior, List<List<int>> matriz, List<List<i
                       feedback: function != null
                           ? Material(
                               child: _buildMovieImage(
-                                  _getMovieById(function.movieId)?.posterPath),
+                                  _getMovieById(function.movieId)?.poster_path),
                             )
                           : Container(),
                       childWhenDragging: Container(
@@ -762,7 +762,7 @@ List<int> buscarPrimero(List<int>? anterior, List<List<int>> matriz, List<List<i
                               Expanded(
                                   child: _buildMovieImage(
                                       _getMovieById(function.movieId)
-                                          ?.posterPath)),
+                                          ?.poster_path)),
                           ],
                         ),
                       ),

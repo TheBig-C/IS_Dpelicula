@@ -51,7 +51,7 @@ class MovieDetailPage extends ConsumerWidget {
               Expanded(
                 flex: 4,
                 child: _loadImageWidget(
-                    movie.posterPath as String, 600, BoxFit.cover),
+                    movie.poster_path as String, 600, BoxFit.cover),
               ),
               const SizedBox(width: 20),
               Expanded(
@@ -82,7 +82,7 @@ class MovieDetailPage extends ConsumerWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
             ),
-            child: _loadImageWidget('${movie.backdropPath}', 500, BoxFit.cover),
+            child: _loadImageWidget('${movie.backdrop_path}', 500, BoxFit.cover),
           ),
           const SizedBox(height: 30),
         ],
@@ -154,7 +154,7 @@ class MovieDetailPage extends ConsumerWidget {
                     fontSize: 30,
                     fontWeight: FontWeight.bold,
                     color: Colors.purple)),
-            Text('Rating: ${movie.voteAverage}',
+            Text('Rating: ${movie.vote_average}',
                 style: const TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
