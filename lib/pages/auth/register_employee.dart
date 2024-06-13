@@ -59,11 +59,17 @@ class _RegisterEmployeeState extends State<RegisterEmployee> {
                 ),
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\s]'))
+                  FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\s]')),
+                  LengthLimitingTextInputFormatter(40),
                 ],
-                validator: (name) => name != null && name.isEmpty
-                    ? 'Por favor introduzca un nombre'
-                    : null,
+                validator: (name) {
+                  if (name == null || name.isEmpty) {
+                    return 'Por favor introduzca un nombre';
+                  } else if (name.length < 2) {
+                    return 'El nombre debe tener al menos 2 caracteres';
+                  }
+                  return null;
+                },
                 decoration: InputDecoration(
                   labelText: "Nombre",
                   floatingLabelStyle: TextStyle(
@@ -87,7 +93,11 @@ class _RegisterEmployeeState extends State<RegisterEmployee> {
                       borderSide: BorderSide(
                           color: const Color(0xfff4b33c).withOpacity(0.7)),
                       borderRadius: BorderRadius.circular(16)),
+                  counterText: '${nameController.text.length}/40',
                 ),
+                onChanged: (text) {
+                  setState(() {});
+                },
               ),
               const SizedBox(height: 20),
               TextFormField(
@@ -99,6 +109,9 @@ class _RegisterEmployeeState extends State<RegisterEmployee> {
                   fontSize: 18,
                 ),
                 autovalidateMode: AutovalidateMode.onUserInteraction,
+                inputFormatters: [
+                  LengthLimitingTextInputFormatter(30),
+                ],
                 validator: (email) => email != null && email.isEmpty
                     ? 'Por favor introduzca un email'
                     : null,
@@ -125,7 +138,11 @@ class _RegisterEmployeeState extends State<RegisterEmployee> {
                       borderSide: BorderSide(
                           color: const Color(0xfff4b33c).withOpacity(0.7)),
                       borderRadius: BorderRadius.circular(16)),
+                  counterText: '${emailController.text.length}/30',
                 ),
+                onChanged: (text) {
+                  setState(() {});
+                },
               ),
               const SizedBox(height: 20),
               TextFormField(
@@ -138,10 +155,18 @@ class _RegisterEmployeeState extends State<RegisterEmployee> {
                 ),
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 keyboardType: TextInputType.number,
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                validator: (phone) => phone != null && phone.isEmpty
-                    ? 'Por favor introduzca un teléfono'
-                    : null,
+                inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly,
+                  LengthLimitingTextInputFormatter(15),
+                ],
+                validator: (phone) {
+                  if (phone == null || phone.isEmpty) {
+                    return 'Por favor introduzca un teléfono';
+                  } else if (phone.length > 15) {
+                    return 'El teléfono debe tener hasta 15 números';
+                  }
+                  return null;
+                },
                 decoration: InputDecoration(
                   labelText: "Teléfono",
                   floatingLabelStyle: TextStyle(
@@ -165,7 +190,11 @@ class _RegisterEmployeeState extends State<RegisterEmployee> {
                       borderSide: BorderSide(
                           color: const Color(0xfff4b33c).withOpacity(0.7)),
                       borderRadius: BorderRadius.circular(16)),
+                  counterText: '${phoneController.text.length}/15',
                 ),
+                onChanged: (text) {
+                  setState(() {});
+                },
               ),
               const SizedBox(height: 20),
               Row(
@@ -237,7 +266,7 @@ class _RegisterEmployeeState extends State<RegisterEmployee> {
                           selectedCIExtension = value!;
                         });
                       },
-                      dropdownColor: const Color(0xff1C1C27), // Azul oscuro
+                      dropdownColor: const Color(0xff1C1C27),
                       decoration: InputDecoration(
                         labelText: "Extensión",
                         floatingLabelStyle: TextStyle(
@@ -278,9 +307,17 @@ class _RegisterEmployeeState extends State<RegisterEmployee> {
                   fontSize: 18,
                 ),
                 autovalidateMode: AutovalidateMode.onUserInteraction,
-                validator: (address) => address != null && address.isEmpty
-                    ? 'Por favor introduzca una dirección'
-                    : null,
+                inputFormatters: [
+                  LengthLimitingTextInputFormatter(25),
+                ],
+                validator: (address) {
+                  if (address == null || address.isEmpty) {
+                    return 'Por favor introduzca una dirección';
+                  } else if (address.length > 25) {
+                    return 'La dirección debe tener hasta 25 caracteres';
+                  }
+                  return null;
+                },
                 decoration: InputDecoration(
                   labelText: "Dirección",
                   floatingLabelStyle: TextStyle(
@@ -304,7 +341,11 @@ class _RegisterEmployeeState extends State<RegisterEmployee> {
                       borderSide: BorderSide(
                           color: const Color(0xfff4b33c).withOpacity(0.7)),
                       borderRadius: BorderRadius.circular(16)),
+                  counterText: '${addressController.text.length}/25',
                 ),
+                onChanged: (text) {
+                  setState(() {});
+                },
               ),
               const SizedBox(height: 20),
               ElevatedButton(
@@ -371,23 +412,26 @@ class _RegisterEmployeeState extends State<RegisterEmployee> {
             : ListView(children: [registerForm]),
       ),
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(60.0),
+        preferredSize: Size.fromHeight(100.0),
         child: ClipRRect(
           borderRadius: const BorderRadius.only(
             bottomLeft: Radius.circular(50.0),
             bottomRight: Radius.circular(50.0),
           ),
           child: AppBar(
-            title: const Text(
-              'Registrar Empleado',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+            backgroundColor: const Color(0xff1C1C27), // Azul oscuro
+            centerTitle: true,
+            title: Container(
+              padding: const EdgeInsets.all(20),
+              child: Text(
+                'Registrar Empleado',
+                style: TextStyle(
+                  color: const Color(0xfff4b33c), // Naranja
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-            centerTitle: true,
-            backgroundColor: Colors.grey[700],
           ),
         ),
       ),

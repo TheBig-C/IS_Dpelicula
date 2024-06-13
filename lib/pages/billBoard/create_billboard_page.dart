@@ -1,17 +1,17 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:is_dpelicula/controllers/movie_controllers.dart';
 import 'package:is_dpelicula/controllers/room_controllers.dart';
+import 'package:is_dpelicula/core/extensions.dart';
+import 'package:is_dpelicula/models/billBoard.dart';
 import 'package:is_dpelicula/models/functionCine.dart';
 import 'package:is_dpelicula/models/movie.dart';
-import 'package:is_dpelicula/controllers/movie_controllers.dart';
 import 'package:is_dpelicula/models/room.dart';
-import 'package:is_dpelicula/controllers/billboard_controller.dart';
-import 'package:is_dpelicula/models/billBoard.dart';
-import 'package:is_dpelicula/core/extensions.dart';
-import 'dart:math';
-import 'package:is_dpelicula/pages/billBoard/roomSlot.dart';
 import 'package:is_dpelicula/pages/billBoard/calculos_page.dart';
+import 'package:is_dpelicula/pages/billBoard/roomSlot.dart';
 
 class CreateBillboardPage extends ConsumerStatefulWidget {
   const CreateBillboardPage({Key? key}) : super(key: key);
@@ -41,22 +41,34 @@ class _CreateBillboardPageState extends ConsumerState<CreateBillboardPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Crear Cartelera'),
+        backgroundColor: const Color(0xff1C1C27), // Azul oscuro
+        centerTitle: true,
+        title: Container(
+          padding: const EdgeInsets.all(20),
+          child: Text(
+            'Crear Cartelera',
+            style: TextStyle(
+              color: const Color(0xfff4b33c), // Naranja
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
         actions: [
           IconButton(
-            icon: Icon(Icons.refresh),
+            icon: Icon(Icons.refresh, color: const Color(0xfff4b33c)),
             onPressed: _clearSchedule,
           ),
           IconButton(
-            icon: Icon(Icons.save),
+            icon: Icon(Icons.save, color: const Color(0xfff4b33c)),
             onPressed: _saveSchedule,
           ),
           IconButton(
-            icon: Icon(Icons.autorenew),
+            icon: Icon(Icons.autorenew, color: const Color(0xfff4b33c)),
             onPressed: _autoFillSchedule,
           ),
           IconButton(
-            icon: Icon(Icons.show_chart),
+            icon: Icon(Icons.show_chart, color: const Color(0xfff4b33c)),
             onPressed: _mostrarCalculos,
           ),
         ],
@@ -96,7 +108,8 @@ class _CreateBillboardPageState extends ConsumerState<CreateBillboardPage> {
 
     movieListAsyncValue.when(
       data: (movies) {
-        final nowPlayingMovies = movies.where((movie) => movie.status == "en cartelera").toList();
+        final nowPlayingMovies =
+            movies.where((movie) => movie.status == "en cartelera").toList();
         roomListAsyncValue.when(
           data: (rooms) {
             if (nowPlayingMovies.isEmpty || rooms.isEmpty) {
@@ -112,7 +125,8 @@ class _CreateBillboardPageState extends ConsumerState<CreateBillboardPage> {
             costsMatrix = _buildCostsMatrix(nowPlayingMovies, rooms);
             assignmentMatrix = northWest(costsMatrix);
 
-            _applyAssignmentToSchedule(assignmentMatrix, nowPlayingMovies, rooms);
+            _applyAssignmentToSchedule(
+                assignmentMatrix, nowPlayingMovies, rooms);
           },
           loading: () => ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -120,7 +134,8 @@ class _CreateBillboardPageState extends ConsumerState<CreateBillboardPage> {
               backgroundColor: Colors.blue,
             ),
           ),
-          error: (error, stackTrace) => ScaffoldMessenger.of(context).showSnackBar(
+          error: (error, stackTrace) =>
+              ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('Error al cargar salas: $error'),
               backgroundColor: Colors.red,
@@ -148,10 +163,8 @@ class _CreateBillboardPageState extends ConsumerState<CreateBillboardPage> {
     int numSlots = rooms.length * 6; // Asumiendo 6 slots por sala como ejemplo
 
     List<List<int>> costsMatrix = List.generate(
-      numMovies + 1, 
-      (i) => List.generate(numSlots + 1, (j) => 50), 
-      growable: false
-    );
+        numMovies + 1, (i) => List.generate(numSlots + 1, (j) => 50),
+        growable: false);
 
     for (int i = 0; i < numMovies; i++) {
       costsMatrix[i][numSlots] = movies[i].usBoxOffice;
@@ -166,10 +179,11 @@ class _CreateBillboardPageState extends ConsumerState<CreateBillboardPage> {
     return costsMatrix;
   }
 
-List<List<int>> northWest(List<List<int>> costsMatrix) {
+  List<List<int>> northWest(List<List<int>> costsMatrix) {
     int numRows = costsMatrix.length;
     int numCols = costsMatrix[0].length;
-    List<List<int>> assignmentMatrix = List.generate(numRows - 1, (i) => List.filled(numCols - 1, 0));
+    List<List<int>> assignmentMatrix =
+        List.generate(numRows - 1, (i) => List.filled(numCols - 1, 0));
 
     List<int> supply = getSupply(costsMatrix);
     List<int> demand = getDemand(costsMatrix);
@@ -183,284 +197,299 @@ List<List<int>> northWest(List<List<int>> costsMatrix) {
       supply[i] -= amount;
       demand[j] -= amount;
 
-      if ( supply[i] == 0 && i < supply.length) i++;
-      if ( demand[j] == 0 && j < demand.length) j++;
+      if (supply[i] == 0 && i < supply.length) i++;
+      if (demand[j] == 0 && j < demand.length) j++;
     }
 
     return assignmentMatrix;
   }
 
 // Funciones de apoyo
-List<int> getSupply(List<List<int>> matrix) {
-  return matrix.take(matrix.length - 1).map((row) => row.last).toList();
-}
+  List<int> getSupply(List<List<int>> matrix) {
+    return matrix.take(matrix.length - 1).map((row) => row.last).toList();
+  }
 
-List<int> getDemand(List<List<int>> matrix) {
-  return matrix.last.take(matrix[0].length - 1).toList();
-}
+  List<int> getDemand(List<List<int>> matrix) {
+    return matrix.last.take(matrix[0].length - 1).toList();
+  }
 
 // Incluye aquí las funciones convertidas de JS a Dart
 
-void modiMethodMax(List<List<int>> costsMatrix, List<List<int>> assignmentMatrix) {
-  bool improvement = true;
-  int ccc = 0;
-  while (improvement) {
-    ccc++;
-    print(ccc);
-    if(ccc >= 100){
-      break;
-    }
-    int numRows = costsMatrix.length - 1;
-    int numCols = costsMatrix[0].length - 1;
-    List<int?> u = List.filled(numRows, null);
-    List<int?> v = List.filled(numCols, null);
-    List<List<int>> markedIndices = [];
-
-    for (int i = 0; i < numRows; i++) {
-      for (int j = 0; j < numCols; j++) {
-        if (assignmentMatrix[i][j] > 0) {
-          markedIndices.add([i, j]);
-        }
-      }
-    }
-
-    u[0] = 0;
-    bool progressMade;
-    int ddd = 0;
-    do {
-      print(u);
-      print(v);
-      progressMade = false;
-      List<List<int>> remainingIndices = [];
-      for (int index = 0; index < markedIndices.length; index++) {
-        int i = markedIndices[index][0];
-        int j = markedIndices[index][1];
-        if (u[i] != null && v[j] == null) {
-          v[j] = costsMatrix[i][j] - u[i]!;
-          progressMade = true;
-        } else if (u[i] == null && v[j] != null) {
-          u[i] = costsMatrix[i][j] - v[j]!;
-          progressMade = true;
-        } else {
-          remainingIndices.add([i, j]);
-        }
-      }
-      markedIndices = remainingIndices;
-      if (!progressMade && markedIndices.isNotEmpty) {
-        int i = markedIndices[0][0];
-        int j = markedIndices[0][1];
-        if (u[i] == null) {
-          u[i] = 0;
-        } else {
-          v[j] = 0;
-        }
-        progressMade = true;
-      }
-      ddd++;
-      if(ddd >= 1000){
+  void modiMethodMax(
+      List<List<int>> costsMatrix, List<List<int>> assignmentMatrix) {
+    bool improvement = true;
+    int ccc = 0;
+    while (improvement) {
+      ccc++;
+      print(ccc);
+      if (ccc >= 100) {
         break;
       }
-    } while (progressMade && markedIndices.isNotEmpty);
+      int numRows = costsMatrix.length - 1;
+      int numCols = costsMatrix[0].length - 1;
+      List<int?> u = List.filled(numRows, null);
+      List<int?> v = List.filled(numCols, null);
+      List<List<int>> markedIndices = [];
 
-    print(u);
-    print(v);
-
-    List<List<int>> d = List.generate(numRows, (_) => List.filled(numCols, 0));
-    bool canImprove = false;
-    for (int i = 0; i < numRows; i++) {
-      for (int j = 0; j < numCols; j++) {
-        if (assignmentMatrix[i][j] == 0) {
-          d[i][j] = u[i]! + v[j]! - costsMatrix[i][j];
-          if (d[i][j] < 0) canImprove = true;
-        }
-      }
-    }
-    print("matrixd");
-    for (int i = 0; i < d.length; i++) {
-      print(d[i]);
-    }
-    var matrix1 = List<List<int>>.generate(assignmentMatrix.length, (i) => List<int>.from(assignmentMatrix[i]));
-    print("matrix");
-    for (int i = 0; i < matrix1.length; i++) {
-      print(matrix1[i]);
-    }
-    if (canImprove) {
-      int maxPositive = 0;
-      List<List<int>> cellsToImprove = [];
       for (int i = 0; i < numRows; i++) {
         for (int j = 0; j < numCols; j++) {
-          if (d[i][j] < maxPositive) {
-            maxPositive = d[i][j];
-            cellsToImprove = [[i, j]];
-          } else if (d[i][j] == maxPositive) {
-            cellsToImprove.add([i, j]);
+          if (assignmentMatrix[i][j] > 0) {
+            markedIndices.add([i, j]);
           }
         }
       }
 
-      print(cellsToImprove);
-      bool cycleFound = false;
-      for (var cell in cellsToImprove) {
-        try {
-          var cycle = findCycle(assignmentMatrix, cell);
-          if (cycle != null) {
-            adjustAssignmentsMax(assignmentMatrix, cycle);
-            print("Se puede mejorar la solución, se encontró un ciclo para la celda: $cell");
-            cycleFound = true;
-            break;
+      u[0] = 0;
+      bool progressMade;
+      int ddd = 0;
+      do {
+        print(u);
+        print(v);
+        progressMade = false;
+        List<List<int>> remainingIndices = [];
+        for (int index = 0; index < markedIndices.length; index++) {
+          int i = markedIndices[index][0];
+          int j = markedIndices[index][1];
+          if (u[i] != null && v[j] == null) {
+            v[j] = costsMatrix[i][j] - u[i]!;
+            progressMade = true;
+          } else if (u[i] == null && v[j] != null) {
+            u[i] = costsMatrix[i][j] - v[j]!;
+            progressMade = true;
           } else {
-            improvement = false;
+            remainingIndices.add([i, j]);
           }
-        } catch (e) {
-          if (e is TypeError && e.toString().contains("null")) {
-            print("Valor nulo encontrado, continuando con el siguiente elemento.");
-            continue;
+        }
+        markedIndices = remainingIndices;
+        if (!progressMade && markedIndices.isNotEmpty) {
+          int i = markedIndices[0][0];
+          int j = markedIndices[0][1];
+          if (u[i] == null) {
+            u[i] = 0;
           } else {
-            print("Error encontrado: $e");
-            break;
+            v[j] = 0;
+          }
+          progressMade = true;
+        }
+        ddd++;
+        if (ddd >= 1000) {
+          break;
+        }
+      } while (progressMade && markedIndices.isNotEmpty);
+
+      print(u);
+      print(v);
+
+      List<List<int>> d =
+          List.generate(numRows, (_) => List.filled(numCols, 0));
+      bool canImprove = false;
+      for (int i = 0; i < numRows; i++) {
+        for (int j = 0; j < numCols; j++) {
+          if (assignmentMatrix[i][j] == 0) {
+            d[i][j] = u[i]! + v[j]! - costsMatrix[i][j];
+            if (d[i][j] < 0) canImprove = true;
           }
         }
       }
+      print("matrixd");
+      for (int i = 0; i < d.length; i++) {
+        print(d[i]);
+      }
+      var matrix1 = List<List<int>>.generate(
+          assignmentMatrix.length, (i) => List<int>.from(assignmentMatrix[i]));
+      print("matrix");
+      for (int i = 0; i < matrix1.length; i++) {
+        print(matrix1[i]);
+      }
+      if (canImprove) {
+        int maxPositive = 0;
+        List<List<int>> cellsToImprove = [];
+        for (int i = 0; i < numRows; i++) {
+          for (int j = 0; j < numCols; j++) {
+            if (d[i][j] < maxPositive) {
+              maxPositive = d[i][j];
+              cellsToImprove = [
+                [i, j]
+              ];
+            } else if (d[i][j] == maxPositive) {
+              cellsToImprove.add([i, j]);
+            }
+          }
+        }
 
-      if (!cycleFound) {
-        print("No se puede mejorar, no se encontró un ciclo para ninguna celda candidata");
+        print(cellsToImprove);
+        bool cycleFound = false;
+        for (var cell in cellsToImprove) {
+          try {
+            var cycle = findCycle(assignmentMatrix, cell);
+            if (cycle != null) {
+              adjustAssignmentsMax(assignmentMatrix, cycle);
+              print(
+                  "Se puede mejorar la solución, se encontró un ciclo para la celda: $cell");
+              cycleFound = true;
+              break;
+            } else {
+              improvement = false;
+            }
+          } catch (e) {
+            if (e is TypeError && e.toString().contains("null")) {
+              print(
+                  "Valor nulo encontrado, continuando con el siguiente elemento.");
+              continue;
+            } else {
+              print("Error encontrado: $e");
+              break;
+            }
+          }
+        }
+
+        if (!cycleFound) {
+          print(
+              "No se puede mejorar, no se encontró un ciclo para ninguna celda candidata");
+          improvement = false;
+        }
+      } else {
         improvement = false;
       }
-    } else {
-      improvement = false;
     }
   }
-}
 
-void adjustAssignmentsMax(List<List<int>> assignmentMatrix, List<List<int>> cycle) {
-  int min = 0;
-  for (int i = 1; i < cycle.length; i += 2) {
-    var r = cycle[i][0];
-    var c = cycle[i][1];
-    min = min > assignmentMatrix[r][c] ? assignmentMatrix[r][c] : min;
-  }
-
-  for (int i = 0; i < cycle.length; ++i) {
-    var r = cycle[i][0];
-    var c = cycle[i][1];
-    if (i % 2 == 0) {
-      assignmentMatrix[r][c] += min;
-    } else {
-      assignmentMatrix[r][c] -= min;
+  void adjustAssignmentsMax(
+      List<List<int>> assignmentMatrix, List<List<int>> cycle) {
+    int min = 0;
+    for (int i = 1; i < cycle.length; i += 2) {
+      var r = cycle[i][0];
+      var c = cycle[i][1];
+      min = min > assignmentMatrix[r][c] ? assignmentMatrix[r][c] : min;
     }
-  }
-}
 
-List<List<int>>? findCycle(List<List<int>> matrix, List<int> startCell) {
-  bool cantB = true;
-  int c = 0;
-  List<List<int>> d = [], matriz = [], valor1 = [], valo2 = [];
-  String va = "primero";
-  List<int>? anterior;
-  final directions = [
-    [-1, 0],
-    [1, 0],
-    [0, -1],
-    [0, 1],
-  ];
-  final dire1 = [
-    [-1, 0],
-    [1, 0],
-  ];
-  final dire2 = [
-    [0, -1],
-    [0, 1],
-  ];
-  int contador = 0;
-  copiarMatriz(matrix, matriz);
-  List<int> siguiente = startCell;
-
-  do {
-    print("va: $va");
-
-    if (contador == 0) {
-      cantB = false;
-      c = 0;
-      int auxi = startCell[0];
-      int auxj = startCell[1];
-      if (auxi + 1 < matrix.length && matrix[auxi + 1][auxj] > 0) c++;
-      if (auxi - 1 >= 0 && matrix[auxi - 1][auxj] > 0) c++;
-      if (auxj + 1 < matrix[0].length && matrix[auxi][auxj + 1] > 0) c++;
-      if (auxj - 1 >= 0 && matrix[auxi][auxj - 1] > 0) c++;
-      if (c < 2) {
-        cantB = true;
-        break;
+    for (int i = 0; i < cycle.length; ++i) {
+      var r = cycle[i][0];
+      var c = cycle[i][1];
+      if (i % 2 == 0) {
+        assignmentMatrix[r][c] += min;
+      } else {
+        assignmentMatrix[r][c] -= min;
       }
-      anterior = null;
-      siguiente = startCell;
-      valor1 = [];
-      valo2 = [];
-      copiarMatriz(matrix, matriz);
-      contador++;
     }
+  }
 
-    if (va == "primero") {
-      matriz[siguiente[0]][siguiente[1]] = 0;
-      anterior = siguiente;
-      siguiente = buscarPrimero(anterior, matriz, dire1);
-      valor1.add(anterior);
-      va = "segundo";
-      continue;
-    }
+  List<List<int>>? findCycle(List<List<int>> matrix, List<int> startCell) {
+    bool cantB = true;
+    int c = 0;
+    List<List<int>> d = [], matriz = [], valor1 = [], valo2 = [];
+    String va = "primero";
+    List<int>? anterior;
+    final directions = [
+      [-1, 0],
+      [1, 0],
+      [0, -1],
+      [0, 1],
+    ];
+    final dire1 = [
+      [-1, 0],
+      [1, 0],
+    ];
+    final dire2 = [
+      [0, -1],
+      [0, 1],
+    ];
+    int contador = 0;
+    copiarMatriz(matrix, matriz);
+    List<int> siguiente = startCell;
 
-    if (va == "segundo") {
-      matriz[siguiente[0]][siguiente[1]] = 0;
-      anterior = siguiente;
-      siguiente = buscarPrimero(anterior, matriz, dire2);
-      valo2.add(anterior);
-      if (siguiente[0] == startCell[0] && siguiente[1] == startCell[1]) {
-        print("anterior: $anterior");
-        print("startCell: $startCell");
+    do {
+      print("va: $va");
+
+      if (contador == 0) {
+        cantB = false;
+        c = 0;
+        int auxi = startCell[0];
+        int auxj = startCell[1];
+        if (auxi + 1 < matrix.length && matrix[auxi + 1][auxj] > 0) c++;
+        if (auxi - 1 >= 0 && matrix[auxi - 1][auxj] > 0) c++;
+        if (auxj + 1 < matrix[0].length && matrix[auxi][auxj + 1] > 0) c++;
+        if (auxj - 1 >= 0 && matrix[auxi][auxj - 1] > 0) c++;
+        if (c < 2) {
+          cantB = true;
+          break;
+        }
+        anterior = null;
+        siguiente = startCell;
+        valor1 = [];
+        valo2 = [];
+        copiarMatriz(matrix, matriz);
+        contador++;
+      }
+
+      if (va == "primero") {
+        matriz[siguiente[0]][siguiente[1]] = 0;
+        anterior = siguiente;
+        siguiente = buscarPrimero(anterior, matriz, dire1);
         valor1.add(anterior);
-        valor1.add(startCell);
-        va = "encontrado";
-        break;
+        va = "segundo";
+        continue;
       }
-      va = "primero";
-      continue;
+
+      if (va == "segundo") {
+        matriz[siguiente[0]][siguiente[1]] = 0;
+        anterior = siguiente;
+        siguiente = buscarPrimero(anterior, matriz, dire2);
+        valo2.add(anterior);
+        if (siguiente[0] == startCell[0] && siguiente[1] == startCell[1]) {
+          print("anterior: $anterior");
+          print("startCell: $startCell");
+          valor1.add(anterior);
+          valor1.add(startCell);
+          va = "encontrado";
+          break;
+        }
+        va = "primero";
+        continue;
+      }
+    } while (contador <= 10000);
+
+    if (va != "encontrado" || cantB) return null;
+
+    for (var i = 0; i < valor1.length; i++) {
+      d.add(valor1[i]);
     }
-  } while (contador <= 10000);
+    for (var i = valo2.length - 1; i >= 0; i--) {
+      d.add(valo2[i]);
+    }
 
-  if (va != "encontrado" || cantB) return null;
-
-  for (var i = 0; i < valor1.length; i++) {
-    d.add(valor1[i]);
-  }
-  for (var i = valo2.length - 1; i >= 0; i--) {
-    d.add(valo2[i]);
+    return d;
   }
 
-  return d;
-}
-
-void copiarMatriz(List<List<int>> original, List<List<int>> copia) {
-  copia.clear();
-  for (var fila in original) {
-    copia.add(List.from(fila));
+  void copiarMatriz(List<List<int>> original, List<List<int>> copia) {
+    copia.clear();
+    for (var fila in original) {
+      copia.add(List.from(fila));
+    }
   }
-}
 
-List<int> buscarPrimero(List<int>? anterior, List<List<int>> matriz, List<List<int>> direccion) {
-  List<int> siguiente = [];
-  if (anterior != null) {
-    for (var dir in direccion) {
-      int nuevaFila = anterior[0] + dir[0];
-      int nuevaColumna = anterior[1] + dir[1];
-      if (nuevaFila >= 0 && nuevaFila < matriz.length && nuevaColumna >= 0 && nuevaColumna < matriz[0].length && matriz[nuevaFila][nuevaColumna] != 0) {
-        siguiente = [nuevaFila, nuevaColumna];
-        break;
+  List<int> buscarPrimero(
+      List<int>? anterior, List<List<int>> matriz, List<List<int>> direccion) {
+    List<int> siguiente = [];
+    if (anterior != null) {
+      for (var dir in direccion) {
+        int nuevaFila = anterior[0] + dir[0];
+        int nuevaColumna = anterior[1] + dir[1];
+        if (nuevaFila >= 0 &&
+            nuevaFila < matriz.length &&
+            nuevaColumna >= 0 &&
+            nuevaColumna < matriz[0].length &&
+            matriz[nuevaFila][nuevaColumna] != 0) {
+          siguiente = [nuevaFila, nuevaColumna];
+          break;
+        }
       }
     }
+    return siguiente;
   }
-  return siguiente;
-}
 
-  void _applyAssignmentToSchedule(List<List<int>> assignmentMatrix, List<Movie> movies, List<Room> rooms) {
+  void _applyAssignmentToSchedule(
+      List<List<int>> assignmentMatrix, List<Movie> movies, List<Room> rooms) {
     int numMovies = movies.length;
     int numRooms = rooms.length;
     int numSlots = 6; // Asumiendo 6 slots por sala como ejemplo
@@ -481,13 +510,15 @@ List<int> buscarPrimero(List<int>? anterior, List<List<int>> matriz, List<List<i
 
     for (int slot = 0; slot < numSlots; slot++) {
       for (int roomIndex = 0; roomIndex < numRooms; roomIndex++) {
-        int assignmentIndex = (slot * numRooms + roomIndex + currentRotation) % numMovies;
+        int assignmentIndex =
+            (slot * numRooms + roomIndex + currentRotation) % numMovies;
         RoomSlot roomSlot = roomSlots[slot * numRooms + roomIndex];
         Movie movie = movies[assignmentIndex];
-        
+
         _schedule[roomSlot.room.id] ??= [];
         DateTime startTime = _getStartTime(roomSlot.slot);
-        DateTime endTime = startTime.add(Duration(minutes: movie.durationInMinutes));
+        DateTime endTime =
+            startTime.add(Duration(minutes: movie.durationInMinutes));
 
         _schedule[roomSlot.room.id]!.add(
           FunctionCine(
@@ -496,7 +527,9 @@ List<int> buscarPrimero(List<int>? anterior, List<List<int>> matriz, List<List<i
             startTime: startTime,
             endTime: endTime,
             roomId: roomSlot.room.id,
-            price: roomSlot.room.name=='normal'? 30.0 : 50.0, // Precio fijo según tu especificación
+            price: roomSlot.room.name == 'normal'
+                ? 30.0
+                : 50.0, // Precio fijo según tu especificación
             type: roomSlot.room.type,
             createdBy: 'Admin',
           ),
@@ -510,7 +543,8 @@ List<int> buscarPrimero(List<int>? anterior, List<List<int>> matriz, List<List<i
 
   DateTime _getStartTime(int slot) {
     final startTime = TimeOfDay(hour: 10, minute: 0);
-    DateTime currentTime = DateTime(2024, 5, 26, startTime.hour, startTime.minute);
+    DateTime currentTime =
+        DateTime(2024, 5, 26, startTime.hour, startTime.minute);
     currentTime = currentTime.add(Duration(hours: slot * 2));
     return currentTime;
   }
@@ -555,18 +589,18 @@ List<int> buscarPrimero(List<int>? anterior, List<List<int>> matriz, List<List<i
                     child: Draggable<Movie>(
                       data: movie,
                       feedback: Material(
-                        child: _buildMovieImage(movie.poster_path),
+                        child: _buildMovieImage(movie.posterPath),
                       ),
                       childWhenDragging: Container(
                         margin: EdgeInsets.symmetric(vertical: 8),
                         child: Opacity(
                           opacity: 0.5,
-                          child: _buildMovieImage(movie.poster_path),
+                          child: _buildMovieImage(movie.posterPath),
                         ),
                       ),
                       child: Container(
                         margin: EdgeInsets.symmetric(vertical: 8),
-                        child: _buildMovieImage(movie.poster_path),
+                        child: _buildMovieImage(movie.posterPath),
                       ),
                     ),
                   );
@@ -724,7 +758,7 @@ List<int> buscarPrimero(List<int>? anterior, List<List<int>> matriz, List<List<i
                       feedback: function != null
                           ? Material(
                               child: _buildMovieImage(
-                                  _getMovieById(function.movieId)?.poster_path),
+                                  _getMovieById(function.movieId)?.posterPath),
                             )
                           : Container(),
                       childWhenDragging: Container(
@@ -762,7 +796,7 @@ List<int> buscarPrimero(List<int>? anterior, List<List<int>> matriz, List<List<i
                               Expanded(
                                   child: _buildMovieImage(
                                       _getMovieById(function.movieId)
-                                          ?.poster_path)),
+                                          ?.posterPath)),
                           ],
                         ),
                       ),

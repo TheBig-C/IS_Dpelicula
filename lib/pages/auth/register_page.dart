@@ -25,6 +25,7 @@ class _RegisterPageState extends State<RegisterPage> {
     bool isDesktop = MediaQuery.of(context).size.width > 800;
     FirebaseFirestore firestore = FirebaseFirestore.instance;
     CollectionReference users = firestore.collection('users');
+
     Widget registerForm = Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
       child: Form(
@@ -33,50 +34,31 @@ class _RegisterPageState extends State<RegisterPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              "Vamos a registrarte",
+              "Vamos a Registrarte",
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
             ),
             const SizedBox(height: 20),
             const Text(
-              "Bienvenido a DPelícula",
+              "Bienvenido",
               style: TextStyle(fontSize: 26),
             ),
             const SizedBox(height: 60),
             TextFormField(
               controller: emailController,
               textInputAction: TextInputAction.next,
-              cursorColor: Theme.of(context).primaryColor,
+              cursorColor: const Color(0xfff4b33c),
               style: const TextStyle(color: Colors.white70, fontSize: 18),
               autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (email) => email != null && email.isEmpty
                   ? 'Por favor introduzca un email'
                   : null,
-              decoration: InputDecoration(
-                  labelText: "Email",
-                  floatingLabelStyle:
-                      const TextStyle(color: Colors.white54, fontSize: 22),
-                  labelStyle: const TextStyle(
-                      color: Colors.white38,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500),
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                  enabledBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.white24),
-                      borderRadius: BorderRadius.circular(16)),
-                  focusedBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Theme.of(context).primaryColor),
-                      borderRadius: BorderRadius.circular(16)),
-                  border: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.white70),
-                      borderRadius: BorderRadius.circular(16))),
+              decoration: _inputDecoration("Email"),
             ),
             const SizedBox(height: 20),
             TextFormField(
               controller: passwordController,
               textInputAction: TextInputAction.next,
-              cursorColor: Theme.of(context).primaryColor,
+              cursorColor: const Color(0xfff4b33c),
               style: const TextStyle(color: Colors.white70, fontSize: 18),
               obscureText:
                   !passwordVisible, // Usar el estado para controlar la visibilidad
@@ -97,32 +79,25 @@ class _RegisterPageState extends State<RegisterPage> {
                 }
                 return null; // si todos los chequeos pasan, retorna null que significa que el input es válido
               },
-              decoration: InputDecoration(
-                  labelText: "Contraseña",
-                  floatingLabelStyle:
-                      const TextStyle(color: Colors.white54, fontSize: 22),
-                  labelStyle: const TextStyle(
-                      color: Colors.white38,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500),
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                  enabledBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.white24),
-                      borderRadius: BorderRadius.circular(16)),
-                  focusedBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Theme.of(context).primaryColor),
-                      borderRadius: BorderRadius.circular(16)),
-                  border: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.white70),
-                      borderRadius: BorderRadius.circular(16))),
+              decoration: _inputDecoration("Contraseña").copyWith(
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    passwordVisible ? Icons.visibility_off : Icons.visibility,
+                    color: const Color(0xfff4b33c),
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      passwordVisible = !passwordVisible;
+                    });
+                  },
+                ),
+              ),
             ),
             const SizedBox(height: 20),
             TextFormField(
               controller: confirmPasswordController,
               textInputAction: TextInputAction.done,
-              cursorColor: Theme.of(context).primaryColor,
+              cursorColor: const Color(0xfff4b33c),
               style: const TextStyle(color: Colors.white70, fontSize: 18),
               obscureText:
                   !passwordVisible, // Usar el estado para controlar la visibilidad
@@ -131,34 +106,13 @@ class _RegisterPageState extends State<RegisterPage> {
                   value != null && value != passwordController.text
                       ? 'Las contraseñas no coinciden'
                       : null,
-              decoration: InputDecoration(
-                labelText: "Confirmar contraseña",
-                floatingLabelStyle:
-                    const TextStyle(color: Colors.white54, fontSize: 22),
-                labelStyle: const TextStyle(
-                    color: Colors.white38,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500),
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                enabledBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: Colors.white24),
-                    borderRadius: BorderRadius.circular(16)),
-                focusedBorder: OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: Theme.of(context).primaryColor),
-                    borderRadius: BorderRadius.circular(16)),
-                border: OutlineInputBorder(
-                    borderSide: const BorderSide(color: Colors.white70),
-                    borderRadius: BorderRadius.circular(16)),
+              decoration: _inputDecoration("Confirmar contraseña").copyWith(
                 suffixIcon: IconButton(
                   icon: Icon(
-                    // Ícono cambia según el estado de visibilidad
                     passwordVisible ? Icons.visibility_off : Icons.visibility,
-                    color: Theme.of(context).primaryColor,
+                    color: const Color(0xfff4b33c),
                   ),
                   onPressed: () {
-                    // Cambiar el estado de visibilidad al presionar el ícono
                     setState(() {
                       passwordVisible = !passwordVisible;
                     });
@@ -180,8 +134,8 @@ class _RegisterPageState extends State<RegisterPage> {
                   },
                   child: Text(
                     "Iniciar Sesión",
-                    style: TextStyle(
-                        color: Theme.of(context).primaryColor, fontSize: 16),
+                    style:
+                        TextStyle(color: const Color(0xfff4b33c), fontSize: 16),
                   ),
                 )
               ],
@@ -198,7 +152,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         barrierDismissible: false,
                         builder: (context) => Center(
                             child: CircularProgressIndicator(
-                                color: Theme.of(context).primaryColor)));
+                                color: const Color(0xfff4b33c))));
 
                     FirebaseAuth.instance
                         .createUserWithEmailAndPassword(
@@ -225,8 +179,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           const CustomSnackBar.success(
                               message: 'Su cuenta se creó correctamente'));
                       // Redireccionar a la página de verificación de email
-                      GoRouter.of(context)
-                          .push('/verify_email', extra: email);
+                      GoRouter.of(context).push('/verify_email', extra: email);
                     }).catchError((e) {
                       // Cierre del diálogo de progreso en caso de error
                       Navigator.of(context, rootNavigator: true).pop();
@@ -234,8 +187,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       showTopSnackBar(
                           Overlay.of(context) as OverlayState,
                           CustomSnackBar.error(
-                              message:
-                                  "Ocurrió un error al registrarse"));
+                              message: "Ocurrió un error al registrarse"));
                     });
                   },
                   style: ElevatedButton.styleFrom(
@@ -299,6 +251,29 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
             )
           : null,
+    );
+  }
+
+  InputDecoration _inputDecoration(String labelText) {
+    return InputDecoration(
+      labelText: labelText,
+      floatingLabelStyle:
+          const TextStyle(color: Color(0xfff4b33c), fontSize: 22),
+      labelStyle: const TextStyle(
+          color: Color(0xfff4b33c), fontSize: 16, fontWeight: FontWeight.w500),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      enabledBorder: OutlineInputBorder(
+        borderSide: const BorderSide(color: Color(0xfff4b33c)),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderSide: const BorderSide(color: Color(0xfff4b33c)),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      border: OutlineInputBorder(
+        borderSide: const BorderSide(color: Color(0xfff4b33c)),
+        borderRadius: BorderRadius.circular(16),
+      ),
     );
   }
 }

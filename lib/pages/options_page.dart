@@ -1,7 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:is_dpelicula/pages/Dashboard/dashboard.dart';
 import 'package:is_dpelicula/pages/auth/register_employee.dart';
 import 'package:is_dpelicula/pages/billBoard/active_schedule_page.dart';
@@ -26,6 +26,7 @@ class OptionsPage extends StatefulWidget {
 class _OptionsPageState extends State<OptionsPage> {
   bool isAdmin = false;
   Widget mainContent = ProfilePage();
+  String selectedOption = '';
 
   @override
   void initState() {
@@ -62,50 +63,86 @@ class _OptionsPageState extends State<OptionsPage> {
               child: ListView(
                 padding: EdgeInsets.zero,
                 children: <Widget>[
-                  _buildDrawerItem(
-                      Icons.home, 'Inicio', () => context.goNamed('home')),
-                  _buildDrawerItem(Icons.account_circle, 'Perfil',
+                  _buildDrawerItem(Icons.home, 'Inicio', 'home',
+                      () => context.goNamed('home')),
+                  _buildDrawerItem(Icons.account_circle, 'Perfil', 'profile',
                       () => _updateMainContent(ProfilePage())),
                   _buildDrawerItem(
                       Icons.manage_accounts_rounded,
                       'Editar Perfil',
+                      'edit_profile',
                       () => _updateMainContent(ProfileEditPage())),
                   if (isAdmin)
                     _buildDrawerItem(Icons.dashboard, 'Panel de control',
-                        () => _updateMainContent(DashboardPage())),
+                        'dashboard', () => _updateMainContent(DashboardPage())),
                   if (isAdmin)
-                    _buildDrawerItem(Icons.person_add, 'Registrar Empleado',
+                    _buildDrawerItem(
+                        Icons.person_add,
+                        'Registrar Empleado',
+                        'register_employee',
                         () => _updateMainContent(RegisterEmployee())),
                   if (isAdmin)
-                    _buildDrawerItem(Icons.movie, 'Registrar Película',
+                    _buildDrawerItem(
+                        Icons.movie,
+                        'Registrar Película',
+                        'register_movie',
                         () => _updateMainContent(RegisterMovie())),
                   if (isAdmin)
-                    _buildDrawerItem(Icons.people_alt, 'Control de empleados',
+                    _buildDrawerItem(
+                        Icons.people_alt,
+                        'Control de empleados',
+                        'control_employee',
                         () => _updateMainContent(ControlEmployee())),
                   if (isAdmin)
                     _buildDrawerItem(
                         Icons.local_movies_rounded,
                         'Satisfación del cliente',
+                        'movie_satisfaction',
                         () => _updateMainContent(MovieSatisfaction())),
                   if (isAdmin)
-                    _buildDrawerItem(Icons.group, 'Control de clientes',
+                    _buildDrawerItem(
+                        Icons.group,
+                        'Control de clientes',
+                        'control_client',
                         () => _updateMainContent(ControlClient())),
                   if (isAdmin)
-                    _buildDrawerItem(Icons.movie_filter, 'Ver Películas',
+                    _buildDrawerItem(
+                        Icons.movie_filter,
+                        'Ver Películas',
+                        'registered_movies',
                         () => _updateMainContent(RegisteredMoviesPage())),
                   if (isAdmin)
-                    _buildDrawerItem(Icons.add_business, 'Agregar Sala',
+                    _buildDrawerItem(
+                        Icons.add_business,
+                        'Agregar Sala',
+                        'room_creation',
                         () => _updateMainContent(RoomCreationPage())),
                   if (isAdmin)
-                    _buildDrawerItem(Icons.room_preferences, 'Control Salas',
+                    _buildDrawerItem(
+                        Icons.room_preferences,
+                        'Control Salas',
+                        'registered_rooms',
                         () => _updateMainContent(RegisteredRoomsPage())),
                   if (isAdmin)
-                    _buildDrawerItem(Icons.add_to_photos, 'Crear Cartelera',
+                    _buildDrawerItem(
+                        Icons.add_to_photos,
+                        'Crear Cartelera',
+                        'create_billboard',
                         () => _updateMainContent(CreateBillboardPage())),
                   if (isAdmin)
-                    _buildDrawerItem(Icons.schedule, 'Cartelera Actual',
+                    _buildDrawerItem(
+                        Icons.schedule,
+                        'Cartelera Actual',
+                        'active_schedule',
                         () => _updateMainContent(ActiveSchedulePage())),
-                  _buildDrawerItem(Icons.exit_to_app, 'Cerrar sesión', () {
+                  if (isAdmin)
+                    _buildDrawerItem(
+                        Icons.airplane_ticket,
+                        'Tickets Registrados',
+                        'registered_tickets',
+                        () => _updateMainContent(RegisteredTicketsPage())),
+                  _buildDrawerItem(Icons.exit_to_app, 'Cerrar sesión', 'logout',
+                      () {
                     FirebaseAuth.instance
                         .signOut()
                         .then((_) => context.goNamed('login'));
@@ -130,11 +167,19 @@ class _OptionsPageState extends State<OptionsPage> {
     });
   }
 
-  Widget _buildDrawerItem(IconData icon, String title, VoidCallback onTap) {
+  Widget _buildDrawerItem(
+      IconData icon, String title, String optionKey, VoidCallback onTap) {
     return ListTile(
       leading: Icon(icon, color: Colors.orange),
       title: Text(title),
-      onTap: onTap,
+      onTap: () {
+        setState(() {
+          selectedOption = optionKey;
+        });
+        onTap();
+      },
+      selected: selectedOption == optionKey,
+      selectedTileColor: Colors.orange.withOpacity(0.2),
     );
   }
 }

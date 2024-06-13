@@ -49,64 +49,25 @@ class _LoginPageState extends State<LoginPage> {
             TextFormField(
               controller: emailController,
               textInputAction: TextInputAction.next,
-              cursorColor: Theme.of(context).primaryColor,
+              cursorColor: const Color(0xfff4b33c),
               style: const TextStyle(color: Colors.white70, fontSize: 18),
               autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (email) =>
                   email != null && email.isEmpty ? 'Ingrese un email' : null,
-              decoration: InputDecoration(
-                  labelText: "Email",
-                  floatingLabelStyle:
-                      const TextStyle(color: Colors.white54, fontSize: 22),
-                  labelStyle: const TextStyle(
-                      color: Colors.white38,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500),
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                  enabledBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.white24),
-                      borderRadius: BorderRadius.circular(16)),
-                  focusedBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Theme.of(context).primaryColor),
-                      borderRadius: BorderRadius.circular(16)),
-                  border: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.white70),
-                      borderRadius: BorderRadius.circular(16))),
+              decoration: _inputDecoration("Email"),
             ),
             const SizedBox(height: 20),
             TextFormField(
               controller: passwordController,
               textInputAction: TextInputAction.done,
-              cursorColor: Theme.of(context).primaryColor,
+              cursorColor: const Color(0xfff4b33c),
               style: const TextStyle(color: Colors.white70, fontSize: 18),
               obscureText: true,
               autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (value) => value != null && value.length < 6
-                  ? 'Ingrese minimo 6 caracteres'
+                  ? 'Ingrese mínimo 6 caracteres'
                   : null,
-              // obscuringCharacter: '*',
-              decoration: InputDecoration(
-                  labelText: "Password",
-                  floatingLabelStyle:
-                      const TextStyle(color: Colors.white54, fontSize: 22),
-                  labelStyle: const TextStyle(
-                      color: Colors.white38,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500),
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                  enabledBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.white24),
-                      borderRadius: BorderRadius.circular(16)),
-                  focusedBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Theme.of(context).primaryColor),
-                      borderRadius: BorderRadius.circular(16)),
-                  border: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.white70),
-                      borderRadius: BorderRadius.circular(16))),
+              decoration: _inputDecoration("Password"),
             ),
             const SizedBox(height: 20),
             Row(
@@ -122,8 +83,8 @@ class _LoginPageState extends State<LoginPage> {
                   },
                   child: Text(
                     "Regístrate",
-                    style: TextStyle(
-                        color: Theme.of(context).primaryColor, fontSize: 16),
+                    style:
+                        TextStyle(color: const Color(0xfff4b33c), fontSize: 16),
                   ),
                 )
               ],
@@ -144,7 +105,7 @@ class _LoginPageState extends State<LoginPage> {
                             barrierDismissible: false,
                             builder: (context) => Center(
                                     child: CircularProgressIndicator(
-                                  color: Theme.of(context).primaryColor,
+                                  color: const Color(0xfff4b33c),
                                 )));
 
                         FirebaseAuth.instance
@@ -173,7 +134,7 @@ class _LoginPageState extends State<LoginPage> {
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16))),
                       child: const Text(
-                        "Login",
+                        "Inicia Sesión",
                         style: TextStyle(
                             fontSize: 20, fontWeight: FontWeight.w600),
                       ),
@@ -229,6 +190,29 @@ class _LoginPageState extends State<LoginPage> {
               ),
             )
           : null,
+    );
+  }
+
+  InputDecoration _inputDecoration(String labelText) {
+    return InputDecoration(
+      labelText: labelText,
+      floatingLabelStyle:
+          const TextStyle(color: Color(0xfff4b33c), fontSize: 22),
+      labelStyle: const TextStyle(
+          color: Color(0xfff4b33c), fontSize: 16, fontWeight: FontWeight.w500),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      enabledBorder: OutlineInputBorder(
+        borderSide: const BorderSide(color: Color(0xfff4b33c)),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderSide: const BorderSide(color: Color(0xfff4b33c)),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      border: OutlineInputBorder(
+        borderSide: const BorderSide(color: Color(0xfff4b33c)),
+        borderRadius: BorderRadius.circular(16),
+      ),
     );
   }
 }

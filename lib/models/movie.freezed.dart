@@ -22,11 +22,11 @@ Movie _$MovieFromJson(Map<String, dynamic> json) {
 mixin _$Movie {
   String get id => throw _privateConstructorUsedError;
   String get title => throw _privateConstructorUsedError;
-  double get vote_average => throw _privateConstructorUsedError;
+  double get voteAverage => throw _privateConstructorUsedError;
   String get overview => throw _privateConstructorUsedError;
   String get status => throw _privateConstructorUsedError;
-  String? get poster_path => throw _privateConstructorUsedError;
-  String? get backdrop_path => throw _privateConstructorUsedError;
+  String? get posterPath => throw _privateConstructorUsedError;
+  String? get backdropPath => throw _privateConstructorUsedError;
   List<String>? get genres => throw _privateConstructorUsedError;
   List<String> get directorNames => throw _privateConstructorUsedError;
   List<String> get leadActors => throw _privateConstructorUsedError;
@@ -48,11 +48,11 @@ abstract class $MovieCopyWith<$Res> {
   $Res call(
       {String id,
       String title,
-      double vote_average,
+      double voteAverage,
       String overview,
       String status,
-      String? poster_path,
-      String? backdrop_path,
+      String? posterPath,
+      String? backdropPath,
       List<String>? genres,
       List<String> directorNames,
       List<String> leadActors,
@@ -76,11 +76,11 @@ class _$MovieCopyWithImpl<$Res, $Val extends Movie>
   $Res call({
     Object? id = null,
     Object? title = null,
-    Object? vote_average = null,
+    Object? voteAverage = null,
     Object? overview = null,
     Object? status = null,
-    Object? poster_path = freezed,
-    Object? backdrop_path = freezed,
+    Object? posterPath = freezed,
+    Object? backdropPath = freezed,
     Object? genres = freezed,
     Object? directorNames = null,
     Object? leadActors = null,
@@ -97,9 +97,9 @@ class _$MovieCopyWithImpl<$Res, $Val extends Movie>
           ? _value.title
           : title // ignore: cast_nullable_to_non_nullable
               as String,
-      vote_average: null == vote_average
-          ? _value.vote_average
-          : vote_average // ignore: cast_nullable_to_non_nullable
+      voteAverage: null == voteAverage
+          ? _value.voteAverage
+          : voteAverage // ignore: cast_nullable_to_non_nullable
               as double,
       overview: null == overview
           ? _value.overview
@@ -109,13 +109,13 @@ class _$MovieCopyWithImpl<$Res, $Val extends Movie>
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
               as String,
-      poster_path: freezed == poster_path
-          ? _value.poster_path
-          : poster_path // ignore: cast_nullable_to_non_nullable
+      posterPath: freezed == posterPath
+          ? _value.posterPath
+          : posterPath // ignore: cast_nullable_to_non_nullable
               as String?,
-      backdrop_path: freezed == backdrop_path
-          ? _value.backdrop_path
-          : backdrop_path // ignore: cast_nullable_to_non_nullable
+      backdropPath: freezed == backdropPath
+          ? _value.backdropPath
+          : backdropPath // ignore: cast_nullable_to_non_nullable
               as String?,
       genres: freezed == genres
           ? _value.genres
@@ -155,11 +155,11 @@ abstract class _$$MovieImplCopyWith<$Res> implements $MovieCopyWith<$Res> {
   $Res call(
       {String id,
       String title,
-      double vote_average,
+      double voteAverage,
       String overview,
       String status,
-      String? poster_path,
-      String? backdrop_path,
+      String? posterPath,
+      String? backdropPath,
       List<String>? genres,
       List<String> directorNames,
       List<String> leadActors,
@@ -181,11 +181,11 @@ class __$$MovieImplCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? title = null,
-    Object? vote_average = null,
+    Object? voteAverage = null,
     Object? overview = null,
     Object? status = null,
-    Object? poster_path = freezed,
-    Object? backdrop_path = freezed,
+    Object? posterPath = freezed,
+    Object? backdropPath = freezed,
     Object? genres = freezed,
     Object? directorNames = null,
     Object? leadActors = null,
@@ -202,9 +202,9 @@ class __$$MovieImplCopyWithImpl<$Res>
           ? _value.title
           : title // ignore: cast_nullable_to_non_nullable
               as String,
-      vote_average: null == vote_average
-          ? _value.vote_average
-          : vote_average // ignore: cast_nullable_to_non_nullable
+      voteAverage: null == voteAverage
+          ? _value.voteAverage
+          : voteAverage // ignore: cast_nullable_to_non_nullable
               as double,
       overview: null == overview
           ? _value.overview
@@ -214,13 +214,13 @@ class __$$MovieImplCopyWithImpl<$Res>
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
               as String,
-      poster_path: freezed == poster_path
-          ? _value.poster_path
-          : poster_path // ignore: cast_nullable_to_non_nullable
+      posterPath: freezed == posterPath
+          ? _value.posterPath
+          : posterPath // ignore: cast_nullable_to_non_nullable
               as String?,
-      backdrop_path: freezed == backdrop_path
-          ? _value.backdrop_path
-          : backdrop_path // ignore: cast_nullable_to_non_nullable
+      backdropPath: freezed == backdropPath
+          ? _value.backdropPath
+          : backdropPath // ignore: cast_nullable_to_non_nullable
               as String?,
       genres: freezed == genres
           ? _value._genres
@@ -256,11 +256,11 @@ class _$MovieImpl implements _Movie {
   const _$MovieImpl(
       {required this.id,
       required this.title,
-      required this.vote_average,
+      required this.voteAverage,
       required this.overview,
       required this.status,
-      required this.poster_path,
-      required this.backdrop_path,
+      required this.posterPath,
+      required this.backdropPath,
       final List<String>? genres,
       required final List<String> directorNames,
       required final List<String> leadActors,
@@ -279,15 +279,15 @@ class _$MovieImpl implements _Movie {
   @override
   final String title;
   @override
-  final double vote_average;
+  final double voteAverage;
   @override
   final String overview;
   @override
   final String status;
   @override
-  final String? poster_path;
+  final String? posterPath;
   @override
-  final String? backdrop_path;
+  final String? backdropPath;
   final List<String>? _genres;
   @override
   List<String>? get genres {
@@ -326,7 +326,7 @@ class _$MovieImpl implements _Movie {
 
   @override
   String toString() {
-    return 'Movie(id: $id, title: $title, vote_average: $vote_average, overview: $overview, status: $status, poster_path: $poster_path, backdrop_path: $backdrop_path, genres: $genres, directorNames: $directorNames, leadActors: $leadActors, registeredBy: $registeredBy, durationInMinutes: $durationInMinutes, usBoxOffice: $usBoxOffice)';
+    return 'Movie(id: $id, title: $title, voteAverage: $voteAverage, overview: $overview, status: $status, posterPath: $posterPath, backdropPath: $backdropPath, genres: $genres, directorNames: $directorNames, leadActors: $leadActors, registeredBy: $registeredBy, durationInMinutes: $durationInMinutes, usBoxOffice: $usBoxOffice)';
   }
 
   @override
@@ -336,15 +336,15 @@ class _$MovieImpl implements _Movie {
             other is _$MovieImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.title, title) || other.title == title) &&
-            (identical(other.vote_average, vote_average) ||
-                other.vote_average == vote_average) &&
+            (identical(other.voteAverage, voteAverage) ||
+                other.voteAverage == voteAverage) &&
             (identical(other.overview, overview) ||
                 other.overview == overview) &&
             (identical(other.status, status) || other.status == status) &&
-            (identical(other.poster_path, poster_path) ||
-                other.poster_path == poster_path) &&
-            (identical(other.backdrop_path, backdrop_path) ||
-                other.backdrop_path == backdrop_path) &&
+            (identical(other.posterPath, posterPath) ||
+                other.posterPath == posterPath) &&
+            (identical(other.backdropPath, backdropPath) ||
+                other.backdropPath == backdropPath) &&
             const DeepCollectionEquality().equals(other._genres, _genres) &&
             const DeepCollectionEquality()
                 .equals(other._directorNames, _directorNames) &&
@@ -364,11 +364,11 @@ class _$MovieImpl implements _Movie {
       runtimeType,
       id,
       title,
-      vote_average,
+      voteAverage,
       overview,
       status,
-      poster_path,
-      backdrop_path,
+      posterPath,
+      backdropPath,
       const DeepCollectionEquality().hash(_genres),
       const DeepCollectionEquality().hash(_directorNames),
       const DeepCollectionEquality().hash(_leadActors),
@@ -394,11 +394,11 @@ abstract class _Movie implements Movie {
   const factory _Movie(
       {required final String id,
       required final String title,
-      required final double vote_average,
+      required final double voteAverage,
       required final String overview,
       required final String status,
-      required final String? poster_path,
-      required final String? backdrop_path,
+      required final String? posterPath,
+      required final String? backdropPath,
       final List<String>? genres,
       required final List<String> directorNames,
       required final List<String> leadActors,
@@ -413,15 +413,15 @@ abstract class _Movie implements Movie {
   @override
   String get title;
   @override
-  double get vote_average;
+  double get voteAverage;
   @override
   String get overview;
   @override
   String get status;
   @override
-  String? get poster_path;
+  String? get posterPath;
   @override
-  String? get backdrop_path;
+  String? get backdropPath;
   @override
   List<String>? get genres;
   @override

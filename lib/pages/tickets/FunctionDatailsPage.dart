@@ -1,9 +1,8 @@
 import 'dart:typed_data';
-import 'package:flutter/foundation.dart' show kIsWeb;
+
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:is_dpelicula/controllers/movie_controllers.dart';
 import 'package:is_dpelicula/models/functionCine.dart';
 import 'package:is_dpelicula/models/movie.dart';
 import 'package:is_dpelicula/pages/tickets/TicketPurchasePage.dart';
@@ -31,7 +30,10 @@ class FunctionDetailsPage extends ConsumerWidget {
               children: [
                 Text(
                   'Detalles de la Función',
-                  style: Theme.of(context).textTheme.headline5?.copyWith(fontSize: 35, fontWeight: FontWeight.bold, color: Colors.white),
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      fontSize: 35,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
                 ),
                 const SizedBox(height: 20),
                 _buildFunctionDetail(context, ref),
@@ -54,7 +56,8 @@ class FunctionDetailsPage extends ConsumerWidget {
           children: [
             Expanded(
               flex: 4,
-              child: _loadImageWidget(movie.poster_path as String, 600, BoxFit.cover),
+              child: _loadImageWidget(
+                  movie.posterPath as String, 600, BoxFit.cover),
             ),
             const SizedBox(width: 20),
             Expanded(
@@ -64,7 +67,10 @@ class FunctionDetailsPage extends ConsumerWidget {
                 children: [
                   Text(
                     'Información de la Película',
-                    style: Theme.of(context).textTheme.headline5?.copyWith(fontSize: 35, fontWeight: FontWeight.bold, color: Colors.white),
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                        fontSize: 35,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
                   ),
                   const SizedBox(height: 20),
                   _buildDetailedInfo(context, movie),
@@ -80,7 +86,9 @@ class FunctionDetailsPage extends ConsumerWidget {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => TicketPurchasePage(function: function, movie: movie)),
+              MaterialPageRoute(
+                  builder: (context) =>
+                      TicketPurchasePage(function: function, movie: movie)),
             );
           },
           child: Text('Comprar Ticket'),
@@ -149,11 +157,22 @@ class FunctionDetailsPage extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(movie.title, style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.purple)),
-            Text('Rating: ${movie.vote_average}', style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black)),
+            Text(movie.title,
+                style: const TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.purple)),
+            Text('Rating: ${movie.voteAverage}',
+                style: const TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black)),
             const Text(
               'Descripción',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black),
+              style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black),
             ),
             Text(
               movie.overview,
@@ -162,7 +181,11 @@ class FunctionDetailsPage extends ConsumerWidget {
             const SizedBox(height: 20),
             Wrap(
               spacing: 8.0,
-              children: movie.genres!.map((genre) => Chip(label: Text(genre, style: const TextStyle(color: Colors.black)))).toList(),
+              children: movie.genres!
+                  .map((genre) => Chip(
+                      label: Text(genre,
+                          style: const TextStyle(color: Colors.black))))
+                  .toList(),
             ),
             const SizedBox(height: 20),
             Text(
@@ -188,12 +211,20 @@ class FunctionDetailsPage extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Información de la Función', style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black)),
+            Text('Información de la Función',
+                style: const TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black)),
             const SizedBox(height: 20),
-            Text('Hora de inicio: ${function.startTime}', style: const TextStyle(fontSize: 18, color: Colors.black)),
-            Text('Hora de fin: ${function.endTime}', style: const TextStyle(fontSize: 18, color: Colors.black)),
-            Text('Sala: ${function.roomId}', style: const TextStyle(fontSize: 18, color: Colors.black)),
-            Text('Precio: \$${function.price}', style: const TextStyle(fontSize: 18, color: Colors.black)),
+            Text('Hora de inicio: ${function.startTime}',
+                style: const TextStyle(fontSize: 18, color: Colors.black)),
+            Text('Hora de fin: ${function.endTime}',
+                style: const TextStyle(fontSize: 18, color: Colors.black)),
+            Text('Sala: ${function.roomId}',
+                style: const TextStyle(fontSize: 18, color: Colors.black)),
+            Text('Precio: \$${function.price}',
+                style: const TextStyle(fontSize: 18, color: Colors.black)),
           ],
         ),
       ),

@@ -23,13 +23,19 @@ class _MovieSatisfactionState extends State<MovieSatisfaction> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Satisfacción de Películas',
-          style: TextStyle(
-              color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
-        ),
+        backgroundColor: const Color(0xff1C1C27), // Azul oscuro
         centerTitle: true,
-        backgroundColor: Colors.grey[700],
+        title: Container(
+          padding: const EdgeInsets.all(20),
+          child: Text(
+            'Satisfacción de Películas',
+            style: TextStyle(
+              color: const Color(0xfff4b33c), // Naranja
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
       ),
       body: SafeArea(
         child: Column(

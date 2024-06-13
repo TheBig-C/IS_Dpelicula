@@ -39,202 +39,196 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
     FirebaseStorage storage = FirebaseStorage.instance;
 
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          iconTheme: const IconThemeData(size: 26, color: Colors.white),
-          elevation: 0,
-          title: const Text(
-            "Editar Perfil",
-            style: TextStyle(fontSize: 18),
+      appBar: AppBar(
+        backgroundColor: const Color(0xff1C1C27), // Azul oscuro
+        centerTitle: true,
+        title: Container(
+          padding: const EdgeInsets.all(20),
+          child: Text(
+            'Editar Perfil',
+            style: TextStyle(
+              color: const Color(0xfff4b33c), // Naranja
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-          centerTitle: true,
         ),
-        body: ListView(
-          children: [
-            Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: FutureBuilder<DocumentSnapshot>(
-                    future: users.doc(user?.uid).get(),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        final data =
-                            snapshot.data!.data() as Map<String, dynamic>;
+      ),
+      body: ListView(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: FutureBuilder<DocumentSnapshot>(
+              future: users.doc(user?.uid).get(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  final data = snapshot.data!.data() as Map<String, dynamic>;
 
-                        return Form(
-                          key: formKey,
-                          child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const SizedBox(height: 40),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    data['image_url'] == null ||
-                                            data['image_url'] == ''
-                                        ? UserImagePicker(_pickedImage)
-                                        : UserImagePicker(
-                                            _pickedImage,
-                                            defaultImage: data['image_url'],
-                                          ),
-                                  ],
+                  return Form(
+                    key: formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 40),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            data['image_url'] == null || data['image_url'] == ''
+                                ? UserImagePicker(_pickedImage)
+                                : UserImagePicker(
+                                    _pickedImage,
+                                    defaultImage: data['image_url'],
+                                  ),
+                          ],
+                        ),
+                        const SizedBox(height: 40),
+                        TextFormField(
+                          initialValue: data['email'] ?? '',
+                          textInputAction: TextInputAction.next,
+                          keyboardType: TextInputType.name,
+                          cursorColor: Theme.of(context).primaryColor,
+                          enabled: false,
+                          style: TextStyle(
+                            color: Color(0xfff4b33c).withOpacity(0.7),
+                            fontSize: 18,
+                          ),
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          validator: (email) => email != null && email.isEmpty
+                              ? 'Email can\'t be empty'
+                              : null,
+                          decoration: _inputDecoration('Email', context),
+                        ),
+                        const SizedBox(height: 20),
+                        TextFormField(
+                          initialValue: data['name'] ?? '',
+                          textInputAction: TextInputAction.next,
+                          keyboardType: TextInputType.name,
+                          cursorColor: Theme.of(context).primaryColor,
+                          onSaved: (value) {
+                            profileData['name'] = value!.trim();
+                          },
+                          style: TextStyle(
+                            color: Color(0xfff4b33c).withOpacity(0.7),
+                            fontSize: 18,
+                          ),
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          validator: (name) => name != null && name.isEmpty
+                              ? 'Name can\'t be empty'
+                              : null,
+                          decoration: _inputDecoration('Nombre', context),
+                        ),
+                        const SizedBox(height: 20),
+                        TextFormField(
+                          initialValue: data['phone'] ?? '',
+                          textInputAction: TextInputAction.next,
+                          keyboardType: TextInputType.phone,
+                          cursorColor: Theme.of(context).primaryColor,
+                          onSaved: (value) {
+                            profileData['phone'] = value!.trim();
+                          },
+                          style: TextStyle(
+                            color: Color(0xfff4b33c).withOpacity(0.7),
+                            fontSize: 18,
+                          ),
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          validator: (phone) {
+                            if (phone != null && phone.isEmpty) {
+                              return 'Phone number can\'t be empty';
+                            } else if (num.tryParse(phone!) == null) {
+                              return 'Phone number must be a number';
+                            }
+                            return null;
+                          },
+                          decoration: _inputDecoration('Telefono', context),
+                        ),
+                        const SizedBox(height: 20),
+                        TextFormField(
+                          initialValue: data['address'] ?? '',
+                          textInputAction: TextInputAction.done,
+                          keyboardType: TextInputType.streetAddress,
+                          cursorColor: Theme.of(context).primaryColor,
+                          onSaved: (value) {
+                            profileData['address'] = value!.trim();
+                          },
+                          style: TextStyle(
+                            color: Color(0xfff4b33c).withOpacity(0.7),
+                            fontSize: 18,
+                          ),
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          validator: (address) =>
+                              address != null && address.isEmpty
+                                  ? 'Address can\'t be empty'
+                                  : null,
+                          decoration: _inputDecoration('Direccion', context),
+                        ),
+                        const SizedBox(height: 40),
+                        Center(
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              final isValid = formKey.currentState!.validate();
+
+                              if (!isValid) return;
+
+                              showDialog(
+                                context: context,
+                                barrierDismissible: false,
+                                builder: (context) => Center(
+                                  child: CircularProgressIndicator(
+                                    color: Theme.of(context).primaryColor,
+                                  ),
                                 ),
-                                const SizedBox(height: 40),
-                                TextFormField(
-                                  initialValue: data['email'] ?? '',
-                                  textInputAction: TextInputAction.next,
-                                  keyboardType: TextInputType.name,
-                                  cursorColor: Theme.of(context).primaryColor,
-                                  enabled: false,
-                                  style: TextStyle(
-                                      color: Color(0xfff4b33c).withOpacity(0.7),
-                                      fontSize: 18),
-                                  autovalidateMode:
-                                      AutovalidateMode.onUserInteraction,
-                                  validator: (email) =>
-                                      email != null && email.isEmpty
-                                          ? 'Email can\'t be empty'
-                                          : null,
-                                  decoration:
-                                      _inputDecoration('Email', context),
-                                ),
-                                const SizedBox(height: 20),
-                                TextFormField(
-                                  initialValue: data['name'] ?? '',
-                                  textInputAction: TextInputAction.next,
-                                  keyboardType: TextInputType.name,
-                                  cursorColor: Theme.of(context).primaryColor,
-                                  onSaved: (value) {
-                                    profileData['name'] = value!.trim();
-                                  },
-                                  style: TextStyle(
-                                      color: Color(0xfff4b33c).withOpacity(0.7),
-                                      fontSize: 18),
-                                  autovalidateMode:
-                                      AutovalidateMode.onUserInteraction,
-                                  validator: (name) =>
-                                      name != null && name.isEmpty
-                                          ? 'Name can\'t be empty'
-                                          : null,
-                                  decoration:
-                                      _inputDecoration('Nombre', context),
-                                ),
-                                const SizedBox(height: 20),
-                                TextFormField(
-                                  initialValue: data['phone'] ?? '',
-                                  textInputAction: TextInputAction.next,
-                                  keyboardType: TextInputType.phone,
-                                  cursorColor: Theme.of(context).primaryColor,
-                                  onSaved: (value) {
-                                    profileData['phone'] = value!.trim();
-                                  },
-                                  style: TextStyle(
-                                      color: Color(0xfff4b33c).withOpacity(0.7),
-                                      fontSize: 18),
-                                  autovalidateMode:
-                                      AutovalidateMode.onUserInteraction,
-                                  validator: (phone) {
-                                    if (phone != null && phone.isEmpty) {
-                                      return 'Phone number can\'t be empty';
-                                    } else if (num.tryParse(phone!) == null) {
-                                      return 'Phone number must be a number';
-                                    }
+                              );
+                              formKey.currentState!.save();
 
-                                    return null;
-                                  },
-                                  decoration:
-                                      _inputDecoration('Telefono', context),
-                                ),
-                                const SizedBox(height: 20),
-                                TextFormField(
-                                  initialValue: data['address'] ?? '',
-                                  textInputAction: TextInputAction.done,
-                                  keyboardType: TextInputType.streetAddress,
-                                  cursorColor: Theme.of(context).primaryColor,
-                                  onSaved: (value) {
-                                    profileData['address'] = value!.trim();
-                                  },
-                                  style: TextStyle(
-                                      color: Color(0xfff4b33c).withOpacity(0.7),
-                                      fontSize: 18),
-                                  autovalidateMode:
-                                      AutovalidateMode.onUserInteraction,
-                                  validator: (address) =>
-                                      address != null && address.isEmpty
-                                          ? 'Address can\'t be empty'
-                                          : null,
-                                  decoration:
-                                      _inputDecoration('Direccion', context),
-                                ),
-                                const SizedBox(height: 40),
-                                Center(
-                                  child: ElevatedButton(
-                                      onPressed: () async {
-                                        final isValid =
-                                            formKey.currentState!.validate();
+                              try {
+                                final ref = storage
+                                    .ref()
+                                    .child('user_image')
+                                    .child('${user!.uid}.jpg');
 
-                                        if (!isValid) return;
+                                if (_userImageFile != null) {
+                                  await ref.putFile(_userImageFile!);
+                                  final url = await ref.getDownloadURL();
+                                  profileData['image_url'] = url;
+                                }
 
-                                        showDialog(
-                                            context: context,
-                                            barrierDismissible: false,
-                                            builder: (context) => Center(
-                                                    child:
-                                                        CircularProgressIndicator(
-                                                  color: Theme.of(context)
-                                                      .primaryColor,
-                                                )));
-                                        formKey.currentState!.save();
+                                await users.doc(user.uid).update(profileData);
 
-                                        try {
-                                          final ref = storage
-                                              .ref()
-                                              .child('user_image')
-                                              .child('${user!.uid}.jpg');
-
-                                          if (_userImageFile != null) {
-                                            await ref.putFile(_userImageFile!);
-
-                                            final url =
-                                                await ref.getDownloadURL();
-
-                                            profileData['image_url'] = url;
-                                          }
-
-                                          await users
-                                              .doc(user.uid)
-                                              .update(profileData);
-
-                                          Navigator.of(context,
-                                                  rootNavigator: true)
-                                              .pop();
-                                          context.goNamed('profile');
-                                        } on FirebaseException catch (e) {
-                                          Navigator.of(context,
-                                                  rootNavigator: true)
-                                              .pop();
-
-                                          showTopSnackBar(
-                                              Overlay.of(context)
-                                                  as OverlayState,
-                                              CustomSnackBar.error(
-                                                  message: e.toString()));
-                                        }
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                          fixedSize: const Size(180, 50)),
-                                      child: const Text(
-                                        'Guardar',
-                                        style: TextStyle(fontSize: 18),
-                                      )),
-                                )
-                              ]),
-                        );
-                      } else {
-                        return const LoadingSpinner();
-                      }
-                    })),
-          ],
-        ));
+                                Navigator.of(context, rootNavigator: true)
+                                    .pop();
+                                context.goNamed('profile');
+                              } on FirebaseException catch (e) {
+                                Navigator.of(context, rootNavigator: true)
+                                    .pop();
+                                showTopSnackBar(
+                                  Overlay.of(context) as OverlayState,
+                                  CustomSnackBar.error(
+                                    message: e.toString(),
+                                  ),
+                                );
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              fixedSize: const Size(180, 50),
+                            ),
+                            child: const Text(
+                              'Guardar',
+                              style: TextStyle(fontSize: 18),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                } else {
+                  return const LoadingSpinner();
+                }
+              },
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   InputDecoration _inputDecoration(String labelText, BuildContext context) {

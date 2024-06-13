@@ -98,16 +98,7 @@ class _RegisterMovieState extends State<RegisterMovie> {
             ),
           );
         }
-        titleController.clear();
-        overviewController.clear();
-        voteAverageController.clear();
-        statusController.clear();
-        genresController.clear();
-        directorNamesController.clear();
-        leadActorsController.clear();
-        registeredByController.clear();
-        durationInMinutesController.clear();
-        usBoxOfficeController.clear();
+        _clearFormFields();
       }
     } catch (e) {
       if (mounted) {
@@ -118,6 +109,51 @@ class _RegisterMovieState extends State<RegisterMovie> {
           ),
         );
       }
+    }
+  }
+
+  void _clearFormFields() {
+    titleController.clear();
+    overviewController.clear();
+    voteAverageController.clear();
+    statusController.clear();
+    genresController.clear();
+    directorNamesController.clear();
+    leadActorsController.clear();
+    registeredByController.clear();
+    durationInMinutesController.clear();
+    usBoxOfficeController.clear();
+  }
+
+  bool _isStepValid(int step) {
+    switch (step) {
+      case 0:
+        return titleController.text.isNotEmpty &&
+            titleController.text.length <= 50 &&
+            overviewController.text.isNotEmpty &&
+            overviewController.text.length <= 250;
+      case 1:
+        final voteAverage = double.tryParse(voteAverageController.text);
+        return voteAverageController.text.isNotEmpty &&
+            voteAverage != null &&
+            voteAverage >= 1 &&
+            voteAverage <= 10 &&
+            statusController.text.isNotEmpty &&
+            genresController.text.isNotEmpty &&
+            genresController.text.length <= 30;
+      case 2:
+        return _posterFile != null && _backdropFile != null;
+      case 3:
+        return directorNamesController.text.isNotEmpty &&
+            directorNamesController.text.length <= 30 &&
+            leadActorsController.text.isNotEmpty &&
+            leadActorsController.text.length <= 50 &&
+            durationInMinutesController.text.isNotEmpty &&
+            int.tryParse(durationInMinutesController.text) != null &&
+            usBoxOfficeController.text.isNotEmpty &&
+            int.tryParse(usBoxOfficeController.text) != null;
+      default:
+        return false;
     }
   }
 
@@ -132,16 +168,19 @@ class _RegisterMovieState extends State<RegisterMovie> {
             bottomRight: Radius.circular(50.0),
           ),
           child: AppBar(
-            title: Text(
-              'Registrar Pelicula',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+            backgroundColor: const Color(0xff1C1C27), // Azul oscuro
+            centerTitle: true,
+            title: Container(
+              padding: const EdgeInsets.all(20),
+              child: Text(
+                'Registrar Película',
+                style: TextStyle(
+                  color: const Color(0xfff4b33c), // Naranja
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-            centerTitle: true,
-            backgroundColor: Colors.grey[700],
           ),
         ),
       ),
@@ -150,11 +189,38 @@ class _RegisterMovieState extends State<RegisterMovie> {
           child: Form(
             key: formKey,
             child: Stepper(
+              type: StepperType.vertical,
               currentStep: _currentStep,
-              onStepTapped: (step) => setState(() => _currentStep = step),
-              onStepContinue: _currentStep < 3
-                  ? () => setState(() => _currentStep += 1)
-                  : _submitForm,
+              onStepTapped: (step) {
+                if (_isStepValid(_currentStep)) {
+                  setState(() => _currentStep = step);
+                } else {
+                  showTopSnackBar(
+                    Overlay.of(context),
+                    CustomSnackBar.error(
+                      message:
+                          "Por favor, complete todos los campos antes de continuar.",
+                    ),
+                  );
+                }
+              },
+              onStepContinue: () {
+                if (_isStepValid(_currentStep)) {
+                  if (_currentStep < 3) {
+                    setState(() => _currentStep += 1);
+                  } else {
+                    _submitForm();
+                  }
+                } else {
+                  showTopSnackBar(
+                    Overlay.of(context),
+                    CustomSnackBar.error(
+                      message:
+                          "Por favor, complete todos los campos antes de continuar.",
+                    ),
+                  );
+                }
+              },
               onStepCancel: _currentStep > 0
                   ? () => setState(() => _currentStep -= 1)
                   : null,
@@ -164,10 +230,28 @@ class _RegisterMovieState extends State<RegisterMovie> {
                   content: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildInputField(titleController, "Título", required: true),
+                      _buildInputField(titleController, "Título",
+                          maxLength: 50,
+                          validators: [
+                            (value) => value == null || value.isEmpty
+                                ? 'Campo requerido'
+                                : null,
+                            (value) => value != null && value.length > 50
+                                ? 'Máximo 50 caracteres'
+                                : null,
+                          ]),
                       SizedBox(height: 20),
                       _buildInputField(overviewController, "Descripción",
-                          maxLines: 10, required: true),
+                          maxLines: 10,
+                          maxLength: 250,
+                          validators: [
+                            (value) => value == null || value.isEmpty
+                                ? 'Campo requerido'
+                                : null,
+                            (value) => value != null && value.length > 250
+                                ? 'Máximo 250 caracteres'
+                                : null,
+                          ]),
                     ],
                   ),
                   isActive: _currentStep >= 0,
@@ -179,11 +263,33 @@ class _RegisterMovieState extends State<RegisterMovie> {
                   content: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildInputField(voteAverageController, "Calificación Promedio", required: true, isNumeric: true),
+                      _buildInputField(
+                          voteAverageController, "Calificación Promedio",
+                          validators: [
+                            (value) => value == null || value.isEmpty
+                                ? 'Campo requerido'
+                                : null,
+                            (value) {
+                              final number = double.tryParse(value ?? '');
+                              if (number == null || number < 1 || number > 10) {
+                                return 'Debe ser un número entre 1 y 10';
+                              }
+                              return null;
+                            },
+                          ]),
                       SizedBox(height: 20),
                       _buildDropdownField(),
                       SizedBox(height: 20),
-                      _buildInputField(genresController, "Géneros"),
+                      _buildInputField(genresController, "Géneros",
+                          maxLength: 30,
+                          validators: [
+                            (value) => value == null || value.isEmpty
+                                ? 'Campo requerido'
+                                : null,
+                            (value) => value != null && value.length > 30
+                                ? 'Máximo 30 caracteres'
+                                : null,
+                          ]),
                     ],
                   ),
                   isActive: _currentStep >= 1,
@@ -230,14 +336,53 @@ class _RegisterMovieState extends State<RegisterMovie> {
                   content: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildInputField(directorNamesController, "Nombres de los Directores", required: true),
+                      _buildInputField(
+                          directorNamesController, "Nombres de los Directores",
+                          maxLength: 30,
+                          validators: [
+                            (value) => value == null || value.isEmpty
+                                ? 'Campo requerido'
+                                : null,
+                            (value) => value != null && value.length > 30
+                                ? 'Máximo 30 caracteres'
+                                : null,
+                          ]),
                       SizedBox(height: 20),
-                      _buildInputField(leadActorsController, "Actores Principales", required: true),
+                      _buildInputField(
+                          leadActorsController, "Actores Principales",
+                          maxLength: 50,
+                          validators: [
+                            (value) => value == null || value.isEmpty
+                                ? 'Campo requerido'
+                                : null,
+                            (value) => value != null && value.length > 50
+                                ? 'Máximo 50 caracteres'
+                                : null,
+                          ]),
                       SizedBox(height: 20),
-                      _buildInputField(durationInMinutesController, "Duración en Minutos", required: true, isNumeric: true),
+                      _buildInputField(
+                          durationInMinutesController, "Duración en Minutos",
+                          validators: [
+                            (value) => value == null || value.isEmpty
+                                ? 'Campo requerido'
+                                : null,
+                            (value) =>
+                                value != null && int.tryParse(value) == null
+                                    ? 'Debe ser un número'
+                                    : null,
+                          ]),
                       SizedBox(height: 20),
                       _buildInputField(usBoxOfficeController,
-                          "Taquilla Provisional (EE.UU.)", isNumeric: true),
+                          "Taquilla Provisional (EE.UU.)",
+                          validators: [
+                            (value) => value == null || value.isEmpty
+                                ? 'Campo requerido'
+                                : null,
+                            (value) =>
+                                value != null && int.tryParse(value) == null
+                                    ? 'Debe ser un número'
+                                    : null,
+                          ]),
                     ],
                   ),
                   isActive: _currentStep >= 3,
@@ -248,9 +393,7 @@ class _RegisterMovieState extends State<RegisterMovie> {
               ],
               controlsBuilder: (BuildContext context, ControlsDetails details) {
                 return Padding(
-                  padding: const EdgeInsets.symmetric(
-                      vertical:
-                          20.0), // Añade espacio entre los botones y los contenedores
+                  padding: const EdgeInsets.symmetric(vertical: 20.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -287,48 +430,52 @@ class _RegisterMovieState extends State<RegisterMovie> {
   }
 
   Widget _buildInputField(TextEditingController controller, String label,
-      {int maxLines = 1, bool required = false, bool isNumeric = false}) {
+      {int maxLines = 1,
+      int? maxLength,
+      List<String? Function(String?)>? validators}) {
     return Padding(
-      padding: const EdgeInsets.symmetric(
-          vertical: 6.0), // Ajusta el padding para un mejor espaciado
+      padding: const EdgeInsets.symmetric(vertical: 6.0),
       child: TextFormField(
         controller: controller,
         decoration: _inputDecoration(context, label),
         maxLines: maxLines,
-        keyboardType: isNumeric ? TextInputType.number : TextInputType.text,
-        validator: (value) {
-          if (required && (value == null || value.isEmpty)) {
-            return 'Este campo es obligatorio';
-          }
-          if (isNumeric && value != null && double.tryParse(value) == null) {
-            return 'Debe ser un número válido';
-          }
-          return null;
-        },
+        maxLength: maxLength,
         style: TextStyle(
           color: const Color(0xfff4b33c).withOpacity(0.7),
           fontSize: 18,
         ),
+        validator: (value) {
+          if (validators != null) {
+            for (var validator in validators) {
+              final result = validator(value);
+              if (result != null) {
+                return result;
+              }
+            }
+          }
+          return null;
+        },
+        onChanged: (value) {
+          if (formKey.currentState != null) {
+            formKey.currentState!.validate();
+          }
+        },
       ),
     );
   }
 
   Widget _buildDropdownField() {
     return Padding(
-      padding: const EdgeInsets.symmetric(
-          vertical: 6.0), // Ajusta el padding para un mejor espaciado
+      padding: const EdgeInsets.symmetric(vertical: 6.0),
       child: DropdownButtonFormField<String>(
         value: statusController.text.isNotEmpty ? statusController.text : null,
         onChanged: (value) {
           setState(() {
             statusController.text = value!;
           });
-        },
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Este campo es obligatorio';
+          if (formKey.currentState != null) {
+            formKey.currentState!.validate();
           }
-          return null;
         },
         items: [
           DropdownMenuItem(
@@ -347,8 +494,10 @@ class _RegisterMovieState extends State<RegisterMovie> {
             value: 'ya no disponible',
           ),
         ],
-        dropdownColor: const Color(0xff1C1C27), // Azul oscuro
+        dropdownColor: const Color(0xff1C1C27),
         decoration: _inputDecoration(context, "Estado"),
+        validator: (value) =>
+            value == null || value.isEmpty ? 'Campo requerido' : null,
       ),
     );
   }
@@ -371,20 +520,20 @@ class _RegisterMovieState extends State<RegisterMovie> {
       String? backdropUrl;
 
       if (_posterFile != null) {
-        posterUrl = await _uploadImageToFirebase(_posterFile!, 'poster_path');
+        posterUrl = await _uploadImageToFirebase(_posterFile!, 'poster');
       }
 
       if (_backdropFile != null) {
-        backdropUrl = await _uploadImageToFirebase(_backdropFile!, 'backdrop_path');
+        backdropUrl = await _uploadImageToFirebase(_backdropFile!, 'backdrop');
       }
 
       Movie movie = Movie(
         id: '',
         title: titleController.text.trim(),
         overview: overviewController.text.trim(),
-        poster_path: posterUrl ?? '',
-        backdrop_path: backdropUrl,
-        vote_average: double.tryParse(voteAverageController.text.trim()) ?? 0,
+        posterPath: posterUrl ?? '',
+        backdropPath: backdropUrl,
+        voteAverage: double.tryParse(voteAverageController.text.trim()) ?? 0,
         status: statusController.text.trim(),
         genres: [genresController.text.trim()],
         directorNames: [directorNamesController.text.trim()],

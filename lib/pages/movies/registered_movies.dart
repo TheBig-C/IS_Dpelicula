@@ -30,16 +30,19 @@ class _RegisteredMoviesPageState extends ConsumerState<RegisteredMoviesPage> {
             bottomRight: Radius.circular(50.0),
           ),
           child: AppBar(
-            title: Text(
-              'Películas Registradas',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+            backgroundColor: const Color(0xff1C1C27), // Azul oscuro
+            centerTitle: true,
+            title: Container(
+              padding: const EdgeInsets.all(20),
+              child: Text(
+                'Películas Registradas',
+                style: TextStyle(
+                  color: const Color(0xfff4b33c), // Naranja
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-            centerTitle: true,
-            backgroundColor: Colors.grey[700],
           ),
         ),
       ),
@@ -130,7 +133,7 @@ class _RegisteredMoviesPageState extends ConsumerState<RegisteredMoviesPage> {
                   .toLowerCase()
                   .contains(titleFilterController.text.toLowerCase());
           bool matchesRating = ratingFilterController.text.isEmpty ||
-              movie.vote_average
+              movie.voteAverage
                   .toString()
                   .contains(ratingFilterController.text);
           bool matchesStatus = statusFilterController.text.isEmpty ||
@@ -158,7 +161,7 @@ class _RegisteredMoviesPageState extends ConsumerState<RegisteredMoviesPage> {
                           child: AspectRatio(
                             aspectRatio: 2 / 3,
                             child: Image.network(
-                              movie.poster_path as String,
+                              movie.posterPath as String,
                               fit: BoxFit.cover,
                             ),
                           ),
@@ -177,7 +180,7 @@ class _RegisteredMoviesPageState extends ConsumerState<RegisteredMoviesPage> {
                                 ),
                               ),
                               SizedBox(height: 8),
-                              Text('Calificación: ${movie.vote_average}',
+                              Text('Calificación: ${movie.voteAverage}',
                                   style: TextStyle(color: Colors.black)),
                               Text('Estado: ${movie.status}',
                                   style: TextStyle(color: Colors.black)),
@@ -220,7 +223,7 @@ class _RegisteredMoviesPageState extends ConsumerState<RegisteredMoviesPage> {
   void _showEditMovieDialog(String movieId, Movie movieData) {
     final titleController = TextEditingController(text: movieData.title);
     final voteAverageController =
-        TextEditingController(text: movieData.vote_average.toString());
+        TextEditingController(text: movieData.voteAverage.toString());
     final statusController = TextEditingController(text: movieData.status);
     final overviewController = TextEditingController(text: movieData.overview);
 
@@ -318,7 +321,7 @@ class _RegisteredMoviesPageState extends ConsumerState<RegisteredMoviesPage> {
           .doc(movieId)
           .update({
         'title': title,
-        'vote_average': double.parse(voteAverage),
+        'voteAverage': double.parse(voteAverage),
         'status': status,
         'overview': overview,
       });

@@ -28,23 +28,27 @@ class _RegisteredTicketsPageState extends ConsumerState<RegisteredTicketsPage> {
             bottomRight: Radius.circular(50.0),
           ),
           child: AppBar(
-            title: Text(
-              'Tickets Registrados',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+            backgroundColor: const Color(0xff1C1C27), // Azul oscuro
+            centerTitle: true,
+            title: Container(
+              padding: const EdgeInsets.all(20),
+              child: Text(
+                'Tickets Registrados',
+                style: TextStyle(
+                  color: const Color(0xfff4b33c), // Naranja
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-            centerTitle: true,
-            backgroundColor: Colors.grey[700],
           ),
         ),
       ),
       body: SafeArea(
         child: MediaQuery.of(context).size.width > 800
             ? Center(
-                child: SizedBox(width: 800, child: _buildContent(ticketListAsyncValue)),
+                child: SizedBox(
+                    width: 800, child: _buildContent(ticketListAsyncValue)),
               )
             : ListView(children: [_buildContent(ticketListAsyncValue)]),
       ),
@@ -61,10 +65,7 @@ class _RegisteredTicketsPageState extends ConsumerState<RegisteredTicketsPage> {
               Expanded(
                 child: TextField(
                   controller: userIdFilterController,
-                  decoration: InputDecoration(
-                    labelText: 'Buscar por ID de Usuario',
-                    border: OutlineInputBorder(),
-                  ),
+                  decoration: _inputDecoration('Buscar por ID de Usuario'),
                   onChanged: (value) {
                     setState(() {});
                   },
@@ -74,10 +75,7 @@ class _RegisteredTicketsPageState extends ConsumerState<RegisteredTicketsPage> {
               Expanded(
                 child: TextField(
                   controller: rowFilterController,
-                  decoration: InputDecoration(
-                    labelText: 'Buscar por Fila',
-                    border: OutlineInputBorder(),
-                  ),
+                  decoration: _inputDecoration('Buscar por Fila'),
                   onChanged: (value) {
                     setState(() {});
                   },
@@ -87,10 +85,7 @@ class _RegisteredTicketsPageState extends ConsumerState<RegisteredTicketsPage> {
               Expanded(
                 child: TextField(
                   controller: seatFilterController,
-                  decoration: InputDecoration(
-                    labelText: 'Buscar por Asiento',
-                    border: OutlineInputBorder(),
-                  ),
+                  decoration: _inputDecoration('Buscar por Asiento'),
                   onChanged: (value) {
                     setState(() {});
                   },
@@ -114,16 +109,44 @@ class _RegisteredTicketsPageState extends ConsumerState<RegisteredTicketsPage> {
     );
   }
 
+  InputDecoration _inputDecoration(String labelText) {
+    return InputDecoration(
+      labelText: labelText,
+      border: OutlineInputBorder(),
+      floatingLabelStyle: TextStyle(color: Color(0xfff4b33c), fontSize: 22),
+      labelStyle: TextStyle(
+        color: Color(0xfff4b33c).withOpacity(0.7),
+        fontSize: 16,
+        fontWeight: FontWeight.w500,
+      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      enabledBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: Color(0xfff4b33c).withOpacity(0.7)),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: Color(0xfff4b33c)),
+        borderRadius: BorderRadius.circular(16),
+      ),
+    );
+  }
+
   Widget _buildTicketList(AsyncValue<List<Ticket>> ticketListAsyncValue) {
     return ticketListAsyncValue.when(
       data: (tickets) {
         final filteredTickets = tickets.where((ticket) {
           bool matchesUserId = userIdFilterController.text.isEmpty ||
-              ticket.userId.toLowerCase().contains(userIdFilterController.text.toLowerCase());
+              ticket.userId
+                  .toLowerCase()
+                  .contains(userIdFilterController.text.toLowerCase());
           bool matchesRow = rowFilterController.text.isEmpty ||
-              ticket.row.toLowerCase().contains(rowFilterController.text.toLowerCase());
+              ticket.row
+                  .toLowerCase()
+                  .contains(rowFilterController.text.toLowerCase());
           bool matchesSeat = seatFilterController.text.isEmpty ||
-              ticket.seat.toLowerCase().contains(seatFilterController.text.toLowerCase());
+              ticket.seat
+                  .toLowerCase()
+                  .contains(seatFilterController.text.toLowerCase());
           return matchesUserId && matchesRow && matchesSeat;
         }).toList();
 
@@ -140,14 +163,23 @@ class _RegisteredTicketsPageState extends ConsumerState<RegisteredTicketsPage> {
                   children: [
                     Text(
                       'Usuario ID: ${ticket.userId}',
-                      style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold),
                     ),
                     SizedBox(height: 8),
-                    Text('Fila: ${ticket.row}', style: TextStyle(color: Colors.black)),
-                    Text('Asiento: ${ticket.seat}', style: TextStyle(color: Colors.black)),
-                    Text('Fecha y hora de la función: ${ticket.functionDateTime}', style: TextStyle(color: Colors.black)),
-                    Text('ID de la función: ${ticket.functionId}', style: TextStyle(color: Colors.black)),
-                    Text('Precio: \$${ticket.price}', style: TextStyle(color: Colors.black)),
+                    Text('Fila: ${ticket.row}',
+                        style: TextStyle(color: Colors.black)),
+                    Text('Asiento: ${ticket.seat}',
+                        style: TextStyle(color: Colors.black)),
+                    Text(
+                        'Fecha y hora de la función: ${ticket.functionDateTime}',
+                        style: TextStyle(color: Colors.black)),
+                    Text('ID de la función: ${ticket.functionId}',
+                        style: TextStyle(color: Colors.black)),
+                    Text('Precio: \$${ticket.price}',
+                        style: TextStyle(color: Colors.black)),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
@@ -160,7 +192,8 @@ class _RegisteredTicketsPageState extends ConsumerState<RegisteredTicketsPage> {
                         IconButton(
                           icon: Icon(Icons.delete, color: Colors.red),
                           onPressed: () {
-                            _showDeleteConfirmationDialog(ticket.id, ticket.userId);
+                            _showDeleteConfirmationDialog(
+                                ticket.id, ticket.userId);
                           },
                         ),
                       ],
@@ -180,7 +213,8 @@ class _RegisteredTicketsPageState extends ConsumerState<RegisteredTicketsPage> {
   void _showEditTicketDialog(String ticketId, Ticket ticketData) {
     final rowController = TextEditingController(text: ticketData.row);
     final seatController = TextEditingController(text: ticketData.seat);
-    final priceController = TextEditingController(text: ticketData.price.toString());
+    final priceController =
+        TextEditingController(text: ticketData.price.toString());
 
     showDialog(
       context: context,
@@ -237,7 +271,8 @@ class _RegisteredTicketsPageState extends ConsumerState<RegisteredTicketsPage> {
               child: Text('Guardar', style: TextStyle(color: Colors.black)),
               onPressed: () {
                 if (formKey.currentState!.validate()) {
-                  _updateTicket(ticketId, rowController.text, seatController.text, double.parse(priceController.text));
+                  _updateTicket(ticketId, rowController.text,
+                      seatController.text, double.parse(priceController.text));
                   Navigator.of(context).pop();
                 }
               },
@@ -248,9 +283,13 @@ class _RegisteredTicketsPageState extends ConsumerState<RegisteredTicketsPage> {
     );
   }
 
-  Future<void> _updateTicket(String ticketId, String row, String seat, double price) async {
+  Future<void> _updateTicket(
+      String ticketId, String row, String seat, double price) async {
     try {
-      await FirebaseFirestore.instance.collection('tickets').doc(ticketId).update({
+      await FirebaseFirestore.instance
+          .collection('tickets')
+          .doc(ticketId)
+          .update({
         'row': row,
         'seat': seat,
         'price': price,
@@ -297,7 +336,10 @@ class _RegisteredTicketsPageState extends ConsumerState<RegisteredTicketsPage> {
 
   Future<void> _deleteTicket(String ticketId) async {
     try {
-      await FirebaseFirestore.instance.collection('tickets').doc(ticketId).delete();
+      await FirebaseFirestore.instance
+          .collection('tickets')
+          .doc(ticketId)
+          .delete();
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Ticket eliminado con éxito')),

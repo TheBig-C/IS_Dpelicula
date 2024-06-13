@@ -35,16 +35,19 @@ class _RoomCreationPageState extends ConsumerState<RoomCreationPage> {
             bottomRight: Radius.circular(50.0),
           ),
           child: AppBar(
-            title: const Text(
-              'Crear Sala de Cine',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+            backgroundColor: const Color(0xff1C1C27), // Azul oscuro
+            centerTitle: true,
+            title: Container(
+              padding: const EdgeInsets.all(20),
+              child: Text(
+                'Crear Sala de Cine',
+                style: TextStyle(
+                  color: const Color(0xfff4b33c), // Naranja
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-            centerTitle: true,
-            backgroundColor: Colors.grey[700],
           ),
         ),
       ),
