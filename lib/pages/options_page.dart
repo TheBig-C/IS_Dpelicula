@@ -83,7 +83,9 @@ class _OptionsPageState extends State<OptionsPage> {
                     _buildDrawerItem(Icons.people_alt, 'Control de empleados',
                         () => _updateMainContent(ControlEmployee())),
                   if (isAdmin)
-                    _buildDrawerItem(Icons.local_movies_rounded, 'Satisfación del cliente',
+                    _buildDrawerItem(
+                        Icons.local_movies_rounded,
+                        'Satisfación del cliente',
                         () => _updateMainContent(MovieSatisfaction())),
                   if (isAdmin)
                     _buildDrawerItem(Icons.group, 'Control de clientes',
@@ -103,9 +105,6 @@ class _OptionsPageState extends State<OptionsPage> {
                   if (isAdmin)
                     _buildDrawerItem(Icons.schedule, 'Cartelera Actual',
                         () => _updateMainContent(ActiveSchedulePage())),
-                        if (isAdmin)
-                    _buildDrawerItem(Icons.airplane_ticket, 'Cartelera Actual',
-                        () => _updateMainContent(RegisteredTicketsPage())),
                   _buildDrawerItem(Icons.exit_to_app, 'Cerrar sesión', () {
                     FirebaseAuth.instance
                         .signOut()
