@@ -41,4 +41,28 @@ class FunctionCine with _$FunctionCine {
       throw ArgumentError('Invalid date format');
     }
   }
+  
+}
+extension FunctionCineCopyWith on FunctionCine {
+  FunctionCine copyWith({
+    String? id,
+    String? movieId,
+    DateTime? startTime,
+    DateTime? endTime,
+    String? roomId,
+    double? price,
+    String? type,
+    String? createdBy,
+  }) {
+    return FunctionCine(
+      id: id ?? this.id,
+      movieId: movieId ?? this.movieId,
+      startTime: startTime ?? this.startTime,
+      endTime: endTime ?? this.endTime,
+      roomId: roomId ?? this.roomId,
+      price: price ?? this.price,
+      type: type ?? this.type,
+      createdBy: createdBy ?? this.createdBy,
+    );
+  }
 }

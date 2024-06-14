@@ -26,6 +26,13 @@ class FunctionCineApi {
       rethrow;
     }
   }
+Future<void> updateFunctionMovieId(String functionId, String newMovieId) async {
+  try {
+    await _functionCinesCollection.doc(functionId).update({'movieId': newMovieId});
+  } catch (e) {
+    rethrow;
+  }
+}
 
   Future<void> updateFunctionCine(FunctionCine functionCine) async {
     try {

@@ -170,12 +170,7 @@ class _RegisteredRoomsPageState extends ConsumerState<RegisteredRoomsPage> {
                             _showEditRoomDialog(room.id, room);
                           },
                         ),
-                        IconButton(
-                          icon: Icon(Icons.delete, color: Colors.red),
-                          onPressed: () {
-                            _showDeleteConfirmationDialog(room.id, room.name);
-                          },
-                        ),
+                       
                       ],
                     ),
                   ],

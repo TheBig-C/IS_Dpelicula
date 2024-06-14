@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:is_dpelicula/controllers/function_controller.dart';
 import 'package:is_dpelicula/controllers/movie_controllers.dart';
 import 'package:is_dpelicula/models/movie.dart';
 
@@ -365,20 +366,36 @@ class _RegisteredMoviesPageState extends ConsumerState<RegisteredMoviesPage> {
     );
   }
 
-  Future<void> _deleteMovie(String movieId) async {
-    try {
-      await FirebaseFirestore.instance
-          .collection('movies')
-          .doc(movieId)
-          .delete();
+Future<void> _deleteMovie(String movieId) async {
+  try {
+    // Obtener todas las funciones que tengan el ID de la película a eliminar
+    final functionCineApi = ref.read(functionCineApiProvider);
+    final allFunctions = await functionCineApi.getAllFunctionCines();
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Película eliminada con éxito')),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error al eliminar la película: $e')),
-      );
+    // Filtrar las funciones que tienen el ID de la película a eliminar
+    final functionsToUpdate = allFunctions.where((func) => func.movieId == movieId).toList();
+
+    // Obtener una lista de todas las películas
+    final allMovies = await FirebaseFirestore.instance.collection('movies').get();
+    final newMovieId = allMovies.docs.firstWhere((doc) => doc.id != movieId).id;
+
+    // Actualizar las funciones con el nuevo ID de película
+    for (var function in functionsToUpdate) {
+      await functionCineApi.updateFunctionCine(function.copyWith(movieId: newMovieId));
     }
+
+    // Eliminar la película
+    await FirebaseFirestore.instance.collection('movies').doc(movieId).delete();
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Película eliminada con éxito')),
+    );
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Error al eliminar la película: $e')),
+    );
   }
 }
+
+  }
+
