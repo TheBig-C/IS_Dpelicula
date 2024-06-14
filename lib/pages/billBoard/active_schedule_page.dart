@@ -180,13 +180,13 @@ class _ActiveSchedulePageState extends ConsumerState<ActiveSchedulePage> {
                                             child: AspectRatio(
                                               aspectRatio: 2 / 3,
                                               child: movie != null &&
-                                                      movie.posterPath != null
+                                                      movie.poster_path != null
                                                   ? ClipRRect(
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                               10),
                                                       child: Image.network(
-                                                        movie.posterPath!,
+                                                        movie.poster_path!,
                                                         fit: BoxFit.cover,
                                                       ),
                                                     )

@@ -30,6 +30,15 @@ class HomePage extends ConsumerWidget {
               const SizedBox(height: 30),
               _buildContent(context, ref),
               const SizedBox(height: 30),
+              _buildFunctionsInBillboardCarousel(context, ref),
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Text(
+                  "Peliculas en estreno:",
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                ),
+              ),
+              const SizedBox(height: 30),
               _buildNowPlayingMoviesSection(context, ref),
               Padding(
                 padding: const EdgeInsets.all(20.0),
@@ -41,10 +50,8 @@ class HomePage extends ConsumerWidget {
               const SizedBox(height: 30),
               _buildComingSoonMoviesSection(ref),
               const SizedBox(height: 30),
-              _buildFunctionsInBillboardCarousel(context, ref),
-              const SizedBox(height: 30),
-              _buildFunctionsByRoomTypeCarousel(context, ref),
-              const SizedBox(height: 30),
+              
+              
               _buildFunctionsByFunctionTypeCarousel(context, ref),
               const SizedBox(height: 30),
               if (isDesktop) const DesktopFooter(),
@@ -60,8 +67,7 @@ class HomePage extends ConsumerWidget {
       height: 300,
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: NetworkImage(
-              "https://th.bing.com/th/id/R.cde6a7cfb6f085bc4e55286d6731f877?rik=9TffBuibVgxpWQ&pid=ImgRaw&r=0"),
+          image: NetworkImage("https://th.bing.com/th/id/R.cde6a7cfb6f085bc4e55286d6731f877?rik=9TffBuibVgxpWQ&pid=ImgRaw&r=0"),
           fit: BoxFit.cover,
         ),
       ),
@@ -96,91 +102,91 @@ class HomePage extends ConsumerWidget {
     );
   }
 
-  Widget _buildFunctionsCarousel(BuildContext context,
-      List<FunctionCine> functions, List<Movie> movies, String title) {
-    if (functions.isEmpty) {
-      return Center(child: Text('No hay funciones disponibles'));
-    }
+  Widget _buildFunctionsCarousel(BuildContext context, List<FunctionCine> functions, List<Movie> movies, String title) {
+  final validFunctions = functions.where((function) {
+    return movies.any((movie) => movie.id == function.movieId);
+  }).toList();
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Text(
-            title,
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-          ),
-        ),
-        const SizedBox(height: 20),
-        CarouselSlider.builder(
-          itemCount: functions.length,
-          itemBuilder: (context, index, realIndex) {
-            final function = functions[index];
-            final movie =
-                movies.firstWhere((movie) => movie.id == function.movieId);
-            return GestureDetector(
-              onTap: () {
-                context.push('/function/${function.id}');
-              },
-              child: Container(
-                margin: const EdgeInsets.symmetric(horizontal: 5),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: Image.network(
-                          movie.posterPath ?? '',
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Container(
-                              color: Colors.grey,
-                              child: Icon(Icons.error,
-                                  color: Colors.red, size: 50),
-                            );
-                          },
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        movie.title,
-                        style: TextStyle(
-                            fontSize: 16.0, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        '${function.startTime.toLocal()} - ${function.endTime.toLocal()}',
-                        style: TextStyle(fontSize: 14.0),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        '${function.roomId} - ${function.type}',
-                        style: TextStyle(fontSize: 14.0),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            );
-          },
-          options: CarouselOptions(
-            height: 650,
-            initialPage: 0,
-            viewportFraction: 0.4,
-            enlargeCenterPage: true,
-            autoPlay: true,
-            autoPlayInterval: const Duration(seconds: 3),
-            autoPlayAnimationDuration: const Duration(milliseconds: 1000),
-            autoPlayCurve: Curves.fastOutSlowIn,
-          ),
-        ),
-      ],
-    );
+  if (validFunctions.isEmpty) {
+    return Center(child: Text('No hay funciones disponibles'));
   }
 
-  Widget _buildFunctionsInBillboardCarousel(
-      BuildContext context, WidgetRef ref) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Text(
+          title,
+          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+        ),
+      ),
+      const SizedBox(height: 20),
+      CarouselSlider.builder(
+        itemCount: validFunctions.length,
+        itemBuilder: (context, index, realIndex) {
+          final function = validFunctions[index];
+          final movie = movies.firstWhere((movie) => movie.id == function.movieId);
+
+          return GestureDetector(
+            onTap: () {
+              context.push('/function/${function.id}');
+            },
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 5),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: Image.network(
+                        movie.poster_path ?? '',
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            color: Colors.grey,
+                            child: Icon(Icons.error, color: Colors.red, size: 50),
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      movie.title,
+                      style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '${function.startTime.toLocal()} - ${function.endTime.toLocal()}',
+                      style: TextStyle(fontSize: 14.0),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      ' ${function.type}',
+                      style: TextStyle(fontSize: 14.0),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+        options: CarouselOptions(
+          height: 650,
+          initialPage: 0,
+          viewportFraction: 0.4,
+          enlargeCenterPage: true,
+          autoPlay: true,
+          autoPlayInterval: const Duration(seconds: 3),
+          autoPlayAnimationDuration: const Duration(milliseconds: 1000),
+          autoPlayCurve: Curves.fastOutSlowIn,
+        ),
+      ),
+    ],
+  );
+}
+
+  Widget _buildFunctionsInBillboardCarousel(BuildContext context, WidgetRef ref) {
     final functionCineState = ref.watch(functionCineControllerProvider);
     final moviesAsyncValue = ref.watch(allMoviesProviderFuture);
 
@@ -188,8 +194,7 @@ class HomePage extends ConsumerWidget {
       data: (functions) {
         final sortedFunctions = functions.toList();
         return moviesAsyncValue.when(
-          data: (movies) => _buildFunctionsCarousel(
-              context, sortedFunctions, movies, "Funciones en cartelera"),
+          data: (movies) => _buildFunctionsCarousel(context, sortedFunctions, movies, "Funciones en Cartelera"),
           loading: () => Center(child: CircularProgressIndicator()),
           error: (error, stackTrace) => Center(child: Text('Error: $error')),
         );
@@ -199,30 +204,21 @@ class HomePage extends ConsumerWidget {
     );
   }
 
-  Widget _buildFunctionsByRoomTypeCarousel(
-      BuildContext context, WidgetRef ref) {
+  Widget _buildFunctionsByRoomTypeCarousel(BuildContext context, WidgetRef ref) {
     final functionCineState = ref.watch(functionCineControllerProvider);
     final moviesAsyncValue = ref.watch(allMoviesProviderFuture);
 
     return functionCineState.when(
       data: (functions) {
-        final roomTypes =
-            functions.map((function) => function.type).toSet().toList();
+        final roomTypes = functions.map((function) => function.type).toSet().toList();
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: roomTypes.map((roomType) {
-            final functionsByRoomType = functions
-                .where((function) => function.type == roomType)
-                .toList();
+            final functionsByRoomType = functions.where((function) => function.type == roomType).toList();
             return moviesAsyncValue.when(
-              data: (movies) => _buildFunctionsCarousel(
-                  context,
-                  functionsByRoomType,
-                  movies,
-                  "Funciones por tipo de sala: $roomType"),
+              data: (movies) => _buildFunctionsCarousel(context, functionsByRoomType, movies, "Funciones por tipo de sala: $roomType"),
               loading: () => Center(child: CircularProgressIndicator()),
-              error: (error, stackTrace) =>
-                  Center(child: Text('Error: $error')),
+              error: (error, stackTrace) => Center(child: Text('Error: $error')),
             );
           }).toList(),
         );
@@ -232,29 +228,21 @@ class HomePage extends ConsumerWidget {
     );
   }
 
-  Widget _buildFunctionsByFunctionTypeCarousel(
-      BuildContext context, WidgetRef ref) {
+  Widget _buildFunctionsByFunctionTypeCarousel(BuildContext context, WidgetRef ref) {
     final functionCineState = ref.watch(functionCineControllerProvider);
     final moviesAsyncValue = ref.watch(allMoviesProviderFuture);
 
     return functionCineState.when(
       data: (functions) {
-        final functionTypes =
-            functions.map((function) => function.type).toSet().toList();
+        final functionTypes = functions.map((function) => function.type).toSet().toList();
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: functionTypes.map((type) {
-            final functionsByType =
-                functions.where((function) => function.type == type).toList();
+            final functionsByType = functions.where((function) => function.type == type).toList();
             return moviesAsyncValue.when(
-              data: (movies) => _buildFunctionsCarousel(
-                  context,
-                  functionsByType,
-                  movies,
-                  "Funciones por tipo de función: $type"),
+              data: (movies) => _buildFunctionsCarousel(context, functionsByType, movies, "Funciones por tipo de función: $type"),
               loading: () => Center(child: CircularProgressIndicator()),
-              error: (error, stackTrace) =>
-                  Center(child: Text('Error: $error')),
+              error: (error, stackTrace) => Center(child: Text('Error: $error')),
             );
           }).toList(),
         );
@@ -289,8 +277,7 @@ class HomePage extends ConsumerWidget {
           alignment: Alignment.center,
           child: Text(
             "Misión",
-            style: TextStyle(
-                fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white),
+            style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white),
           ),
         ),
       ),
@@ -321,8 +308,7 @@ class HomePage extends ConsumerWidget {
           alignment: Alignment.center,
           child: Text(
             "Visión",
-            style: TextStyle(
-                fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white),
+            style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white),
           ),
         ),
       ),
@@ -349,16 +335,11 @@ class HomePage extends ConsumerWidget {
         children: [
           DrawerHeader(
             decoration: BoxDecoration(color: Colors.blue),
-            child: const Text('Menú',
-                style: TextStyle(color: Colors.white, fontSize: 24)),
+            child: const Text('Menú', style: TextStyle(color: Colors.white, fontSize: 24)),
           ),
           ListTile(title: const Text('Inicio'), onTap: () => context.pop()),
-          ListTile(
-              title: const Text('Nosotros'),
-              onTap: () => context.goNamed('aboutUs')),
-          ListTile(
-              title: const Text('Contáctanos'),
-              onTap: () => context.goNamed('contact')),
+          ListTile(title: const Text('Nosotros'), onTap: () => context.goNamed('aboutUs')),
+          ListTile(title: const Text('Contáctanos'), onTap: () => context.goNamed('contact')),
         ],
       ),
     );
@@ -369,13 +350,42 @@ class HomePage extends ConsumerWidget {
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 20),
-          const Text("Cartelera",
-              style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18)),
-          const SizedBox(height: 20),
-        ],
+        
       ),
+    );
+  }
+
+  Widget _buildCategories(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        PopupMenuButton<String>(
+          onSelected: (String result) {}, // Handle category selection
+          itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+            const PopupMenuItem<String>(value: 'Romance', child: Text('Romance')),
+            const PopupMenuItem<String>(value: 'Horror', child: Text('Horror')),
+            const PopupMenuItem<String>(value: 'Comedia', child: Text('Comedia')),
+            const PopupMenuItem<String>(value: 'Sci-fi', child: Text('Sci-fi')),
+          ],
+          child: Text(
+            "Categorías",
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: Theme.of(context).primaryColor),
+          ),
+        ),
+        TextButton(
+          onPressed: () {},
+          child: Row(
+            children: [
+              Text(
+                "Ver Todo",
+                style: TextStyle(color: Theme.of(context).primaryColor, letterSpacing: 0.3, fontWeight: FontWeight.w500),
+              ),
+              const SizedBox(width: 10),
+              Icon(Icons.keyboard_arrow_right_sharp, color: Theme.of(context).primaryColor, size: 22),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
@@ -383,9 +393,7 @@ class HomePage extends ConsumerWidget {
     final moviesAsyncValue = ref.watch(allMoviesProviderFuture);
     return moviesAsyncValue.when(
       data: (listMovies) {
-        final nowPlayingMovies = listMovies
-            .where((movie) => movie.status == "en cartelera")
-            .toList();
+        final nowPlayingMovies = listMovies.where((movie) => movie.status == "en cartelera").toList();
         return _buildNowPlayingCarousel(context, nowPlayingMovies);
       },
       loading: () => const LoadingSpinner(),
@@ -428,7 +436,7 @@ class HomePage extends ConsumerWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(30),
               child: Image.network(
-                movie.posterPath ?? '',
+                movie.poster_path ?? '',
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
@@ -444,8 +452,7 @@ class HomePage extends ConsumerWidget {
       options: CarouselOptions(
         height: 650,
         initialPage: 0,
-        viewportFraction:
-            0.7, // Ajusta este valor para hacer que los pósters sean más grandes
+        viewportFraction: 0.7, // Ajusta este valor para hacer que los pósters sean más grandes
         enlargeCenterPage: true,
         autoPlay: true,
         autoPlayInterval: const Duration(seconds: 3),
@@ -475,7 +482,7 @@ class HomePage extends ConsumerWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
               image: DecorationImage(
-                image: NetworkImage(movie.backdropPath ?? ''),
+                image: NetworkImage(movie.backdrop_path ?? ''),
                 fit: BoxFit.cover,
               ),
             ),

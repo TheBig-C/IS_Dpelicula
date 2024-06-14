@@ -3,8 +3,10 @@ import 'dart:typed_data';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:is_dpelicula/controllers/room_controllers.dart';
 import 'package:is_dpelicula/models/functionCine.dart';
 import 'package:is_dpelicula/models/movie.dart';
+import 'package:is_dpelicula/models/room.dart';
 import 'package:is_dpelicula/pages/tickets/TicketPurchasePage.dart';
 import 'package:is_dpelicula/widgets/custom_app_bar.dart';
 import 'package:is_dpelicula/widgets/desktop_footer.dart';
@@ -48,8 +50,10 @@ class FunctionDetailsPage extends ConsumerWidget {
   }
 
   Widget _buildFunctionDetail(BuildContext context, WidgetRef ref) {
+    final roomAsyncValue = ref.watch(roomControllerProvider);
+
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -57,7 +61,7 @@ class FunctionDetailsPage extends ConsumerWidget {
             Expanded(
               flex: 4,
               child: _loadImageWidget(
-                  movie.posterPath as String, 600, BoxFit.cover),
+                  movie.poster_path as String, 600, BoxFit.cover),
             ),
             const SizedBox(width: 20),
             Expanded(
@@ -80,7 +84,11 @@ class FunctionDetailsPage extends ConsumerWidget {
           ],
         ),
         const SizedBox(height: 30),
-        _buildFunctionInfo(context),
+        roomAsyncValue.when(
+          data: (rooms) => _buildFunctionInfo(context, rooms),
+          loading: () => const CircularProgressIndicator(),
+          error: (error, stackTrace) => Text('Error: $error'),
+        ),
         const SizedBox(height: 30),
         ElevatedButton(
           onPressed: () {
@@ -92,6 +100,11 @@ class FunctionDetailsPage extends ConsumerWidget {
             );
           },
           child: Text('Comprar Ticket'),
+          style: ElevatedButton.styleFrom(
+            foregroundColor: Colors.black, backgroundColor: Colors.amber, // Color del texto
+            textStyle: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+          ),
         ),
         const SizedBox(height: 30),
       ],
@@ -152,8 +165,15 @@ class FunctionDetailsPage extends ConsumerWidget {
   Widget _buildDetailedInfo(BuildContext context, Movie movie) {
     return Card(
       elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15),
+      ),
       child: Container(
         padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.9),
+          borderRadius: BorderRadius.circular(15),
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -162,7 +182,7 @@ class FunctionDetailsPage extends ConsumerWidget {
                     fontSize: 30,
                     fontWeight: FontWeight.bold,
                     color: Colors.purple)),
-            Text('Rating: ${movie.voteAverage}',
+            Text('Rating: ${movie.vote_average}',
                 style: const TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
@@ -203,29 +223,41 @@ class FunctionDetailsPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildFunctionInfo(BuildContext context) {
-    return Card(
-      elevation: 4,
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Información de la Función',
-                style: const TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black)),
-            const SizedBox(height: 20),
-            Text('Hora de inicio: ${function.startTime}',
-                style: const TextStyle(fontSize: 18, color: Colors.black)),
-            Text('Hora de fin: ${function.endTime}',
-                style: const TextStyle(fontSize: 18, color: Colors.black)),
-            Text('Sala: ${function.roomId}',
-                style: const TextStyle(fontSize: 18, color: Colors.black)),
-            Text('Precio: \$${function.price}',
-                style: const TextStyle(fontSize: 18, color: Colors.black)),
-          ],
+  Widget _buildFunctionInfo(BuildContext context, List<Room> rooms) {
+    final room = rooms.firstWhere((room) => room.id == function.roomId);
+
+    return Center(
+      child: Card(
+        elevation: 4,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: Container(
+          width: 300, // Ajusta el tamaño según sea necesario
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.9),
+            borderRadius: BorderRadius.circular(15),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Información de la Función',
+                  style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black)),
+              const SizedBox(height: 20),
+              Text('Hora de inicio: ${function.startTime}',
+                  style: const TextStyle(fontSize: 18, color: Colors.black)),
+              Text('Hora de fin: ${function.endTime}',
+                  style: const TextStyle(fontSize: 18, color: Colors.black)),
+              Text('Sala: ${room.name}',
+                  style: const TextStyle(fontSize: 18, color: Colors.black)),
+              Text('Precio: \$${function.price}',
+                  style: const TextStyle(fontSize: 18, color: Colors.black)),
+            ],
+          ),
         ),
       ),
     );

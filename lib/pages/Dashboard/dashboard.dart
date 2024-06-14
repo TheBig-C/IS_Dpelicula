@@ -191,504 +191,387 @@ class ActivityCharts extends StatelessWidget {
                           .compareTo(DateFormat('yyyy-MM-dd').parse(b.key)));
 
                     Widget buildChartWidgets(
-                        BuildContext context, BoxConstraints constraints) {
-                      final isDesktop = constraints.maxWidth > 600;
-                      final charts = [
-                        buildCard(
-                          'Distribución de Actividades',
-                          PieChart(
-                            PieChartData(
-                              sections: [
-                                PieChartSectionData(
-                                  color: Colors.green,
-                                  value: successfulLogins.toDouble(),
-                                  title: 'Éxito',
-                                  radius: 50,
-                                  titleStyle: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                PieChartSectionData(
-                                  color: Colors.red,
-                                  value: failedLogins.toDouble(),
-                                  title: 'Fallido',
-                                  radius: 50,
-                                  titleStyle: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        buildCard(
-                          'Intentos de Inicio de Sesión por Usuario',
-                          ListView.builder(
-                            itemCount: userLoginAttempts.length,
-                            itemBuilder: (context, index) {
-                              String user =
-                                  userLoginAttempts.keys.elementAt(index);
-                              int attempts = userLoginAttempts[user]!;
-                              return ListTile(
-                                title: Text(user),
-                                subtitle: Text('Intentos: $attempts'),
-                              );
-                            },
-                          ),
-                        ),
-                        buildCard(
-                          'Intentos Diarios de Inicio de Sesión',
-                          LineChart(
-                            LineChartData(
-                              lineBarsData: [
-                                LineChartBarData(
-                                  spots: sortedDailyLogins
-                                      .asMap()
-                                      .entries
-                                      .map((e) => FlSpot(e.key.toDouble(),
-                                          e.value.value.toDouble()))
-                                      .toList(),
-                                  isCurved: true,
-                                  barWidth: 2,
-                                  color: Colors.deepPurple,
-                                ),
-                              ],
-                              titlesData: FlTitlesData(
-                                leftTitles: AxisTitles(
-                                  sideTitles: SideTitles(
-                                    showTitles: true,
-                                    reservedSize: 35,
-                                    interval: 10,
-                                    getTitlesWidget: (value, meta) {
-                                      return Text(
-                                        value.toString(),
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 10,
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ),
-                                rightTitles: AxisTitles(
-                                  sideTitles: SideTitles(
-                                    showTitles: true,
-                                    getTitlesWidget: (value, meta) {
-                                      return Text(
-                                        value.toString(),
-                                        style: TextStyle(
-                                          color: Colors
-                                              .transparent, // Mismo color del fondo
-                                          fontSize: 10,
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ),
-                                topTitles: AxisTitles(
-                                  sideTitles: SideTitles(
-                                    showTitles: true,
-                                    getTitlesWidget: (value, meta) {
-                                      return Text(
-                                        value.toString(),
-                                        style: TextStyle(
-                                          color: Colors
-                                              .transparent, // Mismo color del fondo
-                                          fontSize: 10,
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ),
-                                bottomTitles: AxisTitles(
-                                  sideTitles: SideTitles(
-                                    showTitles: true,
-                                    reservedSize: 30,
-                                    interval: 0.5,
-                                    getTitlesWidget: (value, meta) {
-                                      int interval =
-                                          (sortedDailyLogins.length / 5).ceil();
-                                      if (value.toInt() % interval == 0 &&
-                                          value.toInt() <
-                                              sortedDailyLogins.length) {
-                                        return Text(
-                                          DateFormat('yyyy-MM-dd').format(
-                                              DateFormat('yyyy-MM-dd').parse(
-                                                  sortedDailyLogins[
-                                                          value.toInt()]
-                                                      .key)),
-                                          style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 10),
-                                        );
-                                      }
-                                      return const SizedBox.shrink();
-                                    },
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        buildCard(
-                          'Distribución Horaria de Inicios de Sesión',
-                          BarChart(
-                            BarChartData(
-                              alignment: BarChartAlignment.spaceAround,
-                              barGroups: hourlyLoginDistribution.entries
-                                  .map((e) => BarChartGroupData(
-                                        x: int.parse(e.key),
-                                        barRods: [
-                                          BarChartRodData(
-                                            toY: e.value.toDouble(),
-                                            color: Colors.orange,
-                                            width: 16,
-                                          ),
-                                        ],
-                                      ))
-                                  .toList(),
-                              titlesData: FlTitlesData(
-                                leftTitles: AxisTitles(
-                                  sideTitles: SideTitles(
-                                    showTitles: true,
-                                    reservedSize: 30,
-                                    interval: 2,
-                                    getTitlesWidget: (value, meta) {
-                                      return Text(
-                                        value.toString(),
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 12,
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ),
-                                rightTitles: AxisTitles(
-                                  sideTitles: SideTitles(
-                                    showTitles: true,
-                                    getTitlesWidget: (value, meta) {
-                                      return Text(
-                                        value.toString(),
-                                        style: TextStyle(
-                                          color: Colors
-                                              .transparent, // Mismo color del fondo
-                                          fontSize: 10,
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ),
-                                topTitles: AxisTitles(
-                                  sideTitles: SideTitles(
-                                    showTitles: true,
-                                    getTitlesWidget: (value, meta) {
-                                      return Text(
-                                        value.toString(),
-                                        style: TextStyle(
-                                          color: Colors
-                                              .transparent, // Mismo color del fondo
-                                          fontSize: 10,
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ),
-                                bottomTitles: AxisTitles(
-                                  sideTitles: SideTitles(
-                                    showTitles: true,
-                                    getTitlesWidget: (value, meta) {
-                                      return Text(
-                                        '${value.toInt()}:00',
-                                        style: TextStyle(
-                                            color: Colors.black, fontSize: 10),
-                                      );
-                                    },
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        buildCard(
-                          'Ventas de Entradas por Película',
-                          BarChart(
-                            BarChartData(
-                              alignment: BarChartAlignment.spaceAround,
-                              barGroups: movieTicketSales.entries
-                                  .map((e) => BarChartGroupData(
-                                        x: e.key.hashCode,
-                                        barRods: [
-                                          BarChartRodData(
-                                            toY: e.value.toDouble(),
-                                            color: Colors.orange,
-                                            width: 16,
-                                          ),
-                                        ],
-                                      ))
-                                  .toList(),
-                              titlesData: FlTitlesData(
-                                leftTitles: AxisTitles(
-                                  sideTitles: SideTitles(
-                                    showTitles: true,
-                                    reservedSize: 20,
-                                    interval: 2,
-                                    getTitlesWidget: (value, meta) {
-                                      return Text(
-                                        value.toString(),
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 12,
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ),
-                                rightTitles: AxisTitles(
-                                  sideTitles: SideTitles(
-                                    showTitles: true,
-                                    getTitlesWidget: (value, meta) {
-                                      return Text(
-                                        value.toString(),
-                                        style: TextStyle(
-                                          color: Colors
-                                              .transparent, // Mismo color del fondo
-                                          fontSize: 10,
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ),
-                                topTitles: AxisTitles(
-                                  sideTitles: SideTitles(
-                                    showTitles: true,
-                                    getTitlesWidget: (value, meta) {
-                                      return Text(
-                                        value.toString(),
-                                        style: TextStyle(
-                                          color: Colors
-                                              .transparent, // Mismo color del fondo
-                                          fontSize: 10,
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ),
-                                bottomTitles: AxisTitles(
-                                  sideTitles: SideTitles(
-                                    showTitles: true,
-                                    reservedSize: 50,
-                                    getTitlesWidget: (value, meta) {
-                                      final movie = movieDocs.firstWhere(
-                                          (doc) =>
-                                              doc.id.hashCode == value.toInt());
-                                      return movie != null
-                                          ? Container(
-                                              width: 50,
-                                              child: Text(
-                                                movie['title'],
-                                                style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 10),
-                                                maxLines:
-                                                    3, // Permite hasta 2 líneas
-                                                overflow: TextOverflow.ellipsis,
-                                                softWrap: true,
-                                                textAlign: TextAlign.center,
-                                              ),
-                                            )
-                                          : Text('');
-                                    },
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        buildCard(
-                          'Calificación Promedio por Género',
-                          BarChart(
-                            BarChartData(
-                              alignment: BarChartAlignment.spaceAround,
-                              barGroups: genreAverageRatings.entries
-                                  .map((e) => BarChartGroupData(
-                                        x: e.key.hashCode,
-                                        barRods: [
-                                          BarChartRodData(
-                                            toY: e.value,
-                                            color: Colors.deepPurple,
-                                            width: 16,
-                                          ),
-                                        ],
-                                      ))
-                                  .toList(),
-                              titlesData: FlTitlesData(
-                                leftTitles: AxisTitles(
-                                  sideTitles: SideTitles(
-                                    showTitles: true,
-                                    reservedSize: 20,
-                                    interval: 3,
-                                    getTitlesWidget: (value, meta) {
-                                      return Text(
-                                        value.toString(),
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 12,
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ),
-                                rightTitles: AxisTitles(
-                                  sideTitles: SideTitles(
-                                    showTitles: true,
-                                    getTitlesWidget: (value, meta) {
-                                      return Text(
-                                        value.toString(),
-                                        style: TextStyle(
-                                          color: Colors
-                                              .transparent, // Mismo color del fondo
-                                          fontSize: 10,
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ),
-                                topTitles: AxisTitles(
-                                  sideTitles: SideTitles(
-                                    showTitles: true,
-                                    getTitlesWidget: (value, meta) {
-                                      return Text(
-                                        value.toString(),
-                                        style: TextStyle(
-                                          color: Colors
-                                              .transparent, // Mismo color del fondo
-                                          fontSize: 10,
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ),
-                                bottomTitles: AxisTitles(
-                                  sideTitles: SideTitles(
-                                    showTitles: true,
-                                    getTitlesWidget: (value, meta) {
-                                      final genre = genreAverageRatings.keys
-                                          .firstWhere((key) =>
-                                              key.hashCode == value.toInt());
-                                      return genre != null
-                                          ? Text(
-                                              genre,
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 12),
-                                            )
-                                          : Text('');
-                                    },
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        buildCard(
-                          'Películas por Género',
-                          Container(
-                            width: 600,
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: PieChart(
-                                    PieChartData(
-                                      sections: moviesByGenre.entries
-                                          .map((e) => PieChartSectionData(
-                                                color: Colors.primaries[
-                                                    moviesByGenre.keys
-                                                            .toList()
-                                                            .indexOf(e.key) %
-                                                        Colors
-                                                            .primaries.length],
-                                                value: e.value.toDouble(),
-                                                title: '',
-                                                radius: 50,
-                                                titleStyle: TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.black,
-                                                ),
-                                              ))
-                                          .toList(),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(width: 16),
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: moviesByGenre.entries
-                                      .map((e) => Row(
-                                            children: [
-                                              Container(
-                                                width: 16,
-                                                height: 16,
-                                                color: Colors.primaries[
-                                                    moviesByGenre.keys
-                                                            .toList()
-                                                            .indexOf(e.key) %
-                                                        Colors
-                                                            .primaries.length],
-                                              ),
-                                              SizedBox(width: 8),
-                                              Text(
-                                                '${e.key} (${e.value})',
-                                                style: TextStyle(
-                                                    fontSize: 14,
-                                                    color: Colors.black),
-                                              ),
-                                            ],
-                                          ))
-                                      .toList(),
-                                ),
-                              ],
-                            ),
-                          ),
-                        )
-                      ];
+  BuildContext context, BoxConstraints constraints) {
+  final isDesktop = constraints.maxWidth > 600;
+  final charts = [
+    buildCard(
+      'Distribución de Actividades',
+      PieChart(
+        PieChartData(
+          sections: [
+            PieChartSectionData(
+              color: Colors.green,
+              value: successfulLogins.toDouble(),
+              title: 'Éxito',
+              radius: 50,
+              titleStyle: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+            PieChartSectionData(
+              color: Colors.red,
+              value: failedLogins.toDouble(),
+              title: 'Fallido',
+              radius: 50,
+              titleStyle: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+    buildCard(
+      'Intentos de Inicio de Sesión por Usuario',
+      ListView.builder(
+        itemCount: userLoginAttempts.length,
+        itemBuilder: (context, index) {
+          String user = userLoginAttempts.keys.elementAt(index);
+          int attempts = userLoginAttempts[user]!;
+          return ListTile(
+            title: Text(user),
+            subtitle: Text('Intentos: $attempts'),
+          );
+        },
+      ),
+    ),
+    buildCard(
+      'Intentos Diarios de Inicio de Sesión',
+      LineChart(
+        LineChartData(
+          lineBarsData: [
+            LineChartBarData(
+              spots: sortedDailyLogins
+                  .asMap()
+                  .entries
+                  .map((e) => FlSpot(e.key.toDouble(), e.value.value.toDouble()))
+                  .toList(),
+              isCurved: true,
+              barWidth: 2,
+              color: Colors.deepPurple,
+            ),
+          ],
+          titlesData: FlTitlesData(
+            leftTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                reservedSize: 35,
+                interval: 10,
+                getTitlesWidget: (value, meta) {
+                  return Text(
+                    value.toString(),
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 10,
+                    ),
+                  );
+                },
+              ),
+            ),
+            rightTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                getTitlesWidget: (value, meta) {
+                  return Text(
+                    value.toString(),
+                    style: TextStyle(
+                      color: Colors.transparent,
+                      fontSize: 10,
+                    ),
+                  );
+                },
+              ),
+            ),
+            topTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                getTitlesWidget: (value, meta) {
+                  return Text(
+                    value.toString(),
+                    style: TextStyle(
+                      color: Colors.transparent,
+                      fontSize: 10,
+                    ),
+                  );
+                },
+              ),
+            ),
+            bottomTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                reservedSize: 30,
+                interval: 0.5,
+                getTitlesWidget: (value, meta) {
+                  int interval = (sortedDailyLogins.length / 5).ceil();
+                  if (value.toInt() % interval == 0 &&
+                      value.toInt() < sortedDailyLogins.length) {
+                    return Text(
+                      DateFormat('yyyy-MM-dd')
+                          .format(DateFormat('yyyy-MM-dd')
+                              .parse(sortedDailyLogins[value.toInt()].key)),
+                      style: TextStyle(color: Colors.black, fontSize: 10),
+                    );
+                  }
+                  return const SizedBox.shrink();
+                },
+              ),
+            ),
+          ),
+        ),
+      ),
+    ),
+    buildCard(
+      'Distribución Horaria de Inicios de Sesión',
+      BarChart(
+        BarChartData(
+          alignment: BarChartAlignment.spaceAround,
+          barGroups: hourlyLoginDistribution.entries
+              .map((e) => BarChartGroupData(
+                    x: int.parse(e.key),
+                    barRods: [
+                      BarChartRodData(
+                        toY: e.value.toDouble(),
+                        color: Colors.orange,
+                        width: 16,
+                      ),
+                    ],
+                  ))
+              .toList(),
+          titlesData: FlTitlesData(
+            leftTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                reservedSize: 30,
+                interval: 2,
+                getTitlesWidget: (value, meta) {
+                  return Text(
+                    value.toString(),
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 12,
+                    ),
+                  );
+                },
+              ),
+            ),
+            rightTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                getTitlesWidget: (value, meta) {
+                  return Text(
+                    value.toString(),
+                    style: TextStyle(
+                      color: Colors.transparent,
+                      fontSize: 10,
+                    ),
+                  );
+                },
+              ),
+            ),
+            topTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                getTitlesWidget: (value, meta) {
+                  return Text(
+                    value.toString(),
+                    style: TextStyle(
+                      color: Colors.transparent,
+                      fontSize: 10,
+                    ),
+                  );
+                },
+              ),
+            ),
+            bottomTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                getTitlesWidget: (value, meta) {
+                  return Text(
+                    '${value.toInt()}:00',
+                    style: TextStyle(color: Colors.black, fontSize: 10),
+                  );
+                },
+              ),
+            ),
+          ),
+        ),
+      ),
+    ),
+    
+    buildCard(
+      'Calificación Promedio por Género',
+      BarChart(
+        BarChartData(
+          alignment: BarChartAlignment.spaceAround,
+          barGroups: genreAverageRatings.entries
+              .map((e) => BarChartGroupData(
+                    x: e.key.hashCode,
+                    barRods: [
+                      BarChartRodData(
+                        toY: e.value,
+                        color: Colors.deepPurple,
+                        width: 16,
+                      ),
+                    ],
+                  ))
+              .toList(),
+          titlesData: FlTitlesData(
+            leftTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                reservedSize: 20,
+                interval: 3,
+                getTitlesWidget: (value, meta) {
+                  return Text(
+                    value.toString(),
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 12,
+                    ),
+                  );
+                },
+              ),
+            ),
+            rightTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                getTitlesWidget: (value, meta) {
+                  return Text(
+                    value.toString(),
+                    style: TextStyle(
+                      color: Colors.transparent,
+                      fontSize: 10,
+                    ),
+                  );
+                },
+              ),
+            ),
+            topTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                getTitlesWidget: (value, meta) {
+                  return Text(
+                    value.toString(),
+                    style: TextStyle(
+                      color: Colors.transparent,
+                      fontSize: 10,
+                    ),
+                  );
+                },
+              ),
+            ),
+            bottomTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                getTitlesWidget: (value, meta) {
+                  final genre = genreAverageRatings.keys.firstWhere(
+                    (key) => key.hashCode == value.toInt(),
+                    orElse: () => '',
+                  );
 
-                      if (isDesktop) {
-                        return Column(
-                          children: [
-                            Row(
-                              children: charts
-                                  .sublist(0, 2)
-                                  .map((chart) => Expanded(child: chart))
-                                  .toList(),
+                  if (genre.isEmpty) {
+                    return const SizedBox.shrink();
+                  }
+
+                  return Text(
+                    genre,
+                    style: TextStyle(color: Colors.black, fontSize: 12),
+                  );
+                },
+              ),
+            ),
+          ),
+        ),
+      ),
+    ),
+    buildCard(
+      'Películas por Género',
+      Container(
+        width: 600,
+        child: Row(
+          children: [
+            Expanded(
+              child: PieChart(
+                PieChartData(
+                  sections: moviesByGenre.entries
+                      .map((e) => PieChartSectionData(
+                            color: Colors.primaries[moviesByGenre.keys
+                                    .toList()
+                                    .indexOf(e.key) %
+                                Colors.primaries.length],
+                            value: e.value.toDouble(),
+                            title: '',
+                            radius: 50,
+                            titleStyle: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
                             ),
-                            Row(
-                              children: charts
-                                  .sublist(2, 4)
-                                  .map((chart) => Expanded(child: chart))
-                                  .toList(),
-                            ),
-                            Row(
-                              children: charts
-                                  .sublist(4, 6)
-                                  .map((chart) => Expanded(child: chart))
-                                  .toList(),
-                            ),
-                            charts.last,
-                          ],
-                        );
-                      } else {
-                        return Column(
-                          children: charts,
-                        );
-                      }
-                    }
+                          ))
+                      .toList(),
+                ),
+              ),
+            ),
+            SizedBox(width: 16),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: moviesByGenre.entries
+                  .map((e) => Row(
+                        children: [
+                          Container(
+                            width: 16,
+                            height: 16,
+                            color: Colors.primaries[moviesByGenre.keys
+                                    .toList()
+                                    .indexOf(e.key) %
+                                Colors.primaries.length],
+                          ),
+                          SizedBox(width: 8),
+                          Text(
+                            '${e.key} (${e.value})',
+                            style: TextStyle(fontSize: 14, color: Colors.black),
+                          ),
+                        ],
+                      ))
+                  .toList(),
+            ),
+          ],
+        ),
+      ),
+    )
+  ];
+
+  if (isDesktop) {
+    return Column(
+      children: [
+        Row(
+          children:
+              charts.sublist(0, 2).map((chart) => Expanded(child: chart)).toList(),
+        ),
+        Row(
+          children:
+              charts.sublist(2, 4).map((chart) => Expanded(child: chart)).toList(),
+        ),
+        Row(
+          children:
+              charts.sublist(4, 6).map((chart) => Expanded(child: chart)).toList(),
+        ),
+        
+      ],
+    );
+  } else {
+    return Column(
+      children: charts,
+    );
+  }
+}
+
+
 
                     return LayoutBuilder(
                       builder: buildChartWidgets,

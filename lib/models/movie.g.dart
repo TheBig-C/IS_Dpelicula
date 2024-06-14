@@ -9,11 +9,11 @@ part of 'movie.dart';
 _$MovieImpl _$$MovieImplFromJson(Map<String, dynamic> json) => _$MovieImpl(
       id: json['id'] as String,
       title: json['title'] as String,
-      voteAverage: (json['voteAverage'] as num).toDouble(),
+      vote_average: (json['vote_average'] as num).toDouble(),
       overview: json['overview'] as String,
       status: json['status'] as String,
-      posterPath: json['posterPath'] as String?,
-      backdropPath: json['backdropPath'] as String?,
+      poster_path: json['poster_path'] as String?,
+      backdrop_path: json['backdrop_path'] as String?,
       genres:
           (json['genres'] as List<dynamic>?)?.map((e) => e as String).toList(),
       directorNames: (json['directorNames'] as List<dynamic>)
@@ -31,11 +31,11 @@ Map<String, dynamic> _$$MovieImplToJson(_$MovieImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
       'title': instance.title,
-      'voteAverage': instance.voteAverage,
+      'vote_average': instance.vote_average,
       'overview': instance.overview,
       'status': instance.status,
-      'posterPath': instance.posterPath,
-      'backdropPath': instance.backdropPath,
+      'poster_path': instance.poster_path,
+      'backdrop_path': instance.backdrop_path,
       'genres': instance.genres,
       'directorNames': instance.directorNames,
       'leadActors': instance.leadActors,

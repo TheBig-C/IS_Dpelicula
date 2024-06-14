@@ -25,7 +25,7 @@ class Ticket {
       userId: map['userId'] as String? ?? '',
       row: map['row'] as String? ?? '',
       seat: map['seat'] as String? ?? '',
-      functionDateTime: map['functionDateTime'] ?? Timestamp.now(),
+      functionDateTime: Timestamp.now(),
       functionId: map['functionId'] as String? ?? '',
       price: (map['price'] ?? 0).toDouble(),
     );

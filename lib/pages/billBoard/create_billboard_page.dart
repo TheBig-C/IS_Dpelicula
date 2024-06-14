@@ -589,18 +589,18 @@ class _CreateBillboardPageState extends ConsumerState<CreateBillboardPage> {
                     child: Draggable<Movie>(
                       data: movie,
                       feedback: Material(
-                        child: _buildMovieImage(movie.posterPath),
+                        child: _buildMovieImage(movie.poster_path),
                       ),
                       childWhenDragging: Container(
                         margin: EdgeInsets.symmetric(vertical: 8),
                         child: Opacity(
                           opacity: 0.5,
-                          child: _buildMovieImage(movie.posterPath),
+                          child: _buildMovieImage(movie.poster_path),
                         ),
                       ),
                       child: Container(
                         margin: EdgeInsets.symmetric(vertical: 8),
-                        child: _buildMovieImage(movie.posterPath),
+                        child: _buildMovieImage(movie.poster_path),
                       ),
                     ),
                   );
@@ -758,7 +758,7 @@ class _CreateBillboardPageState extends ConsumerState<CreateBillboardPage> {
                       feedback: function != null
                           ? Material(
                               child: _buildMovieImage(
-                                  _getMovieById(function.movieId)?.posterPath),
+                                  _getMovieById(function.movieId)?.poster_path),
                             )
                           : Container(),
                       childWhenDragging: Container(
@@ -796,7 +796,7 @@ class _CreateBillboardPageState extends ConsumerState<CreateBillboardPage> {
                               Expanded(
                                   child: _buildMovieImage(
                                       _getMovieById(function.movieId)
-                                          ?.posterPath)),
+                                          ?.poster_path)),
                           ],
                         ),
                       ),
