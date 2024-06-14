@@ -21,6 +21,7 @@ class _RegisterEmployeeState extends State<RegisterEmployee> {
   TextEditingController ciController = TextEditingController();
   TextEditingController addressController = TextEditingController();
   String selectedCIExtension = 'NN';
+  String selectedRole = 'admin';
   final List<String> ciExtensions = [
     'NN',
     'CB',
@@ -32,6 +33,10 @@ class _RegisterEmployeeState extends State<RegisterEmployee> {
     'TJ',
     'BE',
     'PO'
+  ];
+  final List<String> roles = [
+    'admin',
+    'employee'
   ];
 
   @override
@@ -298,6 +303,49 @@ class _RegisterEmployeeState extends State<RegisterEmployee> {
                 ],
               ),
               const SizedBox(height: 20),
+              DropdownButtonFormField<String>(
+                value: selectedRole,
+                items: roles.map((role) {
+                  return DropdownMenuItem<String>(
+                    value: role,
+                    child: Text(
+                      role == 'admin' ? 'Administrador' : 'Empleado',
+                      style: const TextStyle(color: Color(0xfff4b33c)),
+                    ),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    selectedRole = value!;
+                  });
+                },
+                dropdownColor: const Color(0xff1C1C27),
+                decoration: InputDecoration(
+                  labelText: "Cargo",
+                  floatingLabelStyle: TextStyle(
+                      color: const Color(0xfff4b33c).withOpacity(0.7),
+                      fontSize: 22),
+                  labelStyle: TextStyle(
+                      color: const Color(0xfff4b33c).withOpacity(0.7),
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500),
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                  enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                          color: const Color(0xfff4b33c).withOpacity(0.4)),
+                      borderRadius: BorderRadius.circular(16)),
+                  focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                          color: Theme.of(context).primaryColor),
+                      borderRadius: BorderRadius.circular(16)),
+                  border: OutlineInputBorder(
+                      borderSide: BorderSide(
+                          color: const Color(0xfff4b33c).withOpacity(0.7)),
+                      borderRadius: BorderRadius.circular(16)),
+                ),
+              ),
+              const SizedBox(height: 20),
               TextFormField(
                 controller: addressController,
                 textInputAction: TextInputAction.done,
@@ -373,7 +421,7 @@ class _RegisterEmployeeState extends State<RegisterEmployee> {
                                 ciController.text.trim() + selectedCIExtension,
                             'phone': phoneController.text.trim(),
                             'address': addressController.text.trim(),
-                            'role': 'admin',
+                            'role': selectedRole,
                           }))
                       .then((_) {
                     Navigator.of(context, rootNavigator: true).pop();

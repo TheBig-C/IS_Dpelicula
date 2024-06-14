@@ -24,7 +24,7 @@ class OptionsPage extends StatefulWidget {
 }
 
 class _OptionsPageState extends State<OptionsPage> {
-  bool isAdmin = false;
+  String userRole = '';
   Widget mainContent = ProfilePage();
   String selectedOption = '';
 
@@ -41,10 +41,17 @@ class _OptionsPageState extends State<OptionsPage> {
           .collection('users')
           .doc(user.uid)
           .get();
-      if (docSnapshot.exists && docSnapshot.data()?['role'] == 'admin') {
+      if (docSnapshot.exists) {
         setState(() {
-          isAdmin = true;
-          mainContent = DashboardPage();
+          userRole = docSnapshot.data()?['role'] ?? '';
+          if (userRole == 'admin') {
+            mainContent = DashboardPage();
+          } else if (userRole == 'employee') {
+            mainContent =
+                RegisteredMoviesPage(); // Example content for employee
+          } else {
+            mainContent = ProfilePage(); // Default content for client
+          }
         });
       }
     }
@@ -72,75 +79,8 @@ class _OptionsPageState extends State<OptionsPage> {
                       'Editar Perfil',
                       'edit_profile',
                       () => _updateMainContent(ProfileEditPage())),
-                  if (isAdmin)
-                    _buildDrawerItem(Icons.dashboard, 'Panel de control',
-                        'dashboard', () => _updateMainContent(DashboardPage())),
-                  if (isAdmin)
-                    _buildDrawerItem(
-                        Icons.person_add,
-                        'Registrar Empleado',
-                        'register_employee',
-                        () => _updateMainContent(RegisterEmployee())),
-                  if (isAdmin)
-                    _buildDrawerItem(
-                        Icons.movie,
-                        'Registrar Película',
-                        'register_movie',
-                        () => _updateMainContent(RegisterMovie())),
-                  if (isAdmin)
-                    _buildDrawerItem(
-                        Icons.people_alt,
-                        'Control de empleados',
-                        'control_employee',
-                        () => _updateMainContent(ControlEmployee())),
-                  if (isAdmin)
-                    _buildDrawerItem(
-                        Icons.local_movies_rounded,
-                        'Satisfación del cliente',
-                        'movie_satisfaction',
-                        () => _updateMainContent(MovieSatisfaction())),
-                  if (isAdmin)
-                    _buildDrawerItem(
-                        Icons.group,
-                        'Control de clientes',
-                        'control_client',
-                        () => _updateMainContent(ControlClient())),
-                  if (isAdmin)
-                    _buildDrawerItem(
-                        Icons.movie_filter,
-                        'Ver Películas',
-                        'registered_movies',
-                        () => _updateMainContent(RegisteredMoviesPage())),
-                  if (isAdmin)
-                    _buildDrawerItem(
-                        Icons.add_business,
-                        'Agregar Sala',
-                        'room_creation',
-                        () => _updateMainContent(RoomCreationPage())),
-                  if (isAdmin)
-                    _buildDrawerItem(
-                        Icons.room_preferences,
-                        'Control Salas',
-                        'registered_rooms',
-                        () => _updateMainContent(RegisteredRoomsPage())),
-                  if (isAdmin)
-                    _buildDrawerItem(
-                        Icons.add_to_photos,
-                        'Crear Cartelera',
-                        'create_billboard',
-                        () => _updateMainContent(CreateBillboardPage())),
-                  if (isAdmin)
-                    _buildDrawerItem(
-                        Icons.schedule,
-                        'Cartelera Actual',
-                        'active_schedule',
-                        () => _updateMainContent(ActiveSchedulePage())),
-                  if (isAdmin)
-                    _buildDrawerItem(
-                        Icons.airplane_ticket,
-                        'Tickets Registrados',
-                        'registered_tickets',
-                        () => _updateMainContent(RegisteredTicketsPage())),
+                  if (userRole == 'admin') ..._buildAdminItems(),
+                  if (userRole == 'employee') ..._buildEmployeeItems(),
                   _buildDrawerItem(Icons.exit_to_app, 'Cerrar sesión', 'logout',
                       () {
                     FirebaseAuth.instance
@@ -159,6 +99,55 @@ class _OptionsPageState extends State<OptionsPage> {
         ],
       ),
     );
+  }
+
+  List<Widget> _buildAdminItems() {
+    return [
+      _buildDrawerItem(Icons.dashboard, 'Panel de control', 'dashboard',
+          () => _updateMainContent(DashboardPage())),
+      _buildDrawerItem(Icons.person_add, 'Registrar Empleado',
+          'register_employee', () => _updateMainContent(RegisterEmployee())),
+      _buildDrawerItem(Icons.movie, 'Registrar Película', 'register_movie',
+          () => _updateMainContent(RegisterMovie())),
+      _buildDrawerItem(Icons.people_alt, 'Control de empleados',
+          'control_employee', () => _updateMainContent(ControlEmployee())),
+      _buildDrawerItem(Icons.local_movies_rounded, 'Satisfación del cliente',
+          'movie_satisfaction', () => _updateMainContent(MovieSatisfaction())),
+      _buildDrawerItem(Icons.group, 'Control de clientes', 'control_client',
+          () => _updateMainContent(ControlClient())),
+      _buildDrawerItem(Icons.movie_filter, 'Ver Películas', 'registered_movies',
+          () => _updateMainContent(RegisteredMoviesPage())),
+      _buildDrawerItem(Icons.add_business, 'Agregar Sala', 'room_creation',
+          () => _updateMainContent(RoomCreationPage())),
+      _buildDrawerItem(Icons.room_preferences, 'Control Salas',
+          'registered_rooms', () => _updateMainContent(RegisteredRoomsPage())),
+      _buildDrawerItem(Icons.add_to_photos, 'Crear Cartelera',
+          'create_billboard', () => _updateMainContent(CreateBillboardPage())),
+      _buildDrawerItem(Icons.schedule, 'Cartelera Actual', 'active_schedule',
+          () => _updateMainContent(ActiveSchedulePage())),
+      _buildDrawerItem(
+          Icons.airplane_ticket,
+          'Tickets Registrados',
+          'registered_tickets',
+          () => _updateMainContent(RegisteredTicketsPage())),
+    ];
+  }
+
+  List<Widget> _buildEmployeeItems() {
+    return [
+      _buildDrawerItem(Icons.movie, 'Registrar Película', 'register_movie',
+          () => _updateMainContent(RegisterMovie())),
+      _buildDrawerItem(
+          Icons.local_movies_rounded,
+          'Ver Películas',
+          'registered_movies',
+          () => _updateMainContent(RegisteredMoviesPage())),
+      _buildDrawerItem(
+          Icons.airplane_ticket,
+          'Tickets Registrados',
+          'registered_tickets',
+          () => _updateMainContent(RegisteredTicketsPage())),
+    ];
   }
 
   void _updateMainContent(Widget content) {
