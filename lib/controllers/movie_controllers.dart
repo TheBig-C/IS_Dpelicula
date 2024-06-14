@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:is_dpelicula/controllers/function_controller.dart';
 import 'package:is_dpelicula/models/movie.dart';
 import 'package:is_dpelicula/api/movie_methods.dart';
 
@@ -19,6 +20,16 @@ final getAllMoviesProvider = FutureProvider<List<Movie>>((ref) async {
 final allMoviesProviderFuture = FutureProvider<List<Movie>>((ref) {
   final movieController = ref.read(movieControllerProvider.notifier);
   return movieController.getAllMovies();
+});
+final movieTitleProvider = FutureProvider.family<String, String>((ref, functionId) async {
+  // Obtener la función usando el ID de la función
+  final function = await ref.watch(functionCineProvider(functionId).future);
+  
+  // Obtener la película usando el ID de la película
+  final movie = await ref.watch(movieProviderFamily(function.movieId).future);
+  
+  // Retornar el título de la película
+  return movie.title;
 });
 
 final movieProviderFamily = FutureProvider.family<Movie, String>((ref, movieId) async {

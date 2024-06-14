@@ -1,8 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
+import 'package:is_dpelicula/controllers/movie_controllers.dart';
 import 'package:is_dpelicula/controllers/ticket_controller.dart';
 import 'package:is_dpelicula/models/ticket.dart';
+
 
 class RegisteredTicketsPage extends ConsumerStatefulWidget {
   @override
@@ -62,16 +65,7 @@ class _RegisteredTicketsPageState extends ConsumerState<RegisteredTicketsPage> {
           padding: const EdgeInsets.all(16.0),
           child: Row(
             children: [
-              Expanded(
-                child: TextField(
-                  controller: userIdFilterController,
-                  decoration: _inputDecoration('Buscar por ID de Usuario'),
-                  onChanged: (value) {
-                    setState(() {});
-                  },
-                ),
-              ),
-              SizedBox(width: 8),
+              
               Expanded(
                 child: TextField(
                   controller: rowFilterController,
@@ -154,6 +148,8 @@ class _RegisteredTicketsPageState extends ConsumerState<RegisteredTicketsPage> {
           itemCount: filteredTickets.length,
           itemBuilder: (context, index) {
             final ticket = filteredTickets[index];
+            final movieTitleAsyncValue = ref.watch(movieTitleProvider(ticket.functionId));
+
             return Card(
               margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
               child: Padding(
@@ -161,12 +157,14 @@ class _RegisteredTicketsPageState extends ConsumerState<RegisteredTicketsPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'Usuario ID: ${ticket.userId}',
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold),
+                    movieTitleAsyncValue.when(
+                      data: (title) => Text('Película: $title',
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold)),
+                      loading: () => CircularProgressIndicator(),
+                      error: (err, stack) => Text('Error: $err'),
                     ),
                     SizedBox(height: 8),
                     Text('Fila: ${ticket.row}',
@@ -174,9 +172,7 @@ class _RegisteredTicketsPageState extends ConsumerState<RegisteredTicketsPage> {
                     Text('Asiento: ${ticket.seat}',
                         style: TextStyle(color: Colors.black)),
                     Text(
-                        'Fecha y hora de la función: ${ticket.functionDateTime}',
-                        style: TextStyle(color: Colors.black)),
-                    Text('ID de la función: ${ticket.functionId}',
+                        'Fecha y hora de la función: ${DateFormat('yyyy-MM-dd HH:mm').format(ticket.functionDateTime.toDate())}',
                         style: TextStyle(color: Colors.black)),
                     Text('Precio: \$${ticket.price}',
                         style: TextStyle(color: Colors.black)),

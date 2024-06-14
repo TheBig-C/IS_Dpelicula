@@ -5,6 +5,8 @@ import 'package:is_dpelicula/controllers/ticket_controller.dart';
 import 'package:is_dpelicula/models/functionCine.dart';
 import 'package:is_dpelicula/models/movie.dart';
 import 'package:is_dpelicula/models/ticket.dart';
+import 'package:is_dpelicula/widgets/custom_app_bar.dart';
+import 'package:is_dpelicula/widgets/desktop_footer.dart';
 
 class TicketPurchasePage extends ConsumerStatefulWidget {
   final FunctionCine function;
@@ -18,8 +20,6 @@ class TicketPurchasePage extends ConsumerStatefulWidget {
 
 class _TicketPurchasePageState extends ConsumerState<TicketPurchasePage> {
   final _formKey = GlobalKey<FormState>();
-  String? _row;
-  String? _seat;
   final int rows = 10; // Número de filas
   final int columns = 10; // Número de columnas
   late List<List<bool>> seatStatus;
@@ -44,65 +44,61 @@ class _TicketPurchasePageState extends ConsumerState<TicketPurchasePage> {
     });
   }
 
+  void _toggleSeatSelection(int rowIndex, int colIndex) {
+    setState(() {
+      selectedSeat[rowIndex][colIndex] = !selectedSeat[rowIndex][colIndex];
+    });
+  }
+
+  void _confirmSelection() {
+    final selectedTickets = <Ticket>[];
+    for (int i = 0; i < rows; i++) {
+      for (int j = 0; j < columns; j++) {
+        if (selectedSeat[i][j]) {
+          final newTicket = Ticket(
+            id: '',
+            userId: 'someUserId', // Replace with actual user ID
+            row: (i + 1).toString(),
+            seat: (j + 1).toString(),
+            functionDateTime: Timestamp.fromDate(widget.function.startTime),
+            functionId: widget.function.id,
+            price: widget.function.price,
+          );
+          selectedTickets.add(newTicket);
+        }
+      }
+    }
+    if (selectedTickets.isNotEmpty) {
+      ref.read(ticketControllerProvider.notifier).addTickets(selectedTickets);
+      Navigator.pop(context);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final isDesktop = MediaQuery.of(context).size.width > 800;
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Comprar Ticket - ${widget.movie.title}'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      appBar: CustomAppBar(isDesktop: isDesktop),
+      body: SafeArea(
         child: SingleChildScrollView(
-          child: Form(
-            key: _formKey,
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
                 _buildRoomPreview(),
                 const SizedBox(height: 20),
-                TextFormField(
-                  decoration: InputDecoration(labelText: 'Fila'),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Por favor ingrese la fila';
-                    }
-                    return null;
-                  },
-                  onSaved: (value) {
-                    _row = value;
-                  },
-                ),
-                TextFormField(
-                  decoration: InputDecoration(labelText: 'Asiento'),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Por favor ingrese el asiento';
-                    }
-                    return null;
-                  },
-                  onSaved: (value) {
-                    _seat = value;
-                  },
-                ),
-                const SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      _formKey.currentState!.save();
-                      final newTicket = Ticket(
-                        id: '',
-                        userId: 'someUserId', // Replace with actual user ID
-                        row: _row!,
-                        seat: _seat!,
-                        functionDateTime: Timestamp.fromDate(widget.function.startTime),
-                        functionId: widget.function.id,
-                        price: widget.function.price,
-                      );
-                      ref.read(ticketControllerProvider.notifier).addTicket(newTicket);
-                      Navigator.pop(context);
-                    }
-                  },
+                  onPressed: _confirmSelection,
                   child: Text('Confirmar Compra'),
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.black, backgroundColor: Colors.amber, // Color del texto
+                    textStyle: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                  ),
                 ),
+                const SizedBox(height: 30),
+                if (isDesktop) const DesktopFooter(),
               ],
             ),
           ),
@@ -122,12 +118,14 @@ class _TicketPurchasePageState extends ConsumerState<TicketPurchasePage> {
             children: [
               Row(
                 children: List.generate(columns + 1, (index) {
-                  if (index == 0) return const SizedBox(width: 20);
-                  return Padding(
-                    padding: const EdgeInsets.all(4.0),
-                    child: Text(
-                      '$index',
-                      style: TextStyle(color: Colors.white),
+                  if (index == 0) return const SizedBox(width: 24);
+                  return SizedBox(
+                    width: 43, // Ajusta este tamaño según sea necesario
+                    child: Center(
+                      child: Text(
+                        '$index',
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
                   );
                 }),
@@ -136,23 +134,20 @@ class _TicketPurchasePageState extends ConsumerState<TicketPurchasePage> {
                 children: List.generate(rows, (rowIndex) {
                   return Row(
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.all(4.0),
-                        child: Text(
-                          '${rowIndex + 1}',
-                          style: TextStyle(color: Colors.white),
+                      SizedBox(
+                        width: 45, // Ajusta este tamaño según sea necesario
+                        child: Center(
+                          child: Text(
+                            '${rowIndex + 1}',
+                            style: TextStyle(color: Colors.white),
+                          ),
                         ),
                       ),
                       ...List.generate(columns, (colIndex) {
                         return GestureDetector(
                           onTap: () {
                             if (!seatStatus[rowIndex][colIndex]) {
-                              setState(() {
-                                selectedSeat = List.generate(rows, (_) => List.generate(columns, (_) => false));
-                                selectedSeat[rowIndex][colIndex] = true;
-                                _row = (rowIndex + 1).toString();
-                                _seat = (colIndex + 1).toString();
-                              });
+                              _toggleSeatSelection(rowIndex, colIndex);
                             }
                           },
                           child: Container(
@@ -195,7 +190,12 @@ class TicketController extends StateNotifier<List<Ticket>> {
     return querySnapshot.docs.map((doc) => Ticket.fromMap(doc.data(), ticketId: doc.id)).toList();
   }
 
-  Future<void> addTicket(Ticket ticket) async {
-    await FirebaseFirestore.instance.collection('tickets').add(ticket.toJson());
+  Future<void> addTickets(List<Ticket> tickets) async {
+    final batch = FirebaseFirestore.instance.batch();
+    for (final ticket in tickets) {
+      final docRef = FirebaseFirestore.instance.collection('tickets').doc();
+      batch.set(docRef, ticket.toJson());
+    }
+    await batch.commit();
   }
 }
