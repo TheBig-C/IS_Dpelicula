@@ -6,7 +6,6 @@ import 'package:is_dpelicula/controllers/movie_controllers.dart';
 import 'package:is_dpelicula/controllers/ticket_controller.dart';
 import 'package:is_dpelicula/models/ticket.dart';
 
-
 class RegisteredTicketsPage extends ConsumerStatefulWidget {
   @override
   _RegisteredTicketsPageState createState() => _RegisteredTicketsPageState();
@@ -65,7 +64,6 @@ class _RegisteredTicketsPageState extends ConsumerState<RegisteredTicketsPage> {
           padding: const EdgeInsets.all(16.0),
           child: Row(
             children: [
-              
               Expanded(
                 child: TextField(
                   controller: rowFilterController,
@@ -150,53 +148,62 @@ class _RegisteredTicketsPageState extends ConsumerState<RegisteredTicketsPage> {
             final ticket = filteredTickets[index];
             final movieTitleAsyncValue = ref.watch(movieTitleProvider(ticket.functionId));
 
-            return Card(
-              margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    movieTitleAsyncValue.when(
-                      data: (title) => Text('Película: $title',
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold)),
-                      loading: () => CircularProgressIndicator(),
-                      error: (err, stack) => Text('Error: $err'),
-                    ),
-                    SizedBox(height: 8),
-                    Text('Fila: ${ticket.row}',
-                        style: TextStyle(color: Colors.black)),
-                    Text('Asiento: ${ticket.seat}',
-                        style: TextStyle(color: Colors.black)),
-                    Text(
-                        'Fecha y hora de la función: ${DateFormat('yyyy-MM-dd HH:mm').format(ticket.functionDateTime.toDate())}',
-                        style: TextStyle(color: Colors.black)),
-                    Text('Precio: \$${ticket.price}',
-                        style: TextStyle(color: Colors.black)),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
+            return FutureBuilder<String>(
+              future: _getUserName(ticket.userId),
+              builder: (context, snapshot) {
+                final userName = snapshot.data ?? 'Cargando...';
+
+                return Card(
+                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        IconButton(
-                          icon: Icon(Icons.edit, color: Colors.blue),
-                          onPressed: () {
-                            _showEditTicketDialog(ticket.id, ticket);
-                          },
+                        movieTitleAsyncValue.when(
+                          data: (title) => Text('Película: $title',
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold)),
+                          loading: () => CircularProgressIndicator(),
+                          error: (err, stack) => Text('Error: $err'),
                         ),
-                        IconButton(
-                          icon: Icon(Icons.delete, color: Colors.red),
-                          onPressed: () {
-                            _showDeleteConfirmationDialog(
-                                ticket.id, ticket.userId);
-                          },
+                        SizedBox(height: 8),
+                        Text('Usuario: $userName',
+                            style: TextStyle(color: Colors.black)),
+                        Text('Fila: ${ticket.row}',
+                            style: TextStyle(color: Colors.black)),
+                        Text('Asiento: ${ticket.seat}',
+                            style: TextStyle(color: Colors.black)),
+                        Text(
+                            'Fecha y hora de la función: ${DateFormat('yyyy-MM-dd HH:mm').format(ticket.functionDateTime.toDate())}',
+                            style: TextStyle(color: Colors.black)),
+                        Text('Precio: \$${ticket.price}',
+                            style: TextStyle(color: Colors.black)),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            IconButton(
+                              icon: Icon(Icons.edit, color: Colors.blue),
+                              onPressed: () {
+                                _showEditTicketDialog(ticket.id, ticket);
+                              },
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.delete, color: Colors.red),
+                              onPressed: () {
+                                _showDeleteConfirmationDialog(
+                                    ticket.id, ticket.userId);
+                              },
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                  ],
-                ),
-              ),
+                  ),
+                );
+              },
             );
           },
         );
@@ -204,6 +211,22 @@ class _RegisteredTicketsPageState extends ConsumerState<RegisteredTicketsPage> {
       loading: () => Center(child: CircularProgressIndicator()),
       error: (err, stack) => Center(child: Text('Error: $err')),
     );
+  }
+
+  Future<String> _getUserName(String userId) async {
+    try {
+      var docSnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .get();
+      if (docSnapshot.exists) {
+        return docSnapshot.data()?['name'] ?? 'Sin nombre';
+      } else {
+        return 'Usuario no encontrado';
+      }
+    } catch (e) {
+      return 'Error: $e';
+    }
   }
 
   void _showEditTicketDialog(String ticketId, Ticket ticketData) {

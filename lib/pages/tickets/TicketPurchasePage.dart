@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:is_dpelicula/controllers/ticket_controller.dart';
@@ -51,27 +52,80 @@ class _TicketPurchasePageState extends ConsumerState<TicketPurchasePage> {
   }
 
   void _confirmSelection() {
-    final selectedTickets = <Ticket>[];
-    for (int i = 0; i < rows; i++) {
-      for (int j = 0; j < columns; j++) {
-        if (selectedSeat[i][j]) {
-          final newTicket = Ticket(
-            id: '',
-            userId: 'someUserId', // Replace with actual user ID
-            row: (i + 1).toString(),
-            seat: (j + 1).toString(),
-            functionDateTime: Timestamp.fromDate(widget.function.startTime),
-            functionId: widget.function.id,
-            price: widget.function.price,
-          );
-          selectedTickets.add(newTicket);
-        }
-      }
-    }
-    if (selectedTickets.isNotEmpty) {
-      ref.read(ticketControllerProvider.notifier).addTickets(selectedTickets);
-      Navigator.pop(context);
-    }
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            bool isLoading = false;
+
+            void _purchaseTickets() async {
+              setState(() {
+                isLoading = true;
+              });
+
+              var user = FirebaseAuth.instance.currentUser;
+              final selectedTickets = <Ticket>[];
+              for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < columns; j++) {
+                  if (selectedSeat[i][j]) {
+                    final newTicket = Ticket(
+                      id: '',
+                      userId: user!.uid,
+                      row: (i + 1).toString(),
+                      seat: (j + 1).toString(),
+                      functionDateTime: Timestamp.fromDate(widget.function.startTime),
+                      functionId: widget.function.id,
+                      price: widget.function.price,
+                    );
+                    selectedTickets.add(newTicket);
+                  }
+                }
+              }
+              if (selectedTickets.isNotEmpty) {
+                await ref.read(ticketControllerProvider.notifier).addTickets(selectedTickets);
+                setState(() {
+                  isLoading = false;
+                });
+                Navigator.pop(context);
+                Navigator.pop(context);
+              } else {
+                setState(() {
+                  isLoading = false;
+                });
+                Navigator.pop(context);
+              }
+            }
+
+            return AlertDialog(
+              title: Text('Confirmar Compra', style: TextStyle(color: Colors.black)),
+              content: isLoading
+                  ? Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        CircularProgressIndicator(),
+                        SizedBox(height: 20),
+                        Text('Procesando tu compra...', style: TextStyle(color: Colors.black)),
+                      ],
+                    )
+                  : Text('¿Estás seguro de que deseas realizar la compra de los tickets seleccionados?', style: TextStyle(color: Colors.black)),
+              actions: <Widget>[
+                TextButton(
+                  child: Text('Cancelar', style: TextStyle(color: Colors.black)),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                TextButton(
+                  child: Text('Confirmar', style: TextStyle(color: Colors.black)),
+                  onPressed: _purchaseTickets,
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
   }
 
   @override

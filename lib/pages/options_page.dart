@@ -11,6 +11,7 @@ import 'package:is_dpelicula/pages/movies/register_movie_page.dart';
 import 'package:is_dpelicula/pages/movies/registered_movies.dart';
 import 'package:is_dpelicula/pages/room/RegisteredRoomsPage.dart';
 import 'package:is_dpelicula/pages/room/roomCreationPage.dart';
+import 'package:is_dpelicula/pages/tickets/UserTicketPage.dart';
 import 'package:is_dpelicula/pages/tickets/registered_tickets.dart';
 import 'package:is_dpelicula/pages/users/control_client.dart';
 import 'package:is_dpelicula/pages/users/control_employee.dart';
@@ -72,6 +73,8 @@ class _OptionsPageState extends State<OptionsPage> {
                       'Editar Perfil',
                       'edit_profile',
                       () => _updateMainContent(ProfileEditPage())),
+                  _buildDrawerItem(Icons.history, 'Historial', 'historial',
+                      () => _updateMainContent(UserTicketsPage())),
                   if (isAdmin)
                     _buildDrawerItem(Icons.dashboard, 'Panel de control',
                         'dashboard', () => _updateMainContent(DashboardPage())),

@@ -41,4 +41,13 @@ class Ticket {
       'price': price,
     };
   }
+  static DateTime _convertToDateTime(dynamic value) {
+    if (value is Timestamp) {
+      return value.toDate();
+    } else if (value is String) {
+      return DateTime.parse(value);
+    } else {
+      throw ArgumentError('Invalid date format');
+    }
+  }
 }

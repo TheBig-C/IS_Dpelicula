@@ -70,43 +70,19 @@ class FunctionDetailsPage extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Información de la Película',
+                    'Información de la Película y Función',
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                         fontSize: 35,
                         fontWeight: FontWeight.bold,
                         color: Colors.white),
                   ),
                   const SizedBox(height: 20),
-                  _buildDetailedInfo(context, movie),
+                  _buildDetailedInfo(context, movie, function, ref),
                 ],
               ),
             ),
           ],
         ),
-        const SizedBox(height: 30),
-        roomAsyncValue.when(
-          data: (rooms) => _buildFunctionInfo(context, rooms),
-          loading: () => const CircularProgressIndicator(),
-          error: (error, stackTrace) => Text('Error: $error'),
-        ),
-        const SizedBox(height: 30),
-        ElevatedButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      TicketPurchasePage(function: function, movie: movie)),
-            );
-          },
-          child: Text('Comprar Ticket'),
-          style: ElevatedButton.styleFrom(
-            foregroundColor: Colors.black, backgroundColor: Colors.amber, // Color del texto
-            textStyle: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-          ),
-        ),
-        const SizedBox(height: 30),
       ],
     );
   }
@@ -162,7 +138,9 @@ class FunctionDetailsPage extends ConsumerWidget {
     }
   }
 
-  Widget _buildDetailedInfo(BuildContext context, Movie movie) {
+  Widget _buildDetailedInfo(BuildContext context, Movie movie, FunctionCine function, WidgetRef ref) {
+    final roomAsyncValue = ref.watch(roomControllerProvider);
+
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(
@@ -217,47 +195,48 @@ class FunctionDetailsPage extends ConsumerWidget {
               'Actores principales: ${movie.leadActors.join(', ')}',
               style: const TextStyle(fontSize: 18, color: Colors.black),
             ),
+            const SizedBox(height: 20),
+            Text('Información de la Función',
+                style: const TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black)),
+            const SizedBox(height: 20),
+            Text('Hora de inicio: ${function.startTime}',
+                style: const TextStyle(fontSize: 18, color: Colors.black)),
+            Text('Hora de fin: ${function.endTime}',
+                style: const TextStyle(fontSize: 18, color: Colors.black)),
+            Text('Precio: \$${function.price}',
+                style: const TextStyle(fontSize: 18, color: Colors.black)),
+            roomAsyncValue.when(
+              data: (rooms) {
+                final room = rooms.firstWhere((room) => room.id == function.roomId);
+                return Text('Sala: ${room.name}',
+                    style: const TextStyle(fontSize: 18, color: Colors.black));
+              },
+              loading: () => const CircularProgressIndicator(),
+              error: (error, stackTrace) => Text('Error: $error'),
+            ),
+            const SizedBox(height: 30),
+            Center(
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            TicketPurchasePage(function: function, movie: movie)),
+                  );
+                },
+                child: Text('Comprar Ticket'),
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.black, backgroundColor: Colors.amber, // Color del texto
+                  textStyle: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                ),
+              ),
+            ),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildFunctionInfo(BuildContext context, List<Room> rooms) {
-    final room = rooms.firstWhere((room) => room.id == function.roomId);
-
-    return Center(
-      child: Card(
-        elevation: 4,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
-        ),
-        child: Container(
-          width: 300, // Ajusta el tamaño según sea necesario
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.9),
-            borderRadius: BorderRadius.circular(15),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Información de la Función',
-                  style: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black)),
-              const SizedBox(height: 20),
-              Text('Hora de inicio: ${function.startTime}',
-                  style: const TextStyle(fontSize: 18, color: Colors.black)),
-              Text('Hora de fin: ${function.endTime}',
-                  style: const TextStyle(fontSize: 18, color: Colors.black)),
-              Text('Sala: ${room.name}',
-                  style: const TextStyle(fontSize: 18, color: Colors.black)),
-              Text('Precio: \$${function.price}',
-                  style: const TextStyle(fontSize: 18, color: Colors.black)),
-            ],
-          ),
         ),
       ),
     );
