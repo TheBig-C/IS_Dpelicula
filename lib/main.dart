@@ -7,7 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:is_dpelicula/controllers/function_controller.dart';
 import 'package:is_dpelicula/controllers/movie_controllers.dart';
 import 'package:is_dpelicula/pages/auth/forgot_pw_page.dart';
-import 'package:is_dpelicula/pages/auth/login_page%20copy.dart';
+import 'package:is_dpelicula/pages/auth/login_page.dart';
 import 'package:is_dpelicula/pages/auth/register_employee.dart';
 import 'package:is_dpelicula/pages/auth/register_page.dart';
 import 'package:is_dpelicula/pages/auth/verify_email.dart';
